@@ -1,0 +1,108 @@
+<idea-plugin>
+  <id>com.vk.kphpstorm</id>
+  <name>KPHPStorm</name>
+  <vendor email="unserialize.alias@gmail.com" url="https://vk.com/kphp">vk.com/kphp</vendor>
+
+  <description>
+    <![CDATA[
+<p><b>About</b></p>
+<p>KPHPStorm is a PhpStorm plugin that makes IDE understand KPHP specifics.</p>
+<p>KPHP is a PHP compiler. It supports a strict subset of PHP and brings new types, functions and annotations.</p>
+<br>
+<p><b>Features</b></p>
+<ul>
+  <li>extended phpdoc types including tuples, ?nullable and arbitrary nesting</li>
+  <li>extended type inferring supporting tuples and shapes</li>
+  <li>complete and validate @kphp- doc tags</li>
+  <li>strict typing inspections based on local type inferring</li>
+  <li>for plain PHP projects, most of functionality is turned off</li>
+</ul>
+<br>
+<p><b>Homepage</b></p>
+<p><a href="https://unserialize.github.io/kphpstorm">Landing</a> (in russian)</p>
+<p><a href="https://github.com/unserialize/kphpstorm">GitHub</a></p>
+      ]]>
+  </description>
+
+  <depends>com.jetbrains.php</depends>
+  <depends>com.intellij.modules.platform</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+
+    <!-- All inspections are OFF by default: @see setupKphpStormPluginForProject() -->
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="KphpDocInspection"
+                     displayName="PHPDoc checks and simplification"
+                     enabledByDefault="false" level="WEAK WARNING"
+                     implementationClass="com.vk.kphpstorm.inspections.KphpDocInspection"/>
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="NoTypeDeclarationInspection"
+                     displayName="No type declaration"
+                     enabledByDefault="false" level="ERROR"
+                     implementationClass="com.vk.kphpstorm.inspections.NoTypeDeclarationInspection"/>
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="KphpUndefinedClassInspection"
+                     displayName="Undefined class"
+                     enabledByDefault="false" level="ERROR"
+                     implementationClass="com.vk.kphpstorm.inspections.KphpUndefinedClassInspection"/>
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="KphpAssignmentTypeMismatchInspection"
+                     displayName="Type mismatch in property assignment"
+                     enabledByDefault="false" level="ERROR"
+                     implementationClass="com.vk.kphpstorm.inspections.KphpAssignmentTypeMismatchInspection"/>
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="KphpReturnTypeMismatchInspection"
+                     displayName="Type mismatch in return of function"
+                     enabledByDefault="false" level="ERROR"
+                     implementationClass="com.vk.kphpstorm.inspections.KphpReturnTypeMismatchInspection"/>
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="KphpParameterTypeMismatchInspection"
+                     displayName="Type mismatch in call argument"
+                     enabledByDefault="false" level="ERROR"
+                     implementationClass="com.vk.kphpstorm.inspections.KphpParameterTypeMismatchInspection"/>
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="ArrayAndIndexingInspection"
+                     displayName="Arrays and [$indexing]"
+                     enabledByDefault="false" level="ERROR"
+                     implementationClass="com.vk.kphpstorm.inspections.ArrayAndIndexingInspection"/>
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="RedundantCastInspection"
+                     displayName="Redundant cast (int)/(array)/etc"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.vk.kphpstorm.inspections.RedundantCastInspection"/>
+
+    <intentionAction>
+      <className>com.vk.kphpstorm.inspections.PrettifyPhpdocBlockIntention</className>
+      <category>PHP</category>
+      <descriptionDirectoryName>PrettifyPhpdocBlockIntention</descriptionDirectoryName>
+    </intentionAction>
+
+    <additionalTextAttributes scheme="Default" file="colorSchemes/KphpAddonsDefault.xml"/>
+    <additionalTextAttributes scheme="Darcula" file="colorSchemes/KphpAddonsDarcula.xml"/>
+    <colorSettingsPage implementation="com.vk.kphpstorm.highlighting.KphpColorsAndFontsPage"/>
+
+    <completion.contributor language="PHP" order="first"
+                            implementationClass="com.vk.kphpstorm.completion.KphpStormCompletionContributor"/>
+    <lang.parserDefinition language="PHP" order="first"
+                           implementationClass="com.vk.kphpstorm.KphpStormParserDefinition"/>
+    <stubElementTypeHolder class="com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes"/>
+    <annotator language="PHP" implementationClass="com.vk.kphpstorm.highlighting.KphpStormAnnotator"/>
+
+    <lang.documentationProvider language="PHP" order="first"
+                                implementationClass="com.vk.kphpstorm.highlighting.KphpStormDocumentationProvider"/>
+    <codeInsight.typeInfo language="PHP" order="last"
+                          implementationClass="com.vk.kphpstorm.highlighting.KphpStormTypeInfoProvider"/>
+
+    <postStartupActivity implementation="com.vk.kphpstorm.configuration.KphpStormStartupActivity"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.jetbrains.php">
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.TupleShapeTypeProvider"/>
+<!--    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.TemplateObjectAccessTypeProvider"/>-->
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.FunctionsTypeProvider"/>
+  </extensions>
+
+  <actions>
+    <group id="com.vk.kphpstorm" text="KPHPStorm" popup="true">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+      <action
+        id="com.vk.kphpstorm.configuration.SetupPluginForProjectAction"
+        class="com.vk.kphpstorm.configuration.SetupPluginForProjectAction"
+        text="Set up for Project...">
+      </action>
+    </group>
+  </actions>
+
+</idea-plugin>

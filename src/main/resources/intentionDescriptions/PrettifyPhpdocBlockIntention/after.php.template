@@ -1,0 +1,5 @@
+/**
+ * @param tuple(int, ?string, Unknown) $o
+ * @param Some\Clazz $h2
+ */
+function f1($o, ?int $h, $h2){}

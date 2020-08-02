@@ -7,7 +7,7 @@ plugins {
 
 group 'com.vk'
 // important! update changeNotes (below) on version bump
-version 'todo'
+version '1.0.0'
 
 sourceCompatibility = 1.8
 
@@ -56,7 +56,15 @@ patchPluginXml {
     // see https://github.com/JetBrains/gradle-intellij-plugin#patching-dsl
     // <change-notes> is only for LATEST version and should be updated on every version bump
     changeNotes """
-todo
+<ul>
+  <li>custom phpdoc type parsers: support tuple, shape, var, future, arbitrary nesting, nullable types</li>
+  <li>patched type inferring supporting tuples and shapes + hack php stdlib inferring</li>
+  <li>complete and validate @kphp- doc tags</li>
+  <li>strict typing inspections</li>
+  <li>phpdoc simplification</li>
+  <li>custom quick documentation and type info</li>
+  <li>support both PHP and KPHP projects</li>
+</ul>
 """
 }
 

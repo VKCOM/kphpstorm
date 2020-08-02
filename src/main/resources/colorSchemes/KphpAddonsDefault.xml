@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<list>
+  <option name="PHPDOC_TAG_KPHP">
+    <value>
+      <option name="FOREGROUND" value="404060"/>
+      <option name="FONT_TYPE" value="3"/>
+    </value>
+  </option>
+  <option name="PHPDOC_TAG_REGULAR">
+    <value>
+      <option name="FOREGROUND" value="808080"/>
+      <option name="FONT_TYPE" value="3"/>
+    </value>
+  </option>
+  <option name="PHPDOC_TYPE_INSIDE">
+    <value>
+      <option name="FOREGROUND" value="4D5054"/>
+      <option name="BACKGROUND" value="EBF2FF"/>
+      <option name="FONT_TYPE" value="2"/>
+    </value>
+  </option>
+
+  <option name="FUNC_CALL_KPHP_NATIVE">
+    <value>
+      <option name="FOREGROUND" value="000066"/>
+      <option name="FONT_TYPE" value="2"/>
+    </value>
+  </option>
+
+  
+  <option name="PHP_DOC_TAG">
+    <value>
+      <option name="FOREGROUND" value=""/>
+      <option name="BACKGROUND" value=""/>
+      <option name="FONT_TYPE" value=""/>
+      <option name="EFFECT_TYPE" value=""/>
+      <option name="EFFECT_COLOR" value=""/>
+    </value>
+  </option>
+  <option name="PHP_DOC_IDENTIFIER">
+    <value>
+      <option name="FOREGROUND" value=""/>
+      <option name="BACKGROUND" value=""/>
+      <option name="FONT_TYPE" value=""/>
+      <option name="EFFECT_TYPE" value=""/>
+      <option name="EFFECT_COLOR" value=""/>
+    </value>
+  </option>
+  <option name="PHP_FUNCTION_CALL">
+    <value>
+      <option name="FOREGROUND" value=""/>
+      <option name="BACKGROUND" value=""/>
+      <option name="FONT_TYPE" value=""/>
+      <option name="EFFECT_TYPE" value=""/>
+      <option name="EFFECT_COLOR" value=""/>
+    </value>
+  </option>
+</list>
