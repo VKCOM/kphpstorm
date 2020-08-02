@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css">
+    <link rel="stylesheet" href="css/landings.css">
+    <link rel="icon" type="image/png" href="img/favicon32.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="KPHPStorm">
+    <meta property="og:description" content="KPHPStorm — plugin for IDE: faq">
+    <title>KPHPStorm — плагин для IDE</title>
+</head>
+<body>
+
+
+<header>
+    <div class="header-inner">
+        <a href="./" class="header-link--left">
+            <img src="img/pluginIcon_dark.svg" class="header-link-logo">
+        </a>
+        <a href="https://github.com/unserialize/kphpstorm" class="header-link--right">
+            <img src="img/GitHub-Mark-Light-64px.png" class="header-link-github">
+        </a>
+    </div>
+</header>
+
+
+<div class="layout-feature-block layout-feature-block--white layout-feature-block--wide-text">
+    <h1>KPHPStorm — FAQ</h1>
+
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <h3>Как долго разрабатывался плагин?</h3>
+            <p>Около 3-х месяцев — в основном во внерабочее время. Долго.
+                Во-первых, это первый опыт в плагинах, и работы там действительно очень много.
+                А во-вторых, документации по внутренностям PhpStorm крайне мало, аналогичных плагинов нет,
+                подглядеть некуда, поэтому — эксперименты и декомпилированные исходники.
+                И спасибо ребятам из JetBrains, отвечавшим на мои вопросы на первых порах.</p>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <h3>Как он работает? KPHP запускается как демон или что?</h3>
+            <p>Нет, все типы выводятся полностью локально, а ошибки —
+                это опять-таки локальные инспекции на определённые паттерны кода.
+                Никакие части KPHP внутрь не интегрированы, никуда удалённо запросы не посылаются.
+                Это технически невозможно, да и бессмысленно. Всё происходит прям в IDE. </p>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <h3>Какой оверхед? PhpStorm будет тормозить больше?</h3>
+            <p>Вроде бы нет никакого оверхеда, т.е. скорость работы PhpStorm и потребление CPU не изменилось.
+                С поправкой на то, что единожды проходит полная переиндексация,
+                это заметно греет проц на больших проектах.</p>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <h3>Плагин показывает все ошибки, которые найдёт KPHP?</h3>
+            <p>Нет, конечно. KPHP честно выводит всё по всем достижимым исходникам,
+                а плагин работает очень поверхностно.
+                Он доверяет phpdoc’ам, анализирует только локальный scope
+                и уж точно ничего не поймёт в нетипизированном коде.
+                Поэтому даже если плагин считает, что всё ок, то KPHP может ругнуться.
+                Но базовый принцип такой: чем проще код и чем он явнее типизирован,
+                тем больше шансов локально вывести типы и подсветить ошибки при наличии.</p>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <h3>А не проще было заюзать language server?</h3>
+            <p>Нет.</p>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <h3>Есть плагин <a href="https://github.com/klesun/deep-assoc-completion" target="_blank">deep-assoc-completion</a>,
+                оттуда что-нибудь взято?</h3>
+            <p>Нет. Чтобы shape и tuple были нормальными, нужно было подхачить именно вывод типов,
+                а не просто дать какие-то подсказки на месте курсора. Тот плагин из спец. синтаксиса в целом даже умеет
+                после →стрелочки выводить кастомные подсказки — но которые он формирует самостоятельно, и только по
+                горячей клавише. Поэтому там не работают ни parameter info, ни go to, а главное — find
+                usages и рефакторинг.</p>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <h3>Может ли в следующих релизах PhpStorm что-то сломаться?</h3>
+            <p>Если не поддерживать плагин, то на следующую версию PhpStorm он просто не поставится. Поддержка будет
+                нужна обязательно. Дело осложняется тем, что плагин использует много недокументированного API, и есть
+                вероятность, что оно поменяется в будущем и что-то будет работать
+                <a href="https://twitter.com/phpstorm/status/1268501989991813122" target="_blank">не так</a>. Буду
+                бдить, чтобы эффект был минимальный. В конце концов, если уж получилось всё это сделать сейчас, то вряд
+                ли что-то изменится так уж кардинально в будущем.</p>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <h3>Я веду в PhpStorm несколько проектов — один из них на KPHP, другие обычный PHP, как быть?</h3>
+            <p>Ответ здесь: <a href="setup.html">Установка и настройка</a>.</p>
+            <p>Кратко: часть вещей действуют на все проекты сразу, а часть включается per-project.</p>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <h3>Как я могу помочь в разработке плагина?</h3>
+            <p>Пишите в <a href="https://vk.com/kphp" target="_blank">личку ВК</a> или на гитхабе,
+                буду рад адекватной помощи.
+                Но предупреждаю: область очень специфичная, вникать сложно,
+                а из документации — только комментарии в коде.</p>
+        </div>
+    </div>
+
+</div>
+
+
+<footer class="layout-footer-sub" style="margin-top: 60px;">
+    <div class="feature-inner" style="max-width: 600px;">
+        <p><a href="../">Главная</a></p>
+        <p><a href="setup.html">Установка и настройка</a></p>
+        <p><a href="faq.html">FAQ</a></p>
+        <p><a href="https://github.com/unserialize/kphpstorm">GitHub</a></p>
+    </div>
+</footer>
+
+
+</body>
+</html>

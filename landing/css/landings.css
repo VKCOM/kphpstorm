@@ -1,0 +1,410 @@
+.text-c {
+    text-align: center;
+}
+
+code, span.nowrap {
+    white-space: nowrap;
+}
+
+code.allowwrap {
+    white-space: normal;
+}
+
+footer, header {
+    background-color: #232628;
+    color: #c4c4c4;
+    overflow: auto;
+}
+
+header {
+    height: 60px;
+    line-height: 60px;
+    vertical-align: middle;
+}
+
+.header-inner {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header .header-link--left {
+    float: left;
+}
+
+header .header-link--right {
+    float: right;
+}
+
+header .header-link-logo {
+    width: 60px;
+    height: 60px;
+    vertical-align: top;
+}
+
+header .header-link-github {
+    width: 32px;
+    height: 32px;
+    vertical-align: middle;
+}
+
+.header-inner a.logo {
+    float: left;
+    font-size: 0;
+}
+
+.layout-footer-main {
+    padding-bottom: 30px;
+}
+
+.layout-footer-sub {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+
+.layout-title-block {
+    position: relative;
+}
+
+.layout-title-block--bg {
+    position: absolute;
+    height: 1600px;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+}
+
+.layout-title-block--bg svg {
+    position: absolute;
+    left: 50%;
+    top: -200px;
+    width: 1200px;
+    height: 1600px;
+    margin-left: -600px;
+}
+
+.layout-title-block--content {
+    padding: 100px 0 200px;
+    position: relative;
+}
+
+.layout-title-block--content .svg-logo-wrapper {
+    margin-right: 40px;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 20px;
+    background-color: black;
+}
+
+.layout-title-block h1 {
+    font-size: 80px;
+    font-weight: bold;
+    margin-bottom: 100px;
+    text-shadow: 0 1px 4px white;
+}
+
+.layout-title-block--vk-logo-c {
+    margin-top: -20px;
+}
+
+.layout-title-block--vk-logo {
+    background: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M15.68%200C22.4%200%2024%201.6%2024%208.32v7.36C24%2022.4%2022.4%2024%2015.68%2024H8.32C1.6%2024%200%2022.4%200%2015.68V8.32C0%201.6%201.6%200%208.32%200zM6.5%207.5H4.75c-.5%200-.6.24-.6.49%200%20.47.59%202.77%202.76%205.81a6.85%206.85%200%20005.34%203.2c1.11%200%201.25-.25%201.25-.68v-1.57c0-.5.11-.6.46-.6s.7.13%201.74%201.13c1.19%201.19%201.38%201.72%202.05%201.72h1.75c.5%200%20.75-.25.61-.74a7.43%207.43%200%2000-1.48-2.05c-.41-.49-1-1-1.21-1.26s-.18-.49%200-.78a21.83%2021.83%200%20002.36-4c.11-.37%200-.64-.53-.64H17.5a.77.77%200%2000-.76.49%2014.67%2014.67%200%2001-2.15%203.58c-.41.41-.6.54-.82.54s-.27-.13-.27-.5v-3.5c0-.44-.13-.64-.5-.64h-2.75a.43.43%200%2000-.45.4c0%20.42.64.52.7%201.71v2.57c0%20.57-.1.67-.32.67-.6%200-2-2.18-2.9-4.67C7.12%207.7%207%207.5%206.5%207.5z%22%20fill%3D%22%23fff%22%20fill-rule%3D%22evenodd%22%2F%3E%3C%2Fsvg%3E") no-repeat 50%/contain;
+    width: 48px;
+    height: 48px;
+    display: inline-block;
+}
+
+.layout-maininfo-block {
+    padding: 60px 20px 0;
+    overflow: hidden;
+    background: #eaeaec;
+}
+
+.layout-maininfo-block h1 {
+    text-shadow: 0 0 2px white;
+    position: relative;
+    margin: 60px 0 160px;
+    font-size: 44px;
+}
+
+.layout-maininfo-block--inner {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 740px;
+}
+
+.layout-maininfo-block--desc {
+    position: relative;
+    font-size: 1.4em;
+    line-height: 1.6em;
+}
+
+.layout-maininfo-block--desc p {
+    margin-right: 450px;
+    text-shadow: 0 0 2px white;
+}
+
+.layout-maininfo-block--desc p.more-mr {
+    margin-right: 550px;
+}
+
+.layout-maininfo-block--desc p + p {
+    margin-top: 1.8em;
+}
+
+.layout-maininfo-block--img {
+    position: relative;
+    float: right;
+    width: 400px;
+    margin-top: -100px;
+}
+
+.layout-maininfo-block--img img {
+    position: absolute;
+    box-shadow: 0 3px 25px 0 rgba(22, 22, 22, .15);
+}
+
+.layout-feature-block {
+    overflow: auto;
+    padding-bottom: 50px;
+}
+
+.layout-feature-block--blue {
+    background-color: #F7FAFF;
+}
+
+.layout-feature-block--white {
+    background-color: white;
+}
+
+.layout-feature-block--darcula {
+    background-color: #232525;
+    color: #A9B7C6;
+}
+
+.layout-feature-block--green {
+    background-color: #f5fff2;
+}
+
+.layout-feature-block--red {
+    background-color: #fffae6;
+}
+
+.layout-feature-block--shadowed {
+    box-shadow: inset 0 10px 25px -15px rgba(0, 0, 50, 0.4), inset 0 -10px 25px -15px rgba(0, 0, 50, 0.4);
+}
+
+.layout-feature-block--wide-text {
+
+}
+
+
+.layout-feature-block h1, footer h1 {
+    font-size: 48px;
+    font-weight: bold;
+    margin: 100px 30px 40px;
+    text-align: center;
+}
+
+.layout-feature-block h2, footer h2 {
+    font-size: 36px;
+    font-weight: 300;
+    margin: 0 30px 40px;
+    text-align: center;
+}
+
+.feature {
+    padding: 50px 0;
+}
+
+.feature-inner {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.feature-desc {
+}
+
+.feature-desc p {
+    color: #666;
+    line-height: 1.6em;
+}
+
+.layout-feature-block--darcula .feature-desc p {
+    color: #828D99;
+}
+
+p.feature-center-preambule {
+    max-width: 600px;
+    font-size: 1.5em;
+    line-height: 1.4em;
+    text-align: justify;
+    font-weight: 300;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 70px;
+    letter-spacing: -0.2px;
+}
+
+.feature-desc p:last-child {
+    margin-bottom: 0;
+}
+
+.feature-img-l {
+}
+
+.feature-img-l h3 {
+    font-size: 1.2em;
+}
+
+.feature-img-l img {
+    float: left;
+    position: absolute;
+    transform: scale(0.5);
+    transform-origin: left top;
+}
+
+.feature-img-l .feature-desc {
+    padding-left: 500px;
+}
+
+.feature-img-l h3 {
+    margin-right: -100px;
+}
+
+.feature-img-r {
+}
+
+.feature-img-r .feature-inner {
+    position: relative;
+}
+
+.feature-img-r img {
+    position: absolute;
+    left: 480px;
+    transform: scale(0.5);
+    transform-origin: left top;
+}
+
+.feature-img-l + .feature-img-r img {
+    left: 500px;
+}
+
+.feature-img-r .feature-desc {
+    padding-right: 500px;
+}
+
+.feature-img-r h3 {
+    margin-right: -100px;
+}
+
+.feature-just-text {
+    padding-bottom: 10px;
+}
+
+.feature-just-text .feature-inner {
+    max-width: 600px;
+    margin-left: auto;
+    margin-top: auto;
+    font-size: 1.2em;
+    line-height: 1.6em;
+}
+
+.layout-feature-block--wide-text .feature-inner {
+    max-width: 800px;
+}
+
+.feature-just-text .feature-inner p, .feature-just-text .feature-inner li {
+    color: #666;
+}
+
+.feature-just-text h3.fade-effect-item {
+    font-weight: normal;
+    margin: 0;
+    transform-origin: left top;
+}
+
+.feature-just-text div.img-c-wrapper {
+    text-align: center;
+    overflow: hidden;
+}
+
+.feature-just-text div.img-c-wrapper img {
+    /** scale(0.5) doesn't work here, width attr as x/2 required in html instead */
+}
+
+
+.layout-footer-main .feature-inner p {
+    font-size: 22px;
+    color: #c4c4c4;
+}
+
+footer .feature-inner a {
+    color: inherit;
+}
+
+footer .feature-inner a:hover, footer .feature-inner a:active {
+    color: #999;
+}
+
+
+/* --------------------  mobile */
+
+@media only screen and (max-width: 768px) {
+    .layout-title-block h1 {
+        font-size: 60px;
+        word-break: break-all;
+    }
+
+    .layout-maininfo-block--inner {
+        height: auto;
+        padding-bottom: 80px;
+    }
+
+    .layout-maininfo-block--img {
+        display: none;
+    }
+
+    .layout-maininfo-block--desc p, .layout-maininfo-block--desc p.more-mr {
+        margin-right: 0;
+    }
+
+    .feature-inner {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .feature-img-l img, .feature-img-r img {
+        position: static;
+        display: block;
+        float: none;
+        transform-origin: left bottom;
+        max-width: calc(200vw - 60px);
+        margin-top: -20%;
+    }
+
+    .feature-img-l .feature-desc {
+        padding-left: 0;
+    }
+
+    .feature-img-r .feature-desc {
+        padding-right: 0;
+    }
+
+    .feature-img-r h3, .feature-img-l h3 {
+        margin-right: 0;
+    }
+
+    p.feature-center-preambule {
+        max-width: initial;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .feature-just-text div.img-c-wrapper img {
+        max-width: calc(100vw - 40px);
+    }
+}

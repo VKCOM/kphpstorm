@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css">
+    <link rel="stylesheet" href="css/landings.css">
+    <link rel="icon" type="image/png" href="img/favicon32.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="KPHPStorm">
+    <meta property="og:description" content="KPHPStorm — plugin for IDE: setup">
+    <title>KPHPStorm — плагин для IDE</title>
+</head>
+<body>
+
+
+<header>
+    <div class="header-inner">
+        <a href="./" class="header-link--left">
+            <img src="img/pluginIcon_dark.svg" class="header-link-logo">
+        </a>
+        <a href="https://github.com/unserialize/kphpstorm" class="header-link--right">
+            <img src="img/GitHub-Mark-Light-64px.png" class="header-link-github">
+        </a>
+    </div>
+</header>
+
+
+<div class="layout-feature-block layout-feature-block--white layout-feature-block--wide-text">
+    <h1>KPHPStorm — установка и настройка</h1>
+
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <p><b>1.</b> Найти и установить плагин, вылезет <i>Restart IDE</i>, согласиться:</p>
+            <div class="img-c-wrapper">
+                <img src="img/plugin-install-screen.png" width="748">
+            </div>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <p><b>2.</b> После рестарта, если открыт KPHP проект, плагин предложит автонастройку:</p>
+            <div class="img-c-wrapper" style="margin-bottom: -30px; margin-top: -20px;">
+                <img src="img/setup-kphp-project.png" width="536">
+            </div>
+            <p>Нажать, подождать секунду, вылезет окошко, нажать <i>Invalidate and Restart</i>:</p>
+            <div class="img-c-wrapper" style="margin-bottom: -30px;">
+                <img src="img/setup-invalidate-caches.png" width="656">
+            </div>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <p><b>3.</b> После рестарта IDE заново всё переиндексирует — только типы будут парситься уже по-новому.</p>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <h3>Что конкретно делает “автонастройка”?</h3>
+            <ul>
+                <li>в текущем проекте отключаются много стандартных инспекций</li>
+                <li>в текущем проекте включаются все инспекции из KPHPStorm</li>
+                <li>в текущей цветовой схеме изменяются некоторые настройки шрифтов</li>
+                <li>вызывается окошко <i>Invalidate caches</i> — чтобы IDE всё переиндексировала</li>
+            </ul>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <h3>Почему при отключении плагина какие-то ошибки в IDE?</h3>
+            <p>Если хочется удалить или отключить плагин, то тогда нужно снова вручную сделать
+                <i>Invalidate and Restart</i>. Потому что в phpdoc-тегах хранится доп. информация
+                в&nbsp;сериализованном виде, которую IDE без плагина не может распаковать.</p>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <h3>Я веду ещё и PHP проект, и строгие типы там не нужны</h3>
+            <p>Любые плагины ставятся и включаются глобально. Нельзя в одном проекте плагин включить, а в другом
+                выключить. При этом в PhpStorm одновременно может быть открыт как KPHP, так и обычный PHP проект. Что
+                тогда?</p>
+            <p>В случае обычных PHP проектов плагин старается минимально изменять
+                функциональность IDE. Иными словами, отключает те части, которые возможно. Именно поэтому все инспекции
+                по умолчанию отключены.</p>
+            <p><b>На все проекты действуют</b> (не отключаются) следующие вещи:</p>
+            <ul>
+                <li>парсинг phpdoc типов, т.е. даже в PHP-проектах можно написать тип <code>?int</code>,
+                    и IDE это поймёт; при этом
+                    <code>mixed</code> останется <code>mixed</code>, не превратится в <code>var</code>
+                </li>
+                <li>применяется найстройка цветовой схемы <i>Editor > Colors and Fonts > KPHP</i></li>
+                <li>ховеры мышкой, Type Info</li>
+                <li>расширяется вывод типов и подменяется у некоторых php функций</li>
+            </ul>
+            <p><b>После выполнения автонастройки</b> — для текущего проекта:</p>
+            <ul>
+                <li><code>mixed</code> начинает парситься как <code>var</code></li>
+                <li>включаются все инспекции на phpdoc, строгое совпадение типов и т.п.</li>
+                <li>нужно согласиться на <i>Invalidate caches</i></li>
+            </ul>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <h3>Как плагин определяет, что открыт KPHP проект?</h3>
+            <p>На самом деле, очень банально: при открытии любого проекта смотрит,
+                есть ли php-полифиллы для функций <code>tuple()</code> и <code>shape()</code>.
+                Если да, и если автонастройки ещё не было, вылазит окошко с ней.</p>
+        </div>
+    </div>
+    <div class="feature feature-just-text">
+        <div class="feature-inner">
+            <h3>Можно ли в обычном PHP-проекте включить всё это?</h3>
+            <p>В меню <i>Tools > KPHPStorm > Set&nbsp;up&nbsp;for&nbsp;Project</i>:</p>
+            <div class="img-c-wrapper" style="margin-bottom: -20px;">
+                <img src="img/setup-php-project.png" width="601">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer class="layout-footer-sub" style="margin-top: 60px;">
+    <div class="feature-inner" style="max-width: 600px;">
+        <p><a href="../">Главная</a></p>
+        <p><a href="setup.html">Установка и настройка</a></p>
+        <p><a href="faq.html">FAQ</a></p>
+        <p><a href="https://github.com/unserialize/kphpstorm">GitHub</a></p>
+    </div>
+</footer>
+
+
+</body>
+</html>
