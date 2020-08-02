@@ -31,7 +31,7 @@ It supports a strict subset of PHP and brings new types, functions, annotations 
 
 ## Detailed info
 
-#### **[Landing page (in Russian)](https://unserialize.github.io/kphpstorm)**
+#### **[Landing page (in Russian)](https://unserialize.github.io/kphpstorm/)**
 
 
 ## Useful for plugin developers
