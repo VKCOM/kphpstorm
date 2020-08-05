@@ -1,7 +1,7 @@
 # KPHPStorm
 
 PhpStorm plugin that makes IDE understand KPHP specifics.
-(todo link to JB repository)
+[JetBrains repository](https://plugins.jetbrains.com/plugin/14814-kphpstorm/)
 
 KPHP is a PHP compiler. 
 Its goal is to execute PHP code much faster. 
