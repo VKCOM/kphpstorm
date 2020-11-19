@@ -58,6 +58,7 @@ class KphpStormAnnotator : Annotator {
             "tuple",
             "shape",
             "fork",
+            "wait",
             "not_null",
             "not_false"
     )
@@ -72,7 +73,6 @@ class KphpStormAnnotator : Annotator {
             is PhpDocTypeImpl        -> onTypeInsidePhpdocTag(element, holder)
             is ClassReferenceImpl    -> onClassReference(element, holder)
             is PsiComment            -> onComment(element, holder)
-            is FunctionImpl          -> onFunctionDeclaration(element, holder)
         }
     }
 
@@ -160,18 +160,6 @@ class KphpStormAnnotator : Annotator {
             val refTo = element.resolve() as? PhpClass
             if (refTo != null && !refTo.isTrait)
                 holder.textAttributes(element, if (refTo.isInterface) PhpHighlightingData.INTERFACE else PhpHighlightingData.CLASS)
-        }
-    }
-
-    /**
-     * Special highlight for php polyfills of kphp-builtin functions
-     */
-    private fun onFunctionDeclaration(element: Function, holder: AnnotationHolder) {
-        if (element !is Method && KPHP_NATIVE_FUNCTIONS.contains(element.name)) {
-            // just bold and italics, no customization
-            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
-                    .enforcedTextAttributes(TextAttributes().apply { fontType = 3 })
-                    .range(element.nameIdentifier!!).create()
         }
     }
 
