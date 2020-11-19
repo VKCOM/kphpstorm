@@ -9,4 +9,8 @@ class KphpUndefinedClassInspectionTest : InspectionTestBase(KphpUndefinedClassIn
         runFixture("strict_typing/phpdocs_with_kphp_types.fixture.php")
     }
 
+    fun testKphpUndefinedClassImport() {
+        runFixture("strict_typing/undef_class_import.fixture.php")
+    }
+
 }

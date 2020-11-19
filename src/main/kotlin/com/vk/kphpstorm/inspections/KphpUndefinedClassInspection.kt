@@ -7,9 +7,8 @@ import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType
 import com.jetbrains.php.lang.inspections.PhpInspection
-import com.jetbrains.php.lang.psi.elements.ClassReference
-import com.jetbrains.php.lang.psi.elements.PhpClass
-import com.jetbrains.php.lang.psi.elements.PhpTypeDeclaration
+import com.jetbrains.php.lang.inspections.quickfix.PhpImportClassQuickFix
+import com.jetbrains.php.lang.psi.elements.*
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
 import com.vk.kphpstorm.inspections.helpers.KphpTypingAnalyzer
@@ -62,9 +61,20 @@ class KphpUndefinedClassInspection : PhpInspection() {
                     return
                 }
 
+                // use A\B — this must be either a class or a start part of some namespace
+                if (classReference.parent is PhpUse) {
+                    val fqn = classReference.fqn
+                    val project = classReference.project
+
+                    if (PhpIndex.getInstance(project).getChildNamespacesByParentName(fqn + "\\").isNotEmpty())
+                        return
+                    if (PhpIndex.getInstance(project).getNamespacesByName(fqn).isNotEmpty())
+                        return
+                }
+
                 val resolved = classReference.multiResolve(false)
                 if (resolved.isEmpty())
-                    holder.registerProblem(nameNode.psi, "Undefined class '#ref'", ProblemHighlightType.ERROR)
+                    reportUndefinedClassUsage(classReference)
             }
 
             /**
@@ -77,7 +87,26 @@ class KphpUndefinedClassInspection : PhpInspection() {
 
                 val resolved = type.multiResolve(false)
                 if (resolved.isEmpty())
-                    holder.registerProblem(type.nameNode!!.psi, "Undefined class '#ref'", ProblemHighlightType.ERROR)
+                    reportUndefinedClassUsage(type)
+            }
+
+            /**
+             * Highlight an undefined class usage and provide a quickfix to import that class(es)
+             */
+            private fun reportUndefinedClassUsage(classReference: PhpReference) {
+                // candidates to import:
+                // * if none, just report an error, no fixes available
+                // * if one, this is the default fix
+                // * if many, a prompt can be shown, but only in UI (not in a batch mode)
+                // here we use PhpImportClassQuickFix — from a native inspection, see PhpUndefinedClassInspection
+                val candidates = PhpImportClassQuickFix.INSTANCE.getCandidates(classReference.project, classReference)
+                val psi = classReference.nameNode!!.psi
+                val importAvailable = candidates.isNotEmpty() && (isOnTheFly || candidates.size == 1)
+
+                if (importAvailable)
+                    holder.registerProblem(psi, "Undefined class '#ref'", ProblemHighlightType.ERROR, PhpImportClassQuickFix.INSTANCE)
+                else
+                    holder.registerProblem(psi, "Undefined class '#ref'", ProblemHighlightType.ERROR)
             }
 
         }
