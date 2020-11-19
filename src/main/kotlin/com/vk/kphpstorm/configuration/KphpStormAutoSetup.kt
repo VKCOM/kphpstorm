@@ -31,7 +31,8 @@ private val nativeInspectionsToDisable = listOf(
         "PhpMissingFieldTypeInspection",            // done by phpdoc checks
         "PhpMissingReturnTypeInspection",           // done by phpdoc checks
         "PhpFieldAssignmentTypeMismatchInspection", // KphpAssignmentTypeMismatchInspection
-        "PhpRedundantTypeInUnionTypeInspection"     // done by various checks
+        "PhpRedundantTypeInUnionTypeInspection",    // done by various checks
+        "PhpMissingParamTypeInspection",            // done by @param inspection
 
 )
 

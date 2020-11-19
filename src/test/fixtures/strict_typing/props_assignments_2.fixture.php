@@ -164,7 +164,7 @@ function demo() {
     <error descr="Can't assign '?string' to 'string' $s_arr[*]">$a->s_arr[] = $s_null</error>;
     $a->s = (string)$s_null;
     $b->m = $s_null;
-    <error descr="Can't assign 'null[]|string[]' to 'string[]' $s_arr">$a->s_arr = [$s_null]</error>;
+    <error descr="Can't assign 'string[]|null[]' to 'string[]' $s_arr">$a->s_arr = [$s_null]</error>;
     <error descr="Can't assign '?string' to 'string' $s_arr[*]">$a->s_arr[] = $s_null</error>;
     <error descr="Can't assign '?string' to 'int' $i_arr[*]">$a->i_arr[0] = $s_null</error>;
     <error descr="Can't assign 'B' to 'int' $i_arr[*]">$a->i_arr[0] = new B</error>;
@@ -202,7 +202,7 @@ function demo() {
     <error descr="Can't assign 'string|false' to '?string' $s_null">$a->s_null = $s_false</error>;
     <error descr="Can't assign 'string|false' to '?int' $i_null">$a->i_null = $s_false</error>;
     $b->m = $s_false;
-    <error descr="Can't assign 'false[]|string[]' to 'string[]' $s_arr">$a->s_arr = [$s_false]</error>;
+    <error descr="Can't assign 'string[]|false[]' to 'string[]' $s_arr">$a->s_arr = [$s_false]</error>;
     <error descr="Can't assign 'string|false' to 'int' $i_arr[*]">$a->i_arr[] = $s_false</error>;
     // smart casts don't work for |false
     if ($s_false !== false) {
@@ -230,7 +230,7 @@ function demo2() {
     <error descr="Can't assign 'A[]' to 'var' $m">$b->m = $a->a_arr</error>;
 
     $b = new B;
-    <error descr="Can't assign 'var' to 'null[]|string[]' $s_null_arr">$a->s_null_arr = $b->m</error>;
+    <error descr="Can't assign 'var' to 'string[]|null[]' $s_null_arr">$a->s_null_arr = $b->m</error>;
     <error descr="Can't assign 'var' to 'array[]' $arr_of_just_arr">$a->arr_of_just_arr = $b->m</error>;
 }
 

@@ -73,7 +73,7 @@ object KphpSerializedFieldDocTag : KphpDocTag("@kphp-serialized-field") {
         val kphpReservedTag = KphpReservedFieldsDocTag.findThisTagInDocComment(phpClass)
         if (kphpReservedTag != null) {
             val reservedIndexes = KphpReservedFieldsDocTag.parseIndexes(PhpDocUtil.getTagValue(kphpReservedTag))
-            maxIndex = Integer.max(maxIndex, reservedIndexes?.max() ?: 0)
+            maxIndex = Integer.max(maxIndex, reservedIndexes?.maxOrNull() ?: 0)
         }
 
         return (maxIndex + 1).toString()

@@ -78,7 +78,7 @@ function setAny2($arg) {
  */
 function setAny3($arg) {
     $a = new A;
-    <error descr="Can't assign 'int[]|string[]|any' to 'int[]' $int_arr">$a->int_arr = $arg</error>;
+    <error descr="Can't assign 'string[]|int[]|any' to 'int[]' $int_arr">$a->int_arr = $arg</error>;
     <error descr="Can't assign 'int|string|any' to 'int' $int_arr[*]">$a->int_arr[0] = $arg[0]</error>;
 }
 

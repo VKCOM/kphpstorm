@@ -72,7 +72,7 @@ class KphpStormDocumentationProvider : DocumentationProvider {
         override fun getHoverDesc(): String {
             val parameters = f.parameters
             val lengths = parameters.map { PsiToExPhpType.getArgumentDeclaredType(it, f.project).asHtml(f).length }
-            val padL = min(30, lengths.max() ?: 0)
+            val padL = min(30, lengths.maxOrNull() ?: 0)
             val argsHtml =
                     if (parameters.isEmpty()) "()"
                     else parameters.joinToString("\n", "(\n", "\n)") {

@@ -92,6 +92,12 @@
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.TupleShapeTypeProvider"/>
 <!--    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.TemplateObjectAccessTypeProvider"/>-->
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.FunctionsTypeProvider"/>
+
+    <docTagParserExtension tagName="return" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />
+    <docTagParserExtension tagName="returns" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />
+    <docTagParserExtension tagName="param" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocParamTagParserEx" order="first" />
+    <docTagParserExtension tagName="var" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocVarTagParserEx" order="first" />
+    <docTagParserExtension tagName="type" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocVarTagParserEx" order="first" />
   </extensions>
 
   <actions>

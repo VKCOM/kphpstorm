@@ -1,7 +1,6 @@
 package com.vk.kphpstorm.testing.tests
 
 import com.intellij.mock.MockProject
-import com.intellij.openapi.Disposable
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.*
 import com.vk.kphpstorm.helpers.toExPhpType
@@ -10,7 +9,7 @@ import org.junit.Assert
 
 class ExPhpTypeTest : TestCase() {
 
-    private fun createMockProject() = MockProject(null, Disposable {})
+    private fun createMockProject() = MockProject(null) {}
 
     fun testParsingFromPhpType() {
         val shouldBeEq = listOf(
@@ -93,8 +92,8 @@ class ExPhpTypeTest : TestCase() {
         val intFalseArr = phpType.toExPhpType()
 
         Assert.assertTrue(intFalseArr is ExPhpTypePipe)
-        Assert.assertSame(((intFalseArr as ExPhpTypePipe).items[1] as ExPhpTypeArray).inner, ExPhpType.INT)
-        Assert.assertSame((intFalseArr.items[0] as ExPhpTypeArray).inner, ExPhpType.FALSE)
+        Assert.assertSame(((intFalseArr as ExPhpTypePipe).items[0] as ExPhpTypeArray).inner, ExPhpType.INT)
+        Assert.assertSame((intFalseArr.items[1] as ExPhpTypeArray).inner, ExPhpType.FALSE)
 
         // since 2020.2, we can't assign 'int|false' to 'int': PhpStorm handles 'false' not as 'bool' now
         val intFalse = PhpType().add("int").add("false").toExPhpType()!!

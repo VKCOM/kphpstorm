@@ -24,7 +24,7 @@ class ExPhpTypePipe(val items: List<ExPhpType>) : ExPhpType {
         val hasManyTuples = presentationItems.count { it is ExPhpTypeTuple } > 1
         if (hasManyTuples) {
             val project = expr.project
-            val maxTuple = presentationItems.maxBy { if (it is ExPhpTypeTuple) it.items.size else 0 } as ExPhpTypeTuple
+            val maxTuple = presentationItems.maxByOrNull { if (it is ExPhpTypeTuple) it.items.size else 0 } as ExPhpTypeTuple
             val mergedPhpTypes = maxTuple.items.mapTo(arrayListOf()) { PhpType() }
             for (index in mergedPhpTypes.indices)
                 for (item in presentationItems)
@@ -39,7 +39,7 @@ class ExPhpTypePipe(val items: List<ExPhpType>) : ExPhpType {
         // PhpStorm will infer shape(x:int)|shape(), so just remove empty shapes
         val hasManyShapes = presentationItems.count { it is ExPhpTypeShape } > 1
         if (hasManyShapes) {
-            val maxShape = presentationItems.maxBy { if (it is ExPhpTypeShape) it.items.size else 0 } as ExPhpTypeShape
+            val maxShape = presentationItems.maxByOrNull { if (it is ExPhpTypeShape) it.items.size else 0 } as ExPhpTypeShape
             if (maxShape.items.isNotEmpty()) {      // for strange situations like int|shape() don't remove it
                 presentationItems.removeAll { it is ExPhpTypeShape && it.items.isEmpty() }
             }

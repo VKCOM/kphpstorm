@@ -1,15 +1,13 @@
 plugins {
     id 'java'
     id 'idea'
-    id 'org.jetbrains.intellij' version '0.4.16'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.70'
+    id 'org.jetbrains.intellij' version '0.6.3'     // https://github.com/JetBrains/gradle-intellij-plugin
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10'  // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm
 }
 
 group 'com.vk'
 // important! update changeNotes (below) on version bump
 version '1.0.0'
-
-sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -36,9 +34,9 @@ intellij {
     type 'IU'
     // for release versions: https://www.jetbrains.com/intellij-repository/releases (com.jetbrains.intellij.idea)
     // for EAPs: https://www.jetbrains.com/intellij-repository/snapshots
-    version '2020.2'
+    version '203.5981.41-EAP-SNAPSHOT'
     plugins = [
-        'com.jetbrains.php:202.6397.94', // https://plugins.jetbrains.com/plugin/6610-php/versions
+        'com.jetbrains.php:203.5981.43', // https://plugins.jetbrains.com/plugin/6610-php/versions
     ]
     tasks {
         // this task fails :( that's why disabled
@@ -48,8 +46,8 @@ intellij {
     }
 }
 runIde {
-    ideDirectory '/Applications/PhpStorm.app/Contents'
-//    ideDirectory '/Applications/PhpStorm 2020.2 EAP.app/Contents'
+//    ideDirectory '/Applications/PhpStorm.app/Contents'
+    ideDirectory '/Applications/PhpStorm 2020.3 EAP.app/Contents'
 }
 
 patchPluginXml {

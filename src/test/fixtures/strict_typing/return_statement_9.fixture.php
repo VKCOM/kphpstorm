@@ -36,7 +36,7 @@ class C2 extends C {
 
 class C3 extends C {
   public static function demo($x) {
-    <error descr="Can't return 'int|string', expected 'int'">return parent::demo($x);</error>
+    <error descr="Can't return 'string', expected 'int'">return parent::demo($x);</error>
   }
 }
 

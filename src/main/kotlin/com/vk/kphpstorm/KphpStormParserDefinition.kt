@@ -2,7 +2,6 @@ package com.vk.kphpstorm
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
-import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocParser
 import com.jetbrains.php.lang.documentation.phpdoc.parser.tags.PhpDocTagParserRegistry
 import com.jetbrains.php.lang.parser.PhpParserDefinition
 import com.jetbrains.php.lang.parser.PhpPsiElementCreator
@@ -18,12 +17,12 @@ import com.vk.kphpstorm.kphptags.psi.KphpDocTplParameterDeclPsiImpl
  */
 class KphpStormParserDefinition() : PhpParserDefinition() {
     init {
-        PhpDocParser() // can not overload standard tags (@return etc) without this
-        PhpDocTagParserRegistry.register("@return", PhpDocReturnTagParserEx())
-        PhpDocTagParserRegistry.register("@param", PhpDocParamTagParserEx())
-        PhpDocTagParserRegistry.register("@var", PhpDocVarTagParserEx())
-        PhpDocTagParserRegistry.register("@type", PhpDocVarTagParserEx())
-
+        // PhpDocTagParserRegistry.register() became deprecated in 2020.3
+        // (the current suggestion is to use <docTagParserExtension> in plugin.xml)
+        // custom @var/@param/@return handling is already done via xml description
+        // but still use this for @kphp-tags: it's more handy, because we don't need to duplicate tag names to xml
+        // when register() method is dropped, it won't compile and should be rewritten :(
+        @Suppress("DEPRECATION")
         for (kphpDocTag in ALL_KPHPDOC_TAGS)
             PhpDocTagParserRegistry.register(kphpDocTag.nameWithAt, kphpDocTag.elementType.getTagParser())
     }
@@ -55,5 +54,8 @@ class KphpStormParserDefinition() : PhpParserDefinition() {
     }
 }
 
-
-
+/**
+ * This is just for plugin.xml: without this, <localInspection language="PHP" ...> highlighs "PHP" as red
+ * This has no sense but correct plugin.xml validity while development
+ */
+class FakePhpLanguage : com.intellij.lang.Language("PHP")
