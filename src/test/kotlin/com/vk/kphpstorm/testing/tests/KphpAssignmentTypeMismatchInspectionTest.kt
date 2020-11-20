@@ -53,4 +53,8 @@ class KphpAssignmentTypeMismatchInspectionTest : InspectionTestBase(KphpAssignme
         runFixture("strict_typing/props_assignments_12.fixture.php")
     }
 
+    fun testPropsAssignments13() {
+        runFixture("strict_typing/props_assignments_13.fixture.php")
+    }
+
 }

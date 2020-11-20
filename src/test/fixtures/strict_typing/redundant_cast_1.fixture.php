@@ -31,3 +31,12 @@ function demo4(?string $x) {
     if($x === null) return;
     $y2 = <warning descr="Redundant cast">(string)</warning>$x;
 }
+
+function demo5() {
+  $ids = [];
+  if (rand())
+    $ids = [1,2,3];
+  foreach ($ids as $id) {
+    $id2 = (int)$id;  // no warning, as $id is inferred as int|any
+  }
+}
