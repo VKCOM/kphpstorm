@@ -212,11 +212,13 @@ class TupleShapeTypeProvider : PhpTypeProvider4 {
      */
     private fun inferTypeOfTupleShapeByIndex(wholeType: PhpType, indexKey: String): PhpType? {
         // optimization: parse wholeType from string only if tuple/shape exist in it
-        val hasTupleOrShape = wholeType.types.any {
+        val needsCustomIndexing = wholeType.types.any {
             it.length > 7 && it[5] == '('           // tuple(, shape(, force(
-                    || it == "var" || it == "any"   // also var[*] is var, not mixed
+                    || it == "var"                  // var[*] is var, not mixed
+                    || it == "any"                  // any[*] is any, not undefined
+                    || it == "\\array"              // array[*] is any (untyped arrays)
         }
-        if (!hasTupleOrShape)
+        if (!needsCustomIndexing)
             return null
 
         return wholeType.toExPhpType()?.getSubkeyByIndex(indexKey)?.toPhpType()
