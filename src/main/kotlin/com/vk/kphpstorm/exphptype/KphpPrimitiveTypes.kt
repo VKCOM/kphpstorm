@@ -10,9 +10,9 @@ import com.vk.kphpstorm.exphptype.KphpPrimitiveTypes.mapPrimitiveToPhpType
  * So, 'mixed' PhpType can be emerged only by PhpStorm internal inferring and is considered as any.
  */
 object KphpPrimitiveTypes {
-    val PHP_TYPE_ANY = PhpType.PhpTypeBuilder().add("any").build()
-    val PHP_TYPE_VAR = PhpType.PhpTypeBuilder().add("var").build()     
-    val PHP_TYPE_ARRAY_OF_ANY = PhpType.PhpTypeBuilder().add("any[]").build()
+    val PHP_TYPE_ANY = PhpType.PhpTypeBuilder().add("\\any").build()
+    val PHP_TYPE_VAR = PhpType.PhpTypeBuilder().add("\\var").build()
+    val PHP_TYPE_ARRAY_OF_ANY = PhpType.PhpTypeBuilder().add("\\any[]").build()
 
     const val INT = "int"
     const val FLOAT = "float"
