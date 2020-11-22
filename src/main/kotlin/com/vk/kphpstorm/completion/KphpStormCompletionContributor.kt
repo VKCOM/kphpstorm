@@ -24,7 +24,7 @@ class KphpStormCompletionContributor : CompletionContributor() {
         extend(CompletionType.BASIC,
                 PlatformPatterns.psiElement().withParent(PhpReference::class.java),
                 ExPhpTypeCompletionProvider())
-        // #ifndef KittenPHP
+        // #ifndef KPHP
         extend(CompletionType.BASIC,
                 PlatformPatterns.psiElement(PhpTokenTypes.LINE_COMMENT),
                 IfndefEndifCompletionProvider())

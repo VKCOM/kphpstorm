@@ -8,7 +8,7 @@ import com.intellij.psi.impl.source.tree.LeafElement
 import com.intellij.util.ProcessingContext
 
 /**
- * Suggest '#ifndef KittenPHP' and '#endif'
+ * Suggest '#ifndef KPHP' and '#endif'
  * Couldn't get it work on typing, only after Ctrl + Space hotkey.
  */
 class IfndefEndifCompletionProvider : CompletionProvider<CompletionParameters>() {
@@ -17,7 +17,7 @@ class IfndefEndifCompletionProvider : CompletionProvider<CompletionParameters>()
         if (!position.text.startsWith('#'))     // not '//' comment
             return
 
-        result.addElement(LookupElementBuilder.create("ifndef KittenPHP").bold())
+        result.addElement(LookupElementBuilder.create("ifndef KPHP").bold())
         result.addElement(LookupElementBuilder.create("endif").bold())
     }
 }
