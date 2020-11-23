@@ -16,8 +16,8 @@ import com.vk.kphpstorm.helpers.toExPhpType
 
 /**
  * Reports invalid [ $indexing ] in various scenarious:
- * * invalid argument supplied for foreach  (including 'var' support)
- * * invalid index of array/string indexing (including 'var' support)
+ * * invalid argument supplied for foreach  (including 'kmixed' support)
+ * * invalid index of array/string indexing (including 'kmixed' support)
  * * invalid index access of non-indexable types (including 'tuple' and 'shape' support)
  *
  * Important! Some native inspections must be disabled:
@@ -74,8 +74,8 @@ class ArrayAndIndexingInspection : PhpInspection() {
     @Suppress("UNUSED_PARAMETER")
     fun isOkArrayIndex(type: ExPhpType, project: Project): Boolean = when (type) {
         is ExPhpTypeAny       -> true
-        is ExPhpTypePrimitive -> type === ExPhpType.STRING || type === ExPhpType.VAR || type === ExPhpType.INT || type === ExPhpType.FLOAT || type === ExPhpType.FALSE || type === ExPhpType.BOOL || type === ExPhpType.NULL
-        is ExPhpTypePipe      -> type.items.all { isOkArrayIndex(it, project) } || type.items.any { it === ExPhpType.VAR || it === ExPhpType.ANY }
+        is ExPhpTypePrimitive -> type === ExPhpType.STRING || type === ExPhpType.KMIXED || type === ExPhpType.INT || type === ExPhpType.FLOAT || type === ExPhpType.FALSE || type === ExPhpType.BOOL || type === ExPhpType.NULL
+        is ExPhpTypePipe      -> type.items.all { isOkArrayIndex(it, project) } || type.items.any { it === ExPhpType.KMIXED || it === ExPhpType.ANY }
         else                  -> false
     }
 }

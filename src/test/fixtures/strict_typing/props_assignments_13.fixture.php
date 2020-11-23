@@ -15,7 +15,7 @@ function demo1() {
   $a = new A;
   // foreach on mixed is mixed (not undefined, not any)
   foreach ($m as $sub) {
-    <error descr="Can't assign 'var' to 'int' $i">$a->i = $sub</error>;
+    <error descr="Can't assign 'mixed' to 'int' $i">$a->i = $sub</error>;
   }
 }
 

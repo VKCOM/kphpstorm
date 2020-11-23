@@ -6,12 +6,12 @@ import com.vk.kphpstorm.exphptype.KphpPrimitiveTypes.mapPrimitiveToPhpType
 /**
  * Here we define how kphp primitives map to PhpType and which primitives can be assigned to which.
  * [mapPrimitiveToPhpType] defines which tokens are primitives (other are instances)
- * Important! 'mixed' in phpdoc is treated as 'var'.
+ * Important! 'mixed' in phpdoc is treated as 'kmixed'.
  * So, 'mixed' PhpType can be emerged only by PhpStorm internal inferring and is considered as any.
  */
 object KphpPrimitiveTypes {
     val PHP_TYPE_ANY = PhpType.PhpTypeBuilder().add("\\any").build()
-    val PHP_TYPE_VAR = PhpType.PhpTypeBuilder().add("\\var").build()
+    val PHP_TYPE_KMIXED = PhpType.PhpTypeBuilder().add("\\kmixed").build()
     val PHP_TYPE_ARRAY_OF_ANY = PhpType.PhpTypeBuilder().add("\\any[]").build()
 
     const val INT = "int"
@@ -23,7 +23,8 @@ object KphpPrimitiveTypes {
     const val OBJECT = "object"
     const val CALLABLE = "callable"
     const val VOID = "void"
-    const val VAR = "var"
+    // not to be messed up with native PhpStorm "mixed", KPHP "mixed" is called "kmixed" everywhere
+    const val KMIXED = "kmixed"
     // "array" is not a primitive type: it is "any[]"
 
     /**
@@ -47,11 +48,11 @@ object KphpPrimitiveTypes {
             "Closure" to PhpType.CALLABLE,
             "void" to PhpType.VOID,
             "resource" to PhpType.INT,
-            "var" to PHP_TYPE_VAR,
+            "kmixed" to PHP_TYPE_KMIXED,
             "any" to PHP_TYPE_ANY,
-            // important! "mixed" in phpdoc will be "var" in PhpType / ExPhpType.VAR
+            // important! "mixed" in phpdoc will be "kmixed" in PhpType / ExPhpType.KMIXED
             // important! but if "Set up for Project" not done — plain PHP project — still "mixed", see ExPhpTypePrimitivePsiImpl
-            "mixed" to PHP_TYPE_VAR,
+            "mixed" to PHP_TYPE_KMIXED,
             // important! "array" in phpdoc will be "any[]" in PhpType / ExPhpTypeArray(ExPhpTypeAny)
             "array" to PHP_TYPE_ARRAY_OF_ANY
     )

@@ -5,12 +5,14 @@ import com.jetbrains.php.lang.psi.elements.PhpPsiElement
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 
 /**
- * Leaf type, e.g. 'int', 'string', 'var' – primitives only! Not instances!
+ * Leaf type, e.g. 'int', 'string', 'mixed' – primitives only! Not instances!
  */
 class ExPhpTypePrimitive(val typeStr: String) : ExPhpType {
     override fun toString() = typeStr
 
-    override fun toHumanReadable(expr: PhpPsiElement) = typeStr
+    override fun toHumanReadable(expr: PhpPsiElement) =
+            // "kmixed" from internals to "mixed" human-readable presentation
+            if (this === ExPhpType.KMIXED) "mixed" else typeStr
 
     override fun toPhpType(): PhpType {
         return KphpPrimitiveTypes.mapPrimitiveToPhpType[typeStr]
@@ -18,7 +20,7 @@ class ExPhpTypePrimitive(val typeStr: String) : ExPhpType {
     }
 
     override fun getSubkeyByIndex(indexKey: String): ExPhpType? {
-        return if (this === ExPhpType.VAR || this === ExPhpType.STRING) this else null
+        return if (this === ExPhpType.KMIXED || this === ExPhpType.STRING) this else null
     }
 
     override fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType {
@@ -30,7 +32,7 @@ class ExPhpTypePrimitive(val typeStr: String) : ExPhpType {
         is ExPhpTypePipe      -> rhs.isAssignableTo(this, project)
         is ExPhpTypePrimitive -> canBeAssigned(this, rhs)
         is ExPhpTypeNullable  -> canBeAssigned(this, ExPhpType.NULL) && isAssignableFrom(rhs.inner, project)
-        is ExPhpTypeArray     -> canBeAssigned(this, ExPhpType.VAR) && isAssignableFrom(rhs.inner, project)
+        is ExPhpTypeArray     -> canBeAssigned(this, ExPhpType.KMIXED) && isAssignableFrom(rhs.inner, project)
                 || this === ExPhpType.CALLABLE  // ['class', 'name'] is assignable to "callable" :(
         is ExPhpTypeInstance  -> this === ExPhpType.OBJECT
         is ExPhpTypeForcing   -> isAssignableFrom(rhs.inner, project)
@@ -49,7 +51,7 @@ class ExPhpTypePrimitive(val typeStr: String) : ExPhpType {
                 l === OBJECT   -> r === OBJECT || r === NULL
                 l === CALLABLE -> r === CALLABLE || r === STRING
                 l === VOID     -> r === VOID
-                l === VAR      -> r === INT || r === FLOAT || r === STRING || r === BOOL || r === FALSE || r === NULL || r === VAR
+                l === KMIXED   -> r === INT || r === FLOAT || r === STRING || r === BOOL || r === FALSE || r === NULL || r === KMIXED
 
                 else           -> false       // not supposed to happen
             }

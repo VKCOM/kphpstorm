@@ -96,8 +96,8 @@ function demo() {
     $a->a = $undetectable[0];
     $a->a_arr = $undetectable[100500];
 
-    <error descr="Can't assign 'var' to '?A' $a_null">$a->a_null = $b->m</error>;
-    <error descr="Can't assign 'var' to '?A' $a_null">$a->a_null = $b->m_null</error>;
+    <error descr="Can't assign 'mixed' to '?A' $a_null">$a->a_null = $b->m</error>;
+    <error descr="Can't assign 'mixed' to '?A' $a_null">$a->a_null = $b->m_null</error>;
     $a->s_null = $b->s;
     $b->m = $a->s;
     $b->m_null = $a->s;
@@ -143,7 +143,7 @@ function demo() {
     $a->i_arr[0] = 3 * 9;
     $a->s_null_arr = $a->just_arr;
     $a->a_arr = $a->just_arr;
-    <error descr="Can't assign 'var' to 'array' $just_arr">$a->just_arr = $b->m</error>;
+    <error descr="Can't assign 'mixed' to 'array' $just_arr">$a->just_arr = $b->m</error>;
     $a->just_arr = $a->i_arr;
     $a->just_arr = $bools;
     $a->i_arr_null[] = 3;
@@ -215,23 +215,23 @@ function demo() {
 function demo2() {
     $a = new A;
     $b = new B;
-    <error descr="Can't assign 'var' to 'bool' $b">$a->b = $b->m</error>;
-    <error descr="Can't assign 'var' to '?float' $f_null">$a->f_null = $b->m</error>;
-    <error descr="Can't assign 'var' to 'A' $a">$a->a = $b->m</error>;
-    <error descr="Can't assign 'var' to '?A' $a_null">$a->a_null = $b->m</error>;
-    <error descr="Can't assign 'var' to '?A' $a_null_2">$a->a_null_2 = $b->m</error>;
-    <error descr="Can't assign 'var' to 'A[]' $a_arr">$a->a_arr = $b->m</error>;
-    <error descr="Can't assign 'var' to 'int[]' $i_arr">$a->i_arr = $b->m</error>;
-    <error descr="Can't assign 'var' to 'string[]' $s_arr">$a->s_arr = $b->m</error>;
-    <error descr="Can't assign 'var' to 'int[]' $i_arr">$a->i_arr = $b->m</error>;
+    <error descr="Can't assign 'mixed' to 'bool' $b">$a->b = $b->m</error>;
+    <error descr="Can't assign 'mixed' to '?float' $f_null">$a->f_null = $b->m</error>;
+    <error descr="Can't assign 'mixed' to 'A' $a">$a->a = $b->m</error>;
+    <error descr="Can't assign 'mixed' to '?A' $a_null">$a->a_null = $b->m</error>;
+    <error descr="Can't assign 'mixed' to '?A' $a_null_2">$a->a_null_2 = $b->m</error>;
+    <error descr="Can't assign 'mixed' to 'A[]' $a_arr">$a->a_arr = $b->m</error>;
+    <error descr="Can't assign 'mixed' to 'int[]' $i_arr">$a->i_arr = $b->m</error>;
+    <error descr="Can't assign 'mixed' to 'string[]' $s_arr">$a->s_arr = $b->m</error>;
+    <error descr="Can't assign 'mixed' to 'int[]' $i_arr">$a->i_arr = $b->m</error>;
 
     $a = new A;
-    <error descr="Can't assign 'A' to 'var' $m">$b->m = $a->a</error>;
-    <error descr="Can't assign 'A[]' to 'var' $m">$b->m = $a->a_arr</error>;
+    <error descr="Can't assign 'A' to 'mixed' $m">$b->m = $a->a</error>;
+    <error descr="Can't assign 'A[]' to 'mixed' $m">$b->m = $a->a_arr</error>;
 
     $b = new B;
-    <error descr="Can't assign 'var' to 'string[]|null[]' $s_null_arr">$a->s_null_arr = $b->m</error>;
-    <error descr="Can't assign 'var' to 'array[]' $arr_of_just_arr">$a->arr_of_just_arr = $b->m</error>;
+    <error descr="Can't assign 'mixed' to 'string[]|null[]' $s_null_arr">$a->s_null_arr = $b->m</error>;
+    <error descr="Can't assign 'mixed' to 'array[]' $arr_of_just_arr">$a->arr_of_just_arr = $b->m</error>;
 }
 
 function demo3(string $s) {
@@ -285,7 +285,7 @@ class DemoDay {
   var $arr_of_ints;
 
   function home1() {
-    <error descr="Can't assign 'var' to 'var[]' $arr">$this->arr = $this->mixed</error>;
+    <error descr="Can't assign 'mixed' to 'mixed[]' $arr">$this->arr = $this->mixed</error>;
     $this->arr = (array)$this->mixed;
   }
 
@@ -294,15 +294,15 @@ class DemoDay {
   }
 
   function home3() {
-    <error descr="Can't assign 'var' to 'DemoDay[]' $arr_of_instances">$this->arr_of_instances = $this->mixed</error>;
+    <error descr="Can't assign 'mixed' to 'DemoDay[]' $arr_of_instances">$this->arr_of_instances = $this->mixed</error>;
   }
 
   function home4() {
-    <error descr="Can't assign 'DemoDay[]' to 'var' $mixed">$this->mixed = $this->arr_of_instances</error>;
+    <error descr="Can't assign 'DemoDay[]' to 'mixed' $mixed">$this->mixed = $this->arr_of_instances</error>;
   }
 
   function home5() {
-    <error descr="Can't assign 'var' to 'int[]' $arr_of_ints">$this->arr_of_ints = $this->mixed</error>;
+    <error descr="Can't assign 'mixed' to 'int[]' $arr_of_ints">$this->arr_of_ints = $this->mixed</error>;
   }
 
   function home6() {

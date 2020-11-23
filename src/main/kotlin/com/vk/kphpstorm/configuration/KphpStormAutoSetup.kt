@@ -11,9 +11,9 @@ import com.jetbrains.php.lang.highlighter.PhpHighlightingData
 // setup KPHPStorm plugin includes disabling some native inspections and enabling new ones instead
 // (these identifiers are <shortName> from plugin.xml from decompiled PhpStorm sources)
 private val nativeInspectionsToDisable = listOf(
-        // works incorrect for 'var'
+        // works incorrect for 'kmixed'
         "PhpToStringImplementationInspection",
-        // works incorrect for 'var', 'future', 'T' etc; is replaced by KphpUndefinedClassInspection
+        // works incorrect for 'kmixed', 'future', 'T' etc; is replaced by KphpUndefinedClassInspection
         "PhpUndefinedClassInspection",
         // phpdocs and typing in them is fully replaced by KphpDocInspection
         "PhpDocMissingReturnTagInspection",

@@ -214,7 +214,7 @@ class TupleShapeTypeProvider : PhpTypeProvider4 {
         // optimization: parse wholeType from string only if tuple/shape exist in it
         val needsCustomIndexing = wholeType.types.any {
             it.length > 7 && it[5] == '('           // tuple(, shape(, force(
-                    || it == "\\var"                // var[*] is var, not mixed
+                    || it == "\\kmixed"             // kmixed[*] is kmixed, not PhpStorm 'mixed' meaning uninferred
                     || it == "\\any"                // any[*] is any, not undefined
                     || it == "\\array"              // array[*] is any (untyped arrays)
         }

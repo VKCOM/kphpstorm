@@ -85,7 +85,7 @@
             <ul>
                 <li>парсинг phpdoc типов, т.е. даже в PHP-проектах можно написать тип <code>?int</code>,
                     и IDE это поймёт; при этом
-                    <code>mixed</code> останется <code>mixed</code>, не превратится в <code>var</code>
+                    <code>mixed</code> останется в значении "что угодно", как привычно в PHP.
                 </li>
                 <li>применяется найстройка цветовой схемы <i>Editor > Colors and Fonts > KPHP</i></li>
                 <li>ховеры мышкой, Type Info</li>
@@ -93,7 +93,7 @@
             </ul>
             <p><b>После выполнения автонастройки</b> — для текущего проекта:</p>
             <ul>
-                <li><code>mixed</code> начинает парситься как <code>var</code></li>
+                <li><code>mixed</code> начинает значить конкретный тип, как и в KPHP</li>
                 <li>включаются все инспекции на phpdoc, строгое совпадение типов и т.п.</li>
                 <li>нужно согласиться на <i>Invalidate caches</i></li>
             </ul>

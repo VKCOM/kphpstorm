@@ -11,7 +11,7 @@ import com.vk.kphpstorm.exphptype.KphpPrimitiveTypes
  * 'any' in phpdoc (case sensitive).
  * PhpType is 'any' — but it's not a class reference, it's handled as separate ExPhpType.
  * For instance, "array" in phpdoc is any[].
- * Note! "mixed" in phpdoc is "var", that's why "mixed" can be emerged only by PhpStorm inferring and is mapped to any.
+ * Note! "mixed" in phpdoc is "kmixed", that's why "mixed" can be emerged only by PhpStorm inferring and is mapped to any.
  */
 class ExPhpTypeAnyPsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
     companion object {

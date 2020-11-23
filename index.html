@@ -84,7 +84,7 @@
 
 
 <div class="layout-feature-block layout-feature-block--blue">
-    <h1>tuple, shape, var — внутри phpdoc</h1>
+    <h1>tuple, shape, mixed — внутри phpdoc</h1>
     <h2>Вместе с ctrl+click и подсветкой</h2>
 
     <div class="feature feature-img-l">
@@ -111,7 +111,7 @@
             <img src="landing/img/phpdoc-suggest-future.png">
             <div class="feature-desc">
                 <h3>Все kphp типы</h3>
-                <p><code class="allowwrap">tuple, shape, var, callable, future, future_queue, any</code>
+                <p><code class="allowwrap">tuple, shape, mixed, callable, future, future_queue, any</code>
                     — всё&nbsp;понимается, подсказывается и дополняется.</p>
             </div>
         </div>
@@ -268,8 +268,8 @@
                 <h3>Типизация при вызове функций</h3>
                 <p>Всё как и при компиляции: нельзя передавать строки вместо чисел, нельзя
                     <code>?string</code> в <code>string</code>,
-                    но можно числа в <code>var</code>, можно <code>int[]</code> в <code>float[]</code>, но нельзя
-                    <code>A[]</code> в <code>var[]</code> и т.д.</p>
+                    но можно числа в <code>mixed</code>, можно <code>int[]</code> в <code>float[]</code>, но нельзя
+                    <code>A[]</code> в <code>mixed[]</code> и т.д.</p>
                 <p>При сравнении типов здесь и далее учитываются вложенности, различия между PHP и KPHP,
                     частично работают смарткасты.</p>
                 <p>Всё происходит локально в IDE, за счёт phpdoc. Когда тип не выводится, предполагается
@@ -303,10 +303,9 @@
         <div class="feature-inner">
             <img src="landing/img/type-mixed.png">
             <div class="feature-desc">
-                <h3>mixed — это var</h3>
-                <p><code>mixed</code> в phpdoc у нас — это синоним <code>var</code>, а не “всё что угодно”,
-                    как в нативном PhpStorm.</p>
-                <p>Поэтому присваивать туда можно только типы, обобщающиеся до <code>var</code>.</p>
+                <h3>mixed — как в KPHP</h3>
+                <p><code>mixed</code> в KPHP — это не “всё что угодно”, как в нативном PhpStorm.</p>
+                <p>Поэтому присваивать туда можно только обобщающееся до <code>mixed</code>.</p>
             </div>
         </div>
     </div>
@@ -316,9 +315,8 @@
             <div class="feature-desc">
                 <h3>Детальное отслеживание OR-типов</h3>
                 <p>Плагин даже замечает вещи, валидные для KPHP.
-                    Например, <code>string|string[]</code> для KPHP это <code>var</code>, а плагин ругается,
-                    если передаёшь туда <code>int</code> (и даже <code>var</code>).
-                    Будем вместе наводить порядок с <code>mixed</code> в коде.</p>
+                    Например, <code>string|string[]</code> для KPHP это <code>mixed</code>, а плагин ругается,
+                    если передаёшь туда <code>int</code> (и даже <code>mixed</code>).
             </div>
         </div>
     </div>

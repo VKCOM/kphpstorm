@@ -8,13 +8,13 @@ import com.vk.kphpstorm.configuration.KphpStormConfiguration
 /**
  * ANY is a special type which can be assigned to everything, and everything can be assigned to it.
  * For example, "array" in phpdoc is parsed as any[].
- * Note! "mixed" in phpdoc is "var", that's why "mixed" can be emerged only by PhpStorm inferring 
+ * Note! "mixed" in phpdoc is "kmixed", that's why "mixed" can be emerged only by PhpStorm inferring
  */
 class ExPhpTypeAny : ExPhpType {
     override fun toString() = "any"
 
     override fun toHumanReadable(expr: PhpPsiElement) =
-            // for plain PHP projects, "any" is mostly emerged by "mixed", which is not "var", but "mixed"
+            // for plain PHP projects, "any" is mostly emerged by "mixed", which is not "kmixed", but "mixed"
             if (KphpStormConfiguration.wasSetupForProject(expr.project)) "any"
             else "mixed"
 

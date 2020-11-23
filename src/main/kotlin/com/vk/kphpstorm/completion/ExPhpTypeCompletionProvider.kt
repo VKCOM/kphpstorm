@@ -19,7 +19,6 @@ class ExPhpTypeCompletionProvider : CompletionProvider<CompletionParameters>() {
 
         result.addElement(LookupElementBuilder.create("tuple").bold())
         result.addElement(LookupElementBuilder.create("shape").bold())
-        result.addElement(LookupElementBuilder.create("var").bold())
         result.addElement(LookupElementBuilder.create("future"))
         result.addElement(LookupElementBuilder.create("future_queue"))
         result.addElement(LookupElementBuilder.create("any"))

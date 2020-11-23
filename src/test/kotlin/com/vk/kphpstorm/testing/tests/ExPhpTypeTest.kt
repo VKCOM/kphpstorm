@@ -21,7 +21,7 @@ class ExPhpTypeTest : TestCase() {
                 PhpType().add("false"),
                 PhpType().add("\\false"),
                 PhpType().add("float").add("int"),
-                PhpType().add("\\var"),
+                PhpType().add("\\any"),
                 PhpType().add("int").add("false").pluralise()
         )
 
@@ -29,7 +29,8 @@ class ExPhpTypeTest : TestCase() {
             Assert.assertEquals(it.toExPhpType()?.toPhpType(), it)
         }
 
-        Assert.assertEquals(PhpType().add("\\var").toExPhpType(), ExPhpType.VAR)
+        Assert.assertEquals(PhpType().add("\\kmixed").toExPhpType(), ExPhpType.KMIXED)
+        Assert.assertEquals(PhpType().add("\\mixed").toExPhpType(), ExPhpType.ANY)
 
         PhpType().add("tuple(int, A)").toExPhpType().run {
             Assert.assertTrue(this is ExPhpTypeTuple)

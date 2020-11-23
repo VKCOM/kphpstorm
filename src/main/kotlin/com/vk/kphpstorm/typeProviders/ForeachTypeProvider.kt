@@ -13,7 +13,7 @@ import com.vk.kphpstorm.helpers.toExPhpType
 /**
  * Purpose:
  * foreach($something as $a) — better infer type of $a with KPHP specifics:
- * 1) foreach on var is var
+ * 1) foreach on mixed is mixed
  * 2) foreach on (partially) untyped array should lead to any
  *
  * Here we handle only foreach(... as [$k=>] $a), don't handle complex cases like list() instead of $a.

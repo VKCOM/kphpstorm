@@ -57,12 +57,12 @@ function demo() {
 
     $some1 = unserialize('');
     $a->var = $some1;
-    <error descr="Can't assign 'var' to 'A' $a">$a->a = $some1</error>;
+    <error descr="Can't assign 'mixed' to 'A' $a">$a->a = $some1</error>;
     $a->a = S::unserialize('');
 
     $some2 = json_decode('');
     $a->var = $some2;
-    <error descr="Can't assign 'var' to 'A' $a">$a->a = $some2</error>;
+    <error descr="Can't assign 'mixed' to 'A' $a">$a->a = $some2</error>;
 
     $a->s = substr_replace('s', 'r', 0, 1);
 
@@ -91,8 +91,8 @@ function demo2() {
     $a->s = array_first_value($a->s_arr);
     <error descr="Can't assign 'string' to 'A' $a">$a->a = array_first_value($a->s_arr)</error>;
     $a->s_arr[] = array_last_value($a->s_arr);
-    <error descr="Can't assign 'var' to 'string' $s">$a->s = array_first_value($a->var)</error>;
-    <error descr="Can't assign 'var' to 'A' $a">$a->a = array_first_value($a->var)</error>;
+    <error descr="Can't assign 'mixed' to 'string' $s">$a->s = array_first_value($a->var)</error>;
+    <error descr="Can't assign 'mixed' to 'A' $a">$a->a = array_first_value($a->var)</error>;
     $a->var = array_first_value($a->var);
     $a->s_arr = array_filter_by_key($a->s_arr, function($k) { return true; });
     <error descr="Can't assign 'int[]' to 'string[]' $s_arr">$a->s_arr = array_filter_by_key($a->i_arr, function($k) { return true; })</error>;

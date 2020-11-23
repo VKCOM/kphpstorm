@@ -6,7 +6,7 @@
 function f1($a) {}
 
 /**
- * @param var $a1
+ * @param mixed $a1
  * @param $a2 any
  */
 function f2($a1, $a2) {}

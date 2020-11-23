@@ -33,7 +33,7 @@ object PhpTypeToExPhpTypeParsing {
             "Closure" to ExPhpType.CALLABLE,
             "void" to ExPhpType.VOID,
             "resource" to ExPhpType.INT,
-            "var" to ExPhpType.VAR,
+            "kmixed" to ExPhpType.KMIXED,
 
             // PhpType().add("int") — types[0] is "\int", so we need everything with leading slash
             "\\int" to ExPhpType.INT,
@@ -50,7 +50,7 @@ object PhpTypeToExPhpTypeParsing {
             "\\Closure" to ExPhpType.CALLABLE,
             "\\void" to ExPhpType.VOID,
             "\\resource" to ExPhpType.INT,
-            "\\var" to ExPhpType.VAR,
+            "\\kmixed" to ExPhpType.KMIXED,
 
             // arrays of primitives also meet quite often, make them preparsed
             "int[]" to ExPhpTypeArray(ExPhpType.INT),
@@ -61,7 +61,7 @@ object PhpTypeToExPhpTypeParsing {
             "null[]" to ExPhpTypeArray(ExPhpType.NULL),
             "object[]" to ExPhpTypeArray(ExPhpType.OBJECT),
             "callable[]" to ExPhpTypeArray(ExPhpType.CALLABLE),
-            "var[]" to ExPhpTypeArray(ExPhpType.VAR),
+            "kmixed[]" to ExPhpTypeArray(ExPhpType.KMIXED),
 
             // same arrays of primitives with leading slash
             "\\int[]" to ExPhpTypeArray(ExPhpType.INT),
@@ -72,7 +72,7 @@ object PhpTypeToExPhpTypeParsing {
             "\\null[]" to ExPhpTypeArray(ExPhpType.NULL),
             "\\object[]" to ExPhpTypeArray(ExPhpType.OBJECT),
             "\\callable[]" to ExPhpTypeArray(ExPhpType.CALLABLE),
-            "\\var[]" to ExPhpTypeArray(ExPhpType.VAR),
+            "\\kmixed[]" to ExPhpTypeArray(ExPhpType.KMIXED),
 
             // 'any' from phpdoc has a special instantiation
             "any" to ExPhpType.ANY,
@@ -85,18 +85,18 @@ object PhpTypeToExPhpTypeParsing {
             "\\any[]" to ExPhpType.ARRAY_OF_ANY,
 
             // Important!
-            // 'mixed' in phpdoc is treated as 'var', that's why
+            // 'mixed' in phpdoc is treated as 'kmixed', that's why
             // 'mixed' can emerge only by PhpStorm internal inferring, when it couldn't detect the type or types are really mixed
             // (for example, [1,'2'] is mixed[] and [new A, new ADevired] is mixed[] in native PhpStorm inferring)
             // so, if PhpStorm couldn't detect, it can be really anything,
-            // and we don't have any reason to produce errors and assume whether it is compatible with var or not
+            // and we don't have any reason to produce errors and assume whether it is compatible with mixed or not
             "mixed" to ExPhpType.ANY,
             "\\mixed" to ExPhpType.ANY,
 
             // some "forced" that can occur often, @see [ForcingTypeProvider], \\ not needed
             "force(string)" to ExPhpTypeForcing(ExPhpType.STRING),
             "force(int)" to ExPhpTypeForcing(ExPhpType.INT),
-            "force(var)" to ExPhpTypeForcing(ExPhpType.VAR),
+            "force(kmixed)" to ExPhpTypeForcing(ExPhpType.KMIXED),
             "force(any)" to ExPhpTypeForcing(ExPhpType.ANY)
     )
 
@@ -321,8 +321,8 @@ object PhpTypeToExPhpTypeParsing {
     }
 
     private fun createNullableOrSimplified(nullableType: ExPhpType): ExPhpType = when {
-        nullableType === ExPhpType.VAR   -> ExPhpType.VAR
-        nullableType === ExPhpType.ANY   -> ExPhpType.ANY
+        nullableType === ExPhpType.KMIXED -> ExPhpType.KMIXED
+        nullableType === ExPhpType.ANY    -> ExPhpType.ANY
         nullableType is ExPhpTypeForcing -> nullableType
         else                             -> ExPhpTypeNullable(nullableType)
     }

@@ -51,7 +51,7 @@ class ExPhpTypePipe(val items: List<ExPhpType>) : ExPhpType {
                 a === ExPhpType.ANY    -> 15
                 a === ExPhpType.NULL   -> 14
                 a === ExPhpType.FALSE  -> 13
-                a === ExPhpType.VAR    -> 12
+                a === ExPhpType.KMIXED -> 12
 
                 a === ExPhpType.INT    -> -10
                 a === ExPhpType.FLOAT  -> -9

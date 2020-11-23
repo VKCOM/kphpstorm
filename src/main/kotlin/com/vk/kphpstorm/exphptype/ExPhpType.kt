@@ -61,7 +61,7 @@ interface ExPhpType {
         val OBJECT = ExPhpTypePrimitive(KphpPrimitiveTypes.OBJECT)
         val CALLABLE = ExPhpTypePrimitive(KphpPrimitiveTypes.CALLABLE)
         val VOID = ExPhpTypePrimitive(KphpPrimitiveTypes.VOID)
-        val VAR = ExPhpTypePrimitive(KphpPrimitiveTypes.VAR)
+        val KMIXED = ExPhpTypePrimitive(KphpPrimitiveTypes.KMIXED)
 
         val ANY = ExPhpTypeAny()
         val ARRAY_OF_ANY = ExPhpTypeArray(ANY)

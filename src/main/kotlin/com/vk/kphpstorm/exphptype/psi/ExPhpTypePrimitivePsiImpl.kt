@@ -8,8 +8,8 @@ import com.vk.kphpstorm.configuration.KphpStormConfiguration
 import com.vk.kphpstorm.exphptype.KphpPrimitiveTypes
 
 /**
- * 'int', 'bool', 'true', 'var', etc — primitives (not instances!) — psi is just PhpDocType
- * Note! 'mixed' in plain PHP projects will be left 'mixed', in KPHP projects — 'var'.
+ * 'int', 'bool', 'true', 'array', etc — primitives (not instances!) — psi is just PhpDocType
+ * Note! 'mixed' in plain PHP projects will be left 'mixed', in KPHP projects — 'kmixed'.
  * @see KphpPrimitiveTypes
  */
 class ExPhpTypePrimitivePsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
@@ -20,12 +20,12 @@ class ExPhpTypePrimitivePsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
     override fun getType(): PhpType {
         val text = this.text
 
-        // Note! For plain PHP projects (not KPHP) leave 'mixed' as is; but in KPHP turn to 'var'.
-        // Why? Because native PhpStorm inspections work incorrectly with 'var' (e.g., "no __toString() method")
+        // Note! For plain PHP projects (not KPHP) leave 'mixed' as is; but in KPHP turn to 'kmixed'.
+        // Why? Because native PhpStorm inspections work incorrectly with 'kmixed' (e.g., "no __toString() method")
         // But in KPHP projects — after auto setup is done — all these native inspections are turned off (and KPHPStorm's — on)
         if (text == "mixed") {
             // for plain PHP type inferring remains 'mixed' here; it means, that
-            // 1) all native inspections that don't know 'var' work as expected
+            // 1) all native inspections that are unaware of 'kmixed' work as expected
             // 2) KPHPStorm inspections are by default turned off, if occasionally somebody turns them on —
             //    'mixed' will be treated as 'any' (see PhpTypeToExPhpTypeParsing)
             // 3) type info and quick documentation will show 'mixed': see ExPhpTypeAny::toHumanReadable()

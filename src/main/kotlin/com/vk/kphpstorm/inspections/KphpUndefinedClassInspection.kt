@@ -15,8 +15,8 @@ import com.vk.kphpstorm.inspections.helpers.KphpTypingAnalyzer
 
 /**
  * Purpose:
- * In phpdoc types we want 'var', 'any' and other kphp-specific types be valid.
- * But native mechanisms think that 'var' is a ref to class and report "Unknown class" warning.
+ * In phpdoc types we want 'future', 'any' and other kphp-specific types be valid.
+ * But native mechanisms think that 'any' is a ref to class and report "Unknown class" warning.
  *
  * To prevent this, a custom inspection "Undefined class" is written.
  * Important! Native inspection "PHP > Undefined > Undefined Class" must be disabled.
@@ -79,7 +79,7 @@ class KphpUndefinedClassInspection : PhpInspection() {
 
             /**
              * Inside phpdoc instance references,
-             * report if this class is unknown (primitives 'int', 'var', etc have another psi impl)
+             * report if this class is unknown (primitives 'int', 'mixed', etc have another psi impl)
              */
             override fun visitPhpDocType(type: PhpDocType) {
                 if (type !is ExPhpTypeInstancePsiImpl || type.isKphpBuiltinClass())

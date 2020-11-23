@@ -26,5 +26,5 @@ function demo1() {
     $a->callable = ['A', 'method'];
     $a->callable = 'function';
     <error descr="Can't assign 'int' to 'callable' $callable">$a->callable = 3</error>;
-    <error descr="Can't assign 'var' to 'callable' $callable">$a->callable = getMixed()</error>;
+    <error descr="Can't assign 'mixed' to 'callable' $callable">$a->callable = getMixed()</error>;
 }

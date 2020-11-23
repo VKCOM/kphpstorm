@@ -43,7 +43,7 @@ import com.vk.kphpstorm.helpers.toStringAsNested
 class FunctionsTypeProvider : PhpTypeProvider4 {
     private val phpTypeForceString = PhpType.PhpTypeBuilder().add("force(string)").build()
     private val phpTypeForceStringArray = PhpType.PhpTypeBuilder().add("force(string[])").build()
-    private val phpTypeForceVar = PhpType.PhpTypeBuilder().add("force(var)").build()
+    private val phpTypeForceKMixed = PhpType.PhpTypeBuilder().add("force(kmixed)").build()
     private val phpTypeForceInt = PhpType.PhpTypeBuilder().add("force(int)").build()
     private val phpTypeForceFloat = PhpType.PhpTypeBuilder().add("force(float)").build()
 
@@ -76,14 +76,14 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
             "substr_replace" to "string",
             "var_export" to "string",
             "explode" to "string[]",
-            "unserialize" to "var",        // not 'mixed'
-            "json_decode" to "var",
-            "mysqli_query" to "var",
-            "getimagesize" to "var",
-            "array_rand" to "var",
-            "parse_url" to "var",
-            "preg_replace" to "var",
-            "preg_replace_callback" to "var",
+            "unserialize" to "kmixed",        // not 'mixed'
+            "json_decode" to "kmixed",
+            "mysqli_query" to "kmixed",
+            "getimagesize" to "kmixed",
+            "array_rand" to "kmixed",
+            "parse_url" to "kmixed",
+            "preg_replace" to "kmixed",
+            "preg_replace_callback" to "kmixed",
             "curl_init" to "int",
             "bindec" to "int",
             "mysqli_insert_id" to "int",
@@ -135,8 +135,8 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
             return phpTypeForceString
         if (format == "string[]")
             return phpTypeForceStringArray
-        if (format == "var")
-            return phpTypeForceVar
+        if (format == "kmixed")
+            return phpTypeForceKMixed
         if (format == "int")
             return phpTypeForceInt
         if (format == "float")
