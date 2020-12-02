@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression
 import com.jetbrains.php.lang.psi.elements.ArrayIndex
 import com.jetbrains.php.lang.psi.elements.PhpReference
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression
+import com.vk.kphpstorm.kphptags.psi.KphpDocWarnPerformanceItemPsiImpl
 
 /**
  * Main class for completion, that is listed in <completion.contributor> in plugin.xml
@@ -20,6 +21,10 @@ class KphpStormCompletionContributor : CompletionContributor() {
         extend(CompletionType.BASIC,
                 PlatformPatterns.psiElement(PhpDocTokenTypes.DOC_TAG_NAME),
                 KphpDocTagNameCompletionProvider())
+        // arguments of @kphp-warn-performance
+        extend(CompletionType.BASIC,
+                PlatformPatterns.psiElement().withParent(KphpDocWarnPerformanceItemPsiImpl::class.java),
+                KphpWarnPerformanceItemCompletionProvider())
         // type inside @param/@var/@return and tested types
         extend(CompletionType.BASIC,
                 PlatformPatterns.psiElement().withParent(PhpReference::class.java),

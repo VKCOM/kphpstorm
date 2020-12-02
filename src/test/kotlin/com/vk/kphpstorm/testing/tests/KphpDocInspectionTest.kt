@@ -33,4 +33,8 @@ class KphpDocInspectionTest : InspectionTestBase(KphpDocInspection()) {
         runFixture("kphpdoc_inspection/swap_type_and_var_name.fixture.php")
     }
 
+    fun testKphpWarnPerformanceDocTag() {
+        runFixture("kphpdoc_inspection/warn-performance.fixture.php")
+    }
+
 }

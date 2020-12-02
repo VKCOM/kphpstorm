@@ -19,6 +19,8 @@ val ALL_KPHPDOC_TAGS: List<KphpDocTag> = listOf(
         KphpWarnUnusedResultDocTag,
         KphpProfileDocTag,
         KphpProfileAllowInlineDocTag,
+        KphpAnalyzePerformanceDocTag,
+        KphpWarnPerformanceDocTag,
 
         KphpSerializableDocTag,
         KphpReservedFieldsDocTag,

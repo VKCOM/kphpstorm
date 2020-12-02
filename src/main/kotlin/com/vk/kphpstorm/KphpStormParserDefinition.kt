@@ -7,10 +7,7 @@ import com.jetbrains.php.lang.parser.PhpParserDefinition
 import com.jetbrains.php.lang.parser.PhpPsiElementCreator
 import com.vk.kphpstorm.exphptype.psi.*
 import com.vk.kphpstorm.kphptags.ALL_KPHPDOC_TAGS
-import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
-import com.vk.kphpstorm.kphptags.psi.KphpDocTagSimplePsiImpl
-import com.vk.kphpstorm.kphptags.psi.KphpDocTagTemplateClassPsiImpl
-import com.vk.kphpstorm.kphptags.psi.KphpDocTplParameterDeclPsiImpl
+import com.vk.kphpstorm.kphptags.psi.*
 
 /**
  * Main class that overrides php parsing PSI creation
@@ -33,9 +30,11 @@ class KphpStormParserDefinition() : PhpParserDefinition() {
      */
     override fun createElement(node: ASTNode): PsiElement {
         return when (node.elementType) {
-            KphpDocElementTypes.kphpDocTagSimple         -> KphpDocTagSimplePsiImpl(node)
-            KphpDocElementTypes.kphpDocTagTemplateClass  -> KphpDocTagTemplateClassPsiImpl(node)
-            KphpDocTplParameterDeclPsiImpl.elementType   -> KphpDocTplParameterDeclPsiImpl(node)
+            KphpDocElementTypes.kphpDocTagSimple          -> KphpDocTagSimplePsiImpl(node)
+            KphpDocElementTypes.kphpDocTagTemplateClass   -> KphpDocTagTemplateClassPsiImpl(node)
+            KphpDocTplParameterDeclPsiImpl.elementType    -> KphpDocTplParameterDeclPsiImpl(node)
+            KphpDocElementTypes.kphpDocTagWarnPerformance -> KphpDocTagWarnPerformancePsiImpl(node)
+            KphpDocWarnPerformanceItemPsiImpl.elementType -> KphpDocWarnPerformanceItemPsiImpl(node)
 
             ExPhpTypePrimitivePsiImpl.elementType        -> ExPhpTypePrimitivePsiImpl(node)
             ExPhpTypeInstancePsiImpl.elementType         -> ExPhpTypeInstancePsiImpl(node)
