@@ -7,7 +7,7 @@ plugins {
 
 group 'com.vk'
 // important! update changeNotes (below) on version bump
-version '1.0.0'
+version '1.1.0'
 
 repositories {
     mavenCentral()
@@ -34,9 +34,9 @@ intellij {
     type 'IU'
     // for release versions: https://www.jetbrains.com/intellij-repository/releases (com.jetbrains.intellij.idea)
     // for EAPs: https://www.jetbrains.com/intellij-repository/snapshots
-    version '203.5981.41-EAP-SNAPSHOT'
+    version '2020.3'
     plugins = [
-        'com.jetbrains.php:203.5981.43', // https://plugins.jetbrains.com/plugin/6610-php/versions
+        'com.jetbrains.php:203.5981.175', // https://plugins.jetbrains.com/plugin/6610-php/versions
     ]
     tasks {
         // this task fails :( that's why disabled
@@ -46,8 +46,8 @@ intellij {
     }
 }
 runIde {
-//    ideDirectory '/Applications/PhpStorm.app/Contents'
-    ideDirectory '/Applications/PhpStorm 2020.3 EAP.app/Contents'
+    ideDirectory '/Applications/PhpStorm.app/Contents'
+//    ideDirectory '/Applications/PhpStorm 2020.3 EAP.app/Contents'
 }
 
 patchPluginXml {
@@ -55,13 +55,10 @@ patchPluginXml {
     // <change-notes> is only for LATEST version and should be updated on every version bump
     changeNotes """
 <ul>
-  <li>custom phpdoc type parsers: support tuple, shape, var, future, arbitrary nesting, nullable types</li>
-  <li>patched type inferring supporting tuples and shapes + hack php stdlib inferring</li>
-  <li>complete and validate @kphp- doc tags</li>
-  <li>strict typing inspections</li>
-  <li>phpdoc simplification</li>
-  <li>custom quick documentation and type info</li>
-  <li>support both PHP and KPHP projects</li>
+  <li>better inferring for untyped arrays</li>
+  <li>@kphp- tags added in the past 3 months</li>
+  <li>able to import an undefined class</li>
+  <li>'mixed' instead of 'var'</li>
 </ul>
 """
 }
