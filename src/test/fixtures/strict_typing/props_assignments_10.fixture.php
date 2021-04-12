@@ -1,4 +1,9 @@
 <?php
+// warning! this test is known to be failing when running tests,
+// though it seems okay in real IDE
+// the reason is using str_replace and other standard functions: it seems, that tests don't have necessary php stubs
+// moreover, different versions of IDEs behave differently
+
 
 class A {
     public string $s;

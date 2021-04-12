@@ -146,7 +146,8 @@ function demo6() {
   if (rand() > 1 || is_array($ads_section_mobile)) {
   }
 
-  [][<error descr="Invalid index of type 'int|array'">$ads_section_mobile</error>];
+  [][<error descr="Invalid index of type 'int[]'">$ads_sections_mobile</error>];
+  [][$ads_section_mobile];
 }
 
 function getNullableAny() {

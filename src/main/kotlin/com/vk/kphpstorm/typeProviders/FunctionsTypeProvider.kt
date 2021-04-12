@@ -5,10 +5,7 @@ import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.psi.elements.*
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
-import com.vk.kphpstorm.exphptype.ExPhpTypeForcing
-import com.vk.kphpstorm.exphptype.ExPhpTypeInstance
-import com.vk.kphpstorm.exphptype.KphpPrimitiveTypes
-import com.vk.kphpstorm.exphptype.PhpTypeToExPhpTypeParsing
+import com.vk.kphpstorm.exphptype.*
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.helpers.toStringAsNested
 
@@ -310,7 +307,10 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
     }
 
     private fun inferTypeArrayOf(argType: PhpType): PhpType {
-        return argType.pluralise().force()
+        return argType.toExPhpType().let {
+            if (it === null) PhpType.EMPTY
+            else ExPhpTypeArray(it).toPhpType().force()
+        }
     }
 
     private fun inferTypeElementOf(argType: PhpType): PhpType {

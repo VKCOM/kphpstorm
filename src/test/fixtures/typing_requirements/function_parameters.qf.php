@@ -38,8 +38,9 @@ function manyParametersFunctionNotTyped(type $arg_1, type $arg_2, type $arg_3, $
 
 /**
  * @param type $parameter_1
+ * @param type $other_parameters
  */
-function splatOperatorFunction(type $parameter_1, ...$other_parameters) {
+function splatOperatorFunction(type $parameter_1, type...$other_parameters) {
 
 }
 

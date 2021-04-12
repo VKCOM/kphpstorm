@@ -11,3 +11,20 @@ function demo1() {
     array_map(function(Post $int) { return $int; }, $ints);
     array_map(function(int $int) { return $int; }, $ints);
 }
+
+/**
+ * @param int[] $targets_ids
+ */
+function demo2($targets_ids) {
+    // force(int[])
+    $targets_ids = array_slice($targets_ids, 0, 344);
+    // force(force(int[])[])
+    $batches = array_chunk($targets_ids, 4);
+    call2($batches);
+}
+
+/**
+ * @param int[][] $ids
+ */
+function call2($ids) {
+}

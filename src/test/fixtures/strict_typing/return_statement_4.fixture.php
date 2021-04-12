@@ -7,7 +7,7 @@ trait WithMe {
 class Point {
   use WithMe;
 
-    static public function getMe() : ?self {
+    static public function getMe() : ?static {
         $me = instance_deserialize('', self::class);
         return $me;
     }
@@ -33,6 +33,7 @@ class MorePointEx extends MorePoint {
 
 }
 
+// this seems failing since 2021.1, it's a PhpStorm bug
 /** @return MorePointEx */
 function demo1() {
   return MorePointEx::getSelf();

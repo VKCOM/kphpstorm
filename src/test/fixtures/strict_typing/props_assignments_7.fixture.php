@@ -44,13 +44,13 @@ function demo() {
     $h = new Holder;
     $h->a = ASingle::instance();
     $h->b = BSingle::instance();
-    <error descr="Can't assign 'BSingle|Singleton' to 'ASingle' $a">$h->a = BSingle::instance()</error>;
-    <error descr="Can't assign 'ASingle|Singleton' to 'BSingle' $b">$h->b = ASingle::instance()</error>;
+    <error descr="Can't assign 'BSingle' to 'ASingle' $a">$h->a = BSingle::instance()</error>;
+    <error descr="Can't assign 'ASingle' to 'BSingle' $b">$h->b = ASingle::instance()</error>;
 
     <error descr="Can't assign 'BSingle' to 'ASingle' $a">$h->a = new BSingle</error>;
 
     $h->another_a = AnotherA::$anotherInstance;
-    <error descr="Can't assign 'ASingle|Singleton' to '?AnotherA' $another_a">$h->another_a = ASingle::instance()</error>;
+    <error descr="Can't assign 'ASingle' to '?AnotherA' $another_a">$h->another_a = ASingle::instance()</error>;
     <error descr="Can't assign 'AnotherA' to 'ASingle' $a">$h->a = AnotherA::$anotherInstance</error>;
 }
 

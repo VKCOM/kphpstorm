@@ -34,9 +34,9 @@ intellij {
     type 'IU'
     // for release versions: https://www.jetbrains.com/intellij-repository/releases (com.jetbrains.intellij.idea)
     // for EAPs: https://www.jetbrains.com/intellij-repository/snapshots
-    version '2020.3'
+    version '2021.1'
     plugins = [
-        'com.jetbrains.php:203.5981.175', // https://plugins.jetbrains.com/plugin/6610-php/versions
+        'com.jetbrains.php:211.6693.120', // https://plugins.jetbrains.com/plugin/6610-php/versions
     ]
     tasks {
         // this task fails :( that's why disabled

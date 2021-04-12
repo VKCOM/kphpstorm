@@ -50,8 +50,9 @@ class ClassWithMethodsParametersTest {
 
     /**
      * @param type $parameter_1
+     * @param type $other_parameters
      */
-    function splatOperatorMethod(type $parameter_1, ...$other_parameters) {
+    function splatOperatorMethod(type $parameter_1, type...$other_parameters) {
 
   }
 

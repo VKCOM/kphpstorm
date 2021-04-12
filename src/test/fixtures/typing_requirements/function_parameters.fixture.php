@@ -30,7 +30,7 @@ function manyParametersFunctionNotTyped(<error descr="Declare type hint or @para
 
 }
 
-function splatOperatorFunction(<error descr="Declare type hint or @param for this argument">$parameter_1</error>, ...$other_parameters) {
+function splatOperatorFunction(<error descr="Declare type hint or @param for this argument">$parameter_1</error>, ...<error descr="Declare type hint or @param for this argument">$other_parameters</error>) {
 
 }
 

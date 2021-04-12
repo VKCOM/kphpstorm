@@ -45,7 +45,7 @@ function demo2() {
 
     $holder = new Holder;
     $holder->i = $i;
-    <error descr="Can't assign 'A1|A2' to 'A1' $a1">$holder->a1 = $i</error>;
+    <error descr="Can't assign 'A2|A1' to 'A1' $a1">$holder->a1 = $i</error>;
 }
 
 function demo3(BaseObject $o) {
