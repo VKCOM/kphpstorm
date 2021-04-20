@@ -17,6 +17,10 @@ class KphpDocInspectionTest : InspectionTestBase(KphpDocInspection()) {
         runFixture("kphpdoc_inspection/param_tags.fixture.php")
     }
 
+    fun testFieldVarTags() {
+        runFixture("kphpdoc_inspection/field_var_tags.fixture.php")
+    }
+
     fun testReturnTags() {
         runFixture("kphpdoc_inspection/return_tags.fixture.php")
     }

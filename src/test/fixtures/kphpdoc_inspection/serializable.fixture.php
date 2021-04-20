@@ -10,7 +10,7 @@ class A {
     /** @kphp-serialized-field none */
     public ?A $none;
     /**
-     * @var int
+     * <weak_warning descr="@var can be replaced with field hint 'int'">@var</weak_warning> int
      * @kphp-serialized-field 2
      */
     public $f2;
@@ -79,7 +79,7 @@ class A4 {
     /**
      * asdf
      * <warning descr="Tag is not applicable here">@kphp-serialized-field</warning> 2
-     * @var int
+     * <weak_warning descr="@var just duplicates type hint">@var</weak_warning> int
      */
     public int $not_applicable_2;
 }

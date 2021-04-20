@@ -2,7 +2,7 @@
 
 class A {
     <weak_warning descr="Convert @var to single line">/**
-     * @var int
+     * @var int|false
      */</weak_warning>
     public $f1;
     <weak_warning descr="Convert @var to single line">/**
@@ -19,26 +19,23 @@ class A {
 
     /**
      * some comment
-     * @var int
+     * @var int[]
      */
     public $f4;
     /** some comment
-     *  @var int
+     *  @var int[]
      */
     public $f5;
     /**
-     * @var int
+     * @var int[]
      * @see int
      */
     public $f6;
     /**
-     * @var int
+     * @var int[]
      * some comment
      */
     public $f7;
-
-    /** @var <weak_warning descr="Use 'T[]', not just 'array'">array</weak_warning> */
-    public $arr = [];
 }
 
 function withDocsInside() {

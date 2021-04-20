@@ -18,7 +18,7 @@ import com.vk.kphpstorm.kphptags.KphpSerializedFieldDocTag
 
 /**
  * Performs various phpdoc checks and simplification:
- * 1) remove @param/@return duplicating type hint
+ * 1) remove @param/@return/@var duplicating type hint
  * 2) convert multiline @var to single-line
  * 3) convert @param $var {type} to @param {type} $var
  * 4) simplify phpdoc types (string|null → ?string, etc)

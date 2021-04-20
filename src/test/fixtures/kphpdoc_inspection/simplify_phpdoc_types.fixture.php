@@ -6,7 +6,7 @@ class A {
     public $t;
     /** @var \<weak_warning descr="Leading slash is not necessary">shape(x: int, y: A)</weak_warning> comment */
     public $sh;
-    /** @var <weak_warning descr="Use '?T', not 'T|null'">int|null</weak_warning> */
+    /** <weak_warning descr="@var can be replaced with field hint '?int'">@var</weak_warning> <weak_warning descr="Use '?T', not 'T|null'">int|null</weak_warning> */
     public $i_null;
     /** @var <weak_warning descr="Use '?T', not 'T|null'">tuple(int, string)|null</weak_warning> */
     public $t_null;

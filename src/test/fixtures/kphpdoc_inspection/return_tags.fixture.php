@@ -93,6 +93,11 @@ function withReplacement6(int $i) { return true; }
 function withNoAdding1() { return 0; }
 
 /**
+ * @return int comment
+ */
+function withNoAdding1v2(): int { return 0; }
+
+/**
  * @return int[]
  */
 function withNoAdding2() { return [1,2,3]; }

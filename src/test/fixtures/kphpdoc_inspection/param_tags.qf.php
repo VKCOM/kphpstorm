@@ -98,6 +98,12 @@ function withTransformToTypeHints6(int $i, ?string $s_null) {
 }
 
 /**
+ * todo this works wrong: suggests to convert future to int, should be corrected massively somewhen
+ */
+function withTransformToTypeHints7(int $fs) {
+}
+
+/**
  * @param int ...$ints
  */
 function withTransformToTypeHints8(...$ints) {

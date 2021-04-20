@@ -1,7 +1,7 @@
 <?php
 
 class A {
-    /** @var int */
+    /** @var int|false */
     public $f1;
     /** @var int|string|false */
     private $f2 = false;
@@ -13,26 +13,23 @@ class A {
 
     /**
      * some comment
-     * @var int
+     * @var int[]
      */
     public $f4;
     /** some comment
-     *  @var int
+     *  @var int[]
      */
     public $f5;
     /**
-     * @var int
+     * @var int[]
      * @see int
      */
     public $f6;
     /**
-     * @var int
+     * @var int[]
      * some comment
      */
     public $f7;
-
-    /** @var array */
-    public $arr = [];
 }
 
 function withDocsInside() {

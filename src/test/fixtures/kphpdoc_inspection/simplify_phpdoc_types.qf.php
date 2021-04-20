@@ -6,8 +6,7 @@ class A {
     public $t;
     /** @var shape(x: int, y: A) comment */
     public $sh;
-    /** @var ?int */
-    public $i_null;
+    public ?int $i_null;
     /** @var ?tuple(int, string) */
     public $t_null;
     /** @var ?int[] */

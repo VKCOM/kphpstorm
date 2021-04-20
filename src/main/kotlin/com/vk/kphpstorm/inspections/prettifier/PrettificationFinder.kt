@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocParamTag
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocReturnTag
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.psi.PhpPsiUtil
+import com.jetbrains.php.lang.psi.elements.Field
 import com.jetbrains.php.lang.psi.elements.Function
 import com.jetbrains.php.lang.psi.elements.Method
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
@@ -97,7 +98,7 @@ private fun findPhpDocPrettifications(docComment: PhpDocComment, stopOnFirst: Bo
                 if (function != null)
                     visitPhpDocParamTag(function, tag)
                 else if (tag.name == "@var")       // PhpStorm stores @var as PhpDocParamTag :)
-                    visitPhpDocVarTag(tag)
+                    visitPhpDocVarTag(tag.parentDocComment?.getOwnerSmart() as? Field, tag)
                 checkTypeAndVarNameCorrectOrder(tag)
             }
             else if (tag is PhpDocReturnTag) {
@@ -154,7 +155,7 @@ private fun findPhpDocPrettifications(docComment: PhpDocComment, stopOnFirst: Bo
             }
         }
 
-        private fun visitPhpDocVarTag(tag: PhpDocTag) {
+        private fun visitPhpDocVarTag(field: Field?, tag: PhpDocParamTag) {
             @Suppress("NAME_SHADOWING")
             val docComment = tag.parentDocComment!!
             if (docComment.firstPsiChild === tag
@@ -163,6 +164,21 @@ private fun findPhpDocPrettifications(docComment: PhpDocComment, stopOnFirst: Bo
                 val isMultiline = docComment.text.contains('\n')
                 if (isMultiline)
                     list.add(ConvertVarToSingleLinePrettification(docComment))
+            }
+            if (field != null) {
+                val hintType = field.typeDeclaration?.type?.toExPhpType(project)
+                val docType = tag.type.toExPhpType(project)
+
+                if (hintType != null && docType != null) {
+                    if (!KphpTypingAnalyzer.doesDocTypeMatchTypeHint(docType, hintType, project))
+                        list.add(RemoveDocTagPrettification(tag, "@var mismatches type hint", "Remove strange @var", ProblemHighlightType.GENERIC_ERROR))
+                    else if (KphpTypingAnalyzer.doesDocTypeDuplicateTypeHint(docType, hintType) && tag.tagValue.isBlank())
+                        list.add(RemoveDocTagPrettification(tag, "@var just duplicates type hint", "Remove @var duplicating type hint"))
+                }
+                else if (hintType == null && docType != null) {
+                    if (KphpTypingAnalyzer.canMoveToTypeHint(docType) && tag.tagValue.isBlank())
+                        list.add(MoveVarTagToFieldHintPrettification(tag, docType.toHumanReadable(tag)))
+                }
             }
         }
 

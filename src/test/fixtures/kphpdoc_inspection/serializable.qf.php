@@ -10,10 +10,9 @@ class A {
     /** @kphp-serialized-field none */
     public ?A $none;
     /**
-     * @var int
      * @kphp-serialized-field 2
      */
-    public $f2;
+    public int $f2;
     /**
      * @kphp-serialized-field 4
      */
@@ -89,7 +88,6 @@ class A4 {
     public $not_applicable;
     /**
      * asdf
-     * @var int
      */
     public int $not_applicable_2;
 }

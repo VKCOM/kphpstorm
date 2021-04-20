@@ -132,6 +132,13 @@ function withTransformToTypeHints6(int $i, $s_null) {
 }
 
 /**
+ * todo this works wrong: suggests to convert future to int, should be corrected massively somewhen
+ * <weak_warning descr="@param can be replaced with type hint 'int'">@param</weak_warning> future<?string> $fs
+ */
+function withTransformToTypeHints7($fs) {
+}
+
+/**
  * @param int ...$ints
  */
 function withTransformToTypeHints8(...$ints) {
