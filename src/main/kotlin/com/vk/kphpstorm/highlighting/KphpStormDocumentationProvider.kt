@@ -86,7 +86,10 @@ class KphpStormDocumentationProvider : DocumentationProvider {
         override fun getNavigateDesc(): String {
             val argsHtml =
                     if (f.parameters.isEmpty()) "()"
-                    else "(...${f.parameters.size}...)"
+                    else f.parameters.joinToString(", ", "(", ")") {
+                        val argType = PsiToExPhpType.getArgumentDeclaredType(it, f.project)
+                        argType.asHtml(f) + (if (it.isVariadic) "..." else "") + it.name.asName(true) + if (it.isOptional) " (optional)" else ""
+                    }
 
             return kindStr + f.name.asName() + argsHtml + ": " + getReturnType()
         }
@@ -115,15 +118,6 @@ class KphpStormDocumentationProvider : DocumentationProvider {
                     else                     -> nStaticFields++
                 }
 
-            val superName = klass.superName
-            val interfaceNames = klass.interfaceNames.joinToString { PhpLangUtil.toShortName(it) }
-            val extendsStr = when {
-                superName == null && interfaceNames.isEmpty()    -> ""
-                superName != null && interfaceNames.isEmpty()    -> ": $superName"
-                superName == null && interfaceNames.isNotEmpty() -> ": $interfaceNames"
-                else                                             -> ": $superName, $interfaceNames"
-            }
-
             return kindStr + klass.name.asName() + extendsStr +
                     " {\n" +
                     nConst.of("constant") +
@@ -134,11 +128,23 @@ class KphpStormDocumentationProvider : DocumentationProvider {
         }
 
         override fun getNavigateDesc(): String {
-            return kindStr + klass.name.asName()
+            return kindStr + klass.name.asName() + extendsStr
         }
 
         private val kindStr
             get() = if (klass.isInterface) "interface " else if (klass.isTrait) "trait " else "class "
+
+        private val extendsStr: String
+            get() = run {
+                val superName = klass.superName
+                val interfaceNames = klass.interfaceNames.joinToString { PhpLangUtil.toShortName(it) }
+                when {
+                    superName == null && interfaceNames.isEmpty()    -> ""
+                    superName != null && interfaceNames.isEmpty()    -> ": $superName"
+                    superName == null && interfaceNames.isNotEmpty() -> ": $interfaceNames"
+                    else                                             -> ": $superName, $interfaceNames"
+                }
+            }
 
         private fun Int.of(singleEngS: String) = when (this) {
             0    -> ""
