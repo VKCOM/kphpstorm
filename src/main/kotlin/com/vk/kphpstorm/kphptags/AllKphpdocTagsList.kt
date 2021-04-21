@@ -32,5 +32,6 @@ val ALL_KPHPDOC_TAGS: List<KphpDocTag> = listOf(
         KphpTlClassDocTag,
 
         KphpSerializedFieldDocTag,
+        KphpSerializedFloat32DocTag,
         KphpConstDocTag
 )

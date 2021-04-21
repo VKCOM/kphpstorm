@@ -12,6 +12,7 @@ class A {
     /**
      * <weak_warning descr="@var can be replaced with field hint 'int'">@var</weak_warning> int
      * @kphp-serialized-field 2
+     * @kphp-serialized-float32 <warning descr="@kphp-serialized-float32 does not accept any parameters">arg</warning>
      */
     public $f2;
     public <error descr="Field has no @kphp-serialized-field tag">$f4</error>;
@@ -82,4 +83,6 @@ class A4 {
      * <weak_warning descr="@var just duplicates type hint">@var</weak_warning> int
      */
     public int $not_applicable_2;
+    /** <warning descr="Tag is not applicable here">@kphp-serialized-float32</warning> */
+    public $not_applicable_3;
 }

@@ -11,6 +11,7 @@ class A {
     public ?A $none;
     /**
      * @kphp-serialized-field 2
+     * @kphp-serialized-float32 arg
      */
     public int $f2;
     /**
@@ -90,4 +91,5 @@ class A4 {
      * asdf
      */
     public int $not_applicable_2;
+    public $not_applicable_3;
 }
