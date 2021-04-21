@@ -55,6 +55,7 @@ abstract class KphpDocTag(
     /**
      * After pressing 'Enter' on suggestion, tag can auto-insert its argument (rhs).
      * Returned string can have '|' symbol — cursor position (if no — cursor will be placed after appended text).
+     * If '|' is the first symbol, all tag value will be selected instead of placing the cursor before it.
      */
     open fun onAutoCompleted(docComment: PhpDocComment): String? {
         return null

@@ -3,6 +3,7 @@ package com.vk.kphpstorm.completion
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.editor.CaretState
 import com.intellij.util.ProcessingContext
 import com.jetbrains.php.lang.psi.PhpFile
 import com.vk.kphpstorm.helpers.getOwnerSmart
@@ -44,18 +45,24 @@ class KphpDocTagNameCompletionProvider : CompletionProvider<CompletionParameters
             val docComment = file.findElementAt(caretOffset)?.parentDocComment ?: return
 
             var appendText = kphpDocImpl.onAutoCompleted(docComment) ?: return
-            val deltaOffset: Int
             val cursorPos = appendText.indexOf('|')
             if (cursorPos != -1) {
-                deltaOffset = cursorPos
                 appendText = appendText.substring(0, cursorPos) + appendText.substring(cursorPos + 1)
-            }
-            else {
-                deltaOffset = appendText.length
             }
 
             context.document.insertString(caretOffset, " $appendText")
-            context.editor.caretModel.moveToOffset(caretOffset + 1 + deltaOffset)
+            when {
+                // move cursor to the end
+                cursorPos == -1 -> context.editor.caretModel.moveToOffset(caretOffset + 1 + appendText.length)
+                // move cursor to the | position
+                cursorPos > 0   -> context.editor.caretModel.moveToOffset(caretOffset + 1 + cursorPos)
+                // select all tag value
+                cursorPos == 0  -> context.editor.caretModel.caretsAndSelections = listOf(CaretState(
+                        context.editor.offsetToLogicalPosition(caretOffset + 1),
+                        context.editor.offsetToLogicalPosition(caretOffset + 1),
+                        context.editor.offsetToLogicalPosition(caretOffset + 1 + appendText.length)
+                ))
+            }
         }
     }
 }
