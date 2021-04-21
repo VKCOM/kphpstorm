@@ -7,7 +7,7 @@ plugins {
 
 group 'com.vk'
 // important! update changeNotes (below) on version bump
-version '1.1.0'
+version '1.2.0'
 
 repositories {
     mavenCentral()
@@ -55,10 +55,9 @@ patchPluginXml {
     // <change-notes> is only for LATEST version and should be updated on every version bump
     changeNotes """
 <ul>
-  <li>better inferring for untyped arrays</li>
+  <li>adapt code for 2021.1</li>
   <li>@kphp- tags added in the past 3 months</li>
-  <li>able to import an undefined class</li>
-  <li>'mixed' instead of 'var'</li>
+  <li>convert @var to field hint</li>
 </ul>
 """
 }
