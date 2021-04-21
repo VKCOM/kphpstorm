@@ -14,6 +14,7 @@ val ALL_KPHPDOC_TAGS: List<KphpDocTag> = listOf(
         KphpTemplateDocTag,
         KphpReturnDocTag,
         KphpShouldNotThrowDocTag,
+        KphpThrowsDocTag,
         KphpDisableWarningsDocTag,
         KphpNoReturnDocTag,
         KphpRuntimeCheckDocTag,
