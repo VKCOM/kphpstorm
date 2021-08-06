@@ -2,12 +2,12 @@ plugins {
     id 'java'
     id 'idea'
     id 'org.jetbrains.intellij' version '0.6.3'     // https://github.com/JetBrains/gradle-intellij-plugin
-    id 'org.jetbrains.kotlin.jvm' version '1.4.10'  // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm
+    id 'org.jetbrains.kotlin.jvm' version '1.5.21'  // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm
 }
 
 group 'com.vk'
 // important! update changeNotes (below) on version bump
-version '1.2.0'
+version '1.2.1'
 
 repositories {
     mavenCentral()
@@ -34,9 +34,9 @@ intellij {
     type 'IU'
     // for release versions: https://www.jetbrains.com/intellij-repository/releases (com.jetbrains.intellij.idea)
     // for EAPs: https://www.jetbrains.com/intellij-repository/snapshots
-    version '2021.1'
+    version '2021.2'
     plugins = [
-        'com.jetbrains.php:211.6693.120', // https://plugins.jetbrains.com/plugin/6610-php/versions
+        'com.jetbrains.php:212.4746.92', // https://plugins.jetbrains.com/plugin/6610-php/versions
     ]
     tasks {
         // this task fails :( that's why disabled
@@ -55,9 +55,7 @@ patchPluginXml {
     // <change-notes> is only for LATEST version and should be updated on every version bump
     changeNotes """
 <ul>
-  <li>adapt code for 2021.1</li>
-  <li>@kphp- tags added in the past 3 months</li>
-  <li>convert @var to field hint</li>
+  <li>adapt code for 2021.2</li>
 </ul>
 """
 }
