@@ -13,7 +13,7 @@ import com.vk.kphpstorm.inspections.helpers.PhpDocPsiBuilder
 
 class AddVarTagQuickFix(field: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(field) {
 
-    override fun getFamilyName() = "Add @var tag"
+    override fun getFamilyName() = "[KPHP] Add @var tag"
     override fun getText() = "Add @var tag"
 
     override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {

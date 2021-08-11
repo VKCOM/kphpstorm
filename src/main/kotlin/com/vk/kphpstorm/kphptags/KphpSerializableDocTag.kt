@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass
 
 object KphpSerializableDocTag : KphpDocTag("@kphp-serializable") {
     override val description: String
-        get() = "Classes with this tag can be stored in binary format: instance_serialize() and instance_deserialize() — for storing in memcache, for example. All fields must have @kphp-serialized-field, this makes versioning work."
+        get() = "[KPHP] Classes with this tag can be stored in binary format: instance_serialize() and instance_deserialize() — for storing in memcache, for example. All fields must have @kphp-serialized-field, this makes versioning work."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is PhpClass

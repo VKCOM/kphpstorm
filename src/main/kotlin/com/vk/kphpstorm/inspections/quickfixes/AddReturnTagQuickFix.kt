@@ -13,7 +13,7 @@ import com.vk.kphpstorm.inspections.helpers.PhpDocPsiBuilder
 
 class AddReturnTagQuickFix(function: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(function) {
 
-    override fun getFamilyName() = "Add @return tag"
+    override fun getFamilyName() = "[KPHP] Add @return tag"
     override fun getText() = "Add @return tag"
 
     override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {

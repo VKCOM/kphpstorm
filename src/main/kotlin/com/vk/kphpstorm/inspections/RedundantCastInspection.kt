@@ -32,7 +32,7 @@ class RedundantCastInspection : PhpInspection() {
                     return
 
                 if (isRedundantCast(expr.firstChild.elementType!!, expr.firstPsiChild ?: return))
-                    holder.registerProblem(expr.firstChild!!, "Redundant cast", RemoveRedundantCast())
+                    holder.registerProblem(expr.firstChild!!, "[KPHP] Redundant cast", RemoveRedundantCast())
             }
 
             override fun visitPhpFunctionCall(reference: FunctionReference) {
@@ -52,7 +52,7 @@ class RedundantCastInspection : PhpInspection() {
                 }
 
                 if (isRedundantCast(correspondingToken, rhs))
-                    holder.registerProblem(reference.nameNode!!.psi, "Redundant cast call", RemoveRedundantCastCall())
+                    holder.registerProblem(reference.nameNode!!.psi, "[KPHP] Redundant cast call", RemoveRedundantCastCall())
             }
         }
     }

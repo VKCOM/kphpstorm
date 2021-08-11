@@ -53,7 +53,7 @@ class KphpReturnTypeMismatchInspection : PhpInspection() {
                         else PsiToExPhpType.getTypeOfExpr(returnValue, project) ?: return
 
                 if (!expectedType.isAssignableFrom(actualType, project)) {
-                    holder.registerProblem(elementToHighlight, "Can't return '${actualType.toHumanReadable(function)}', expected '${expectedType.toHumanReadable(function)}'", ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+                    holder.registerProblem(elementToHighlight, "[KPHP] Can't return '${actualType.toHumanReadable(function)}', expected '${expectedType.toHumanReadable(function)}'", ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
                 }
             }
 
@@ -73,7 +73,7 @@ class KphpReturnTypeMismatchInspection : PhpInspection() {
                 if (compareWithInferred) {
                     val inferredType = function.inferredType.toExPhpType(project)
                     if (inferredType != null && !docType!!.isAssignableFrom(inferredType, project)) {
-                        holder.registerProblem(tag.firstChild, "Actual return type is '${inferredType.toHumanReadable(tag)}'", ProblemHighlightType.GENERIC_ERROR)
+                        holder.registerProblem(tag.firstChild, "[KPHP] Actual return type is '${inferredType.toHumanReadable(tag)}'", ProblemHighlightType.GENERIC_ERROR)
                     }
                 }
             }

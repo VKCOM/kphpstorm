@@ -10,7 +10,7 @@ import com.vk.kphpstorm.kphptags.psi.KphpDocTagElementType
 
 object KphpTemplateClassDocTag : KphpDocTag("@kphp-template-class") {
     override val description: String
-        get() = "Experiments for future, try to implement concept of template classes in php"
+        get() = "[KPHP] Experiments for future, try to implement concept of template classes in php"
 
     override val elementType: KphpDocTagElementType
         get() = KphpDocElementTypes.kphpDocTagTemplateClass
@@ -27,6 +27,6 @@ object KphpTemplateClassDocTag : KphpDocTag("@kphp-template-class") {
     override fun annotate(docTag: PhpDocTag, rhs: PsiElement?, holder: AnnotationHolder) {
         // rhs is the first template tag name, other can be accessed with nextSibling etc
         if (rhs == null)
-            holder.errTag(docTag, "Template arguments not specified")
+            holder.errTag(docTag, "[KPHP] Template arguments not specified")
     }
 }

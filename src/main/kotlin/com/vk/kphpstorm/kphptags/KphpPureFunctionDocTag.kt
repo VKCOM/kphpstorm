@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpPureFunctionDocTag : KphpDocTag("@kphp-pure-function") {
     override val description: String
-        get() = "Tells kphp that this function is pure: the result is always the same on contant arguments. Therefore, a function can be called in constant arrays for example."
+        get() = "[KPHP] Tells kphp that this function is pure: the result is always the same on contant arguments. Therefore, a function can be called in constant arrays for example."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function

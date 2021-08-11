@@ -40,7 +40,7 @@ class KphpUndefinedClassInspection : PhpInspection() {
                 } ?: return
 
                 val relativePath = UniqueVFilePathBuilder.getInstance().getUniqueVirtualFilePath(clazz.project, another.containingFile.virtualFile)
-                holder.registerProblem(identifier, "Another declaration of class '#ref' exists in $relativePath", ProblemHighlightType.WEAK_WARNING)
+                holder.registerProblem(identifier, "[KPHP] Another declaration of class '#ref' exists in $relativePath", ProblemHighlightType.WEAK_WARNING)
             }
 
             /**
@@ -57,7 +57,7 @@ class KphpUndefinedClassInspection : PhpInspection() {
 
                 if (isPrimitive) {
                     if (classReference.parent !is PhpTypeDeclaration)
-                        holder.registerProblem(nameNode.psi, "Incorrect primitive type usage", ProblemHighlightType.ERROR)
+                        holder.registerProblem(nameNode.psi, "[KPHP] Incorrect primitive type usage", ProblemHighlightType.ERROR)
                     return
                 }
 
@@ -104,9 +104,9 @@ class KphpUndefinedClassInspection : PhpInspection() {
                 val importAvailable = candidates.isNotEmpty() && (isOnTheFly || candidates.size == 1)
 
                 if (importAvailable)
-                    holder.registerProblem(psi, "Undefined class '#ref'", ProblemHighlightType.ERROR, PhpImportClassQuickFix.INSTANCE)
+                    holder.registerProblem(psi, "[KPHP] Undefined class '#ref'", ProblemHighlightType.ERROR, PhpImportClassQuickFix.INSTANCE)
                 else
-                    holder.registerProblem(psi, "Undefined class '#ref'", ProblemHighlightType.ERROR)
+                    holder.registerProblem(psi, "[KPHP] Undefined class '#ref'", ProblemHighlightType.ERROR)
             }
 
         }

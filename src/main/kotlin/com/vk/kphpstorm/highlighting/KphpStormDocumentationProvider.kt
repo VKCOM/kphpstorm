@@ -39,14 +39,14 @@ class KphpStormDocumentationProvider : DocumentationProvider {
     // when hovering with cmd — very short, one line info
     override fun getQuickNavigateInfo(element: PsiElement, originalElement: PsiElement): String? {
         val generator = createHoverDocOverride(element, originalElement)
-                ?: return "Don't know what to hint, but can't disable :)"
+                ?: return "[KPHP] Don't know what to hint, but can't disable :)"
         return generator.getNavigateDesc()
     }
 
     // when just hovering — a bit more detailed (but still only most important) info
     override fun generateHoverDoc(element: PsiElement, originalElement: PsiElement?): String? {
         val generator = createHoverDocOverride(element, originalElement ?: element)
-                ?: return "Don't know what to hint, but can't disable :)"
+                ?: return "[KPHP] Don't know what to hint, but can't disable :)"
         return "<pre>" + generator.getHoverDesc() + "</pre>"
     }
 

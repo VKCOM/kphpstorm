@@ -40,7 +40,7 @@ class KphpAssignmentTypeMismatchInspection : PhpInspection() {
                         val rhsType = PsiToExPhpType.getTypeOfExpr(rhs, project) ?: return
 
                         if (!lhsType.isAssignableFrom(rhsType, project))
-                            holder.registerProblem(expr, "Can't assign '${rhsType.toHumanReadable(expr)}' to '${lhsType.toHumanReadable(expr)}' \$${field.name}")
+                            holder.registerProblem(expr, "[KPHP] Can't assign '${rhsType.toHumanReadable(expr)}' to '${lhsType.toHumanReadable(expr)}' \$${field.name}")
                     }
                 }
                 else if (lhs is ArrayAccessExpression && lhs.value is FieldReference) {
@@ -56,7 +56,7 @@ class KphpAssignmentTypeMismatchInspection : PhpInspection() {
                         val lhsIndex = lhsType.getSubkeyByIndex(indexKey)
 
                         if (lhsIndex == null || !lhsIndex.isAssignableFrom(rhsType, project))
-                            holder.registerProblem(expr, "Can't assign '${rhsType.toHumanReadable(expr)}' to '${lhsIndex?.toHumanReadable(expr)}' \$${field.name}[*]")
+                            holder.registerProblem(expr, "[KPHP] Can't assign '${rhsType.toHumanReadable(expr)}' to '${lhsIndex?.toHumanReadable(expr)}' \$${field.name}[*]")
                     }
                 }
             }

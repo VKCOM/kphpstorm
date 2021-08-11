@@ -9,7 +9,7 @@ class LeadingSlashPrettification(
         private val docType: PhpDocType
 ) : PhpDocPrettification {
     override fun getActionText() = "Remove leading \\"
-    override fun getDescriptionText() = "Leading slash is not necessary"
+    override fun getDescriptionText() = "[KPHP] Leading slash is not necessary"
     override fun getHighlightElement() = docType
     override fun getHightlightType() = ProblemHighlightType.WEAK_WARNING
 

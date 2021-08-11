@@ -11,7 +11,7 @@ import com.vk.kphpstorm.helpers.setSelectionInEditor
 
 class AddVarDefaultValueQuickFix(field: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(field) {
 
-    override fun getFamilyName() = "Add default value"
+    override fun getFamilyName() = "[KPHP] Add default value"
     override fun getText() = "Add default value"
 
     override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {

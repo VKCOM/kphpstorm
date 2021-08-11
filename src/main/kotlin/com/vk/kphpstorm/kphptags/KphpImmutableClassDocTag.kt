@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass
 
 object KphpImmutableClassDocTag : KphpDocTag("@kphp-immutable-class") {
     override val description: String
-        get() = "Fields of immutable class are deeply constant (can be set only in constructor). All nested instances must be also immutable. Such instances can be stored in instance cache."
+        get() = "[KPHP] Fields of immutable class are deeply constant (can be set only in constructor). All nested instances must be also immutable. Such instances can be stored in instance cache."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is PhpClass

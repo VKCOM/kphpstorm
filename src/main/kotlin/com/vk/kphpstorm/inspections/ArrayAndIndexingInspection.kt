@@ -35,7 +35,7 @@ class ArrayAndIndexingInspection : PhpInspection() {
                     val argumentType = argument.type.toExPhpType(holder.project) ?: return
 
                     if (!isOkArgumentForForeach(argumentType, holder.project))
-                        holder.registerProblem(argument, "Invalid foreach on '${argumentType.toHumanReadable(foreach)}'")
+                        holder.registerProblem(argument, "[KPHP] Invalid foreach on '${argumentType.toHumanReadable(foreach)}'")
                 }
             }
 
@@ -45,7 +45,7 @@ class ArrayAndIndexingInspection : PhpInspection() {
                     val indexType = arrayIndex.type.toExPhpType(holder.project) ?: ExPhpType.ANY
 
                     if (!isOkArrayIndex(indexType, holder.project))
-                        holder.registerProblem(expression.index!!, "Invalid index of type '${indexType.toHumanReadable(expression)}'")
+                        holder.registerProblem(expression.index!!, "[KPHP] Invalid index of type '${indexType.toHumanReadable(expression)}'")
                 }
 
                 val value = expression.value
@@ -53,7 +53,7 @@ class ArrayAndIndexingInspection : PhpInspection() {
                     val valueType = value.type.toExPhpType(holder.project) ?: ExPhpType.ANY
 
                     if (!isOkVariableForIndexing(valueType, holder.project))
-                        holder.registerProblem(expression, "Invalid indexing of '${valueType.toHumanReadable(expression)}'")
+                        holder.registerProblem(expression, "[KPHP] Invalid indexing of '${valueType.toHumanReadable(expression)}'")
                 }
             }
 

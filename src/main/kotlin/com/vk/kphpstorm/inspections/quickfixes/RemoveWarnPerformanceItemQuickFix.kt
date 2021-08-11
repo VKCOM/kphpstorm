@@ -12,7 +12,7 @@ class RemoveWarnPerformanceItemQuickFix(
         private val text: String
 ) : LocalQuickFixAndIntentionActionOnPsiElement(item) {
 
-    override fun getFamilyName() = text
+    override fun getFamilyName() = "[KPHP] " + text
     override fun getText() = text
 
     override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {

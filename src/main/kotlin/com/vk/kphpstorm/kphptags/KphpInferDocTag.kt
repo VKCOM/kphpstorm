@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpInferDocTag : KphpDocTag("@kphp-infer") {
     override val description: String
-        get() = "Previously was used to make KPHP parse phpdoc. Now deprecated, as all functions are typed."
+        get() = "[KPHP] Previously was used to make KPHP parse phpdoc. Now deprecated, as all functions are typed."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function

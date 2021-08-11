@@ -10,7 +10,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass
 
 object KphpConstDocTag : KphpDocTag("@kphp-const") {
     override val description: String
-        get() = "Class fields marked @kphp-const can be set only in constructor. Constantness is not deep: array elements and nested instance properties can still be modified, so constant is the field itself."
+        get() = "[KPHP] Class fields marked @kphp-const can be set only in constructor. Constantness is not deep: array elements and nested instance properties can still be modified, so constant is the field itself."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Field && !owner.isConstant && owner.modifier.isDynamic

@@ -12,7 +12,7 @@ import com.vk.kphpstorm.helpers.setSelectionInEditor
 
 class AddVarHintQuickFix(field: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(field) {
 
-    override fun getFamilyName() = "Add type declaration"
+    override fun getFamilyName() = "[KPHP] Add type declaration"
     override fun getText() = "Add type declaration"
 
     override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {

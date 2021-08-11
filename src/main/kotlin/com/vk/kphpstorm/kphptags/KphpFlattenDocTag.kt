@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpFlattenDocTag : KphpDocTag("@kphp-flatten") {
     override val description: String
-        get() = "Makes asm code of this function aggressively inline _everything_, avoiding `callq`. Do not use without Team KPHP consultation!"
+        get() = "[KPHP] Makes asm code of this function aggressively inline _everything_, avoiding `callq`. Do not use without Team KPHP consultation!"
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function

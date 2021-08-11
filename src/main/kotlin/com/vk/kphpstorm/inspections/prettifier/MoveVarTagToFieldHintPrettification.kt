@@ -15,7 +15,7 @@ class MoveVarTagToFieldHintPrettification(
         private val typeHintS: String
 ) : PhpDocPrettification {
     override fun getActionText() = "Remove @var, set '$typeHintS' field hint"
-    override fun getDescriptionText() = "@var can be replaced with field hint '$typeHintS'"
+    override fun getDescriptionText() = "[KPHP] @var can be replaced with field hint '$typeHintS'"
     override fun getHighlightElement() = docTag.firstChild!!
     override fun getHightlightType() = ProblemHighlightType.WEAK_WARNING
 

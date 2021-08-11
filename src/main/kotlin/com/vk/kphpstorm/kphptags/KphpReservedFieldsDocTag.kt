@@ -9,7 +9,7 @@ import com.vk.kphpstorm.helpers.parentDocComment
 
 object KphpReservedFieldsDocTag : KphpDocTag("@kphp-reserved-fields") {
     override val description: String
-        get() = "For serializable classes: you should place here all indexes of deleted fields — to prevent their usage in future."
+        get() = "[KPHP] For serializable classes: you should place here all indexes of deleted fields — to prevent their usage in future."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is PhpClass && KphpSerializableDocTag.existsInDocComment(owner)
@@ -27,14 +27,14 @@ object KphpReservedFieldsDocTag : KphpDocTag("@kphp-reserved-fields") {
         // check format of rhs: it must be [index1, index2, ...]
         // processing rhs.text is much easier than psi children
         val indexes = parseIndexes(rhs?.text ?: "")
-                ?: return holder.errTag(docTag, "Format is: [index1, index2, ...]")
+                ?: return holder.errTag(docTag, "[KPHP] Format is: [index1, index2, ...]")
 
         // check for all @kphp-serialized-field inside the class: that none of them has a removed index
         val phpClass = docTag.parentDocComment?.owner as? PhpClass ?: return
         for (field in phpClass.ownFields) {
             val fIdx = KphpSerializedFieldDocTag.parseIndexFromFieldPhpdoc(field)
             if (fIdx != null && indexes.contains(fIdx))
-                return holder.errTag(docTag, "Index $fIdx is used in field \$${field.name}")
+                return holder.errTag(docTag, "[KPHP] Index $fIdx is used in field \$${field.name}")
         }
     }
 

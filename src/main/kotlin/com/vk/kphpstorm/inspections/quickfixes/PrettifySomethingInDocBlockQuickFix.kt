@@ -7,7 +7,7 @@ import com.vk.kphpstorm.inspections.prettifier.PhpDocPrettification
 
 class PrettifySomethingInDocBlockQuickFix(private val prettification: PhpDocPrettification) : LocalQuickFix {
 
-    override fun getFamilyName() = prettification.getActionText()
+    override fun getFamilyName() = "[KPHP] " + prettification.getActionText()
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         prettification.applyPrettification()

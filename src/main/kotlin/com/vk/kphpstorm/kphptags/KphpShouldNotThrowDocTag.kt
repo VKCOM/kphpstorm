@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpShouldNotThrowDocTag : KphpDocTag("@kphp-should-not-throw") {
     override val description: String
-        get() = "If a function turns out to be able to throw an exception, you will get a compilation error."
+        get() = "[KPHP] If a function turns out to be able to throw an exception, you will get a compilation error."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function

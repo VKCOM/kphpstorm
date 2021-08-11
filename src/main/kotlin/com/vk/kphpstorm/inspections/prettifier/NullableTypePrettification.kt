@@ -9,7 +9,7 @@ class NullableTypePrettification(
         private val replacementStr: String
 ) : PhpDocPrettification {
     override fun getActionText() = "Replace with $replacementStr"
-    override fun getDescriptionText() = "Use '?T', not 'T|null'"
+    override fun getDescriptionText() = "[KPHP] Use '?T', not 'T|null'"
     override fun getHighlightElement() = docType
     override fun getHightlightType() = ProblemHighlightType.WEAK_WARNING
 

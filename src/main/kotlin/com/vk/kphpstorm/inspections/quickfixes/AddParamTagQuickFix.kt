@@ -15,7 +15,7 @@ import com.vk.kphpstorm.inspections.helpers.PhpDocPsiBuilder
 
 class AddParamTagQuickFix(parameter: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(parameter) {
 
-    override fun getFamilyName() = "Add @param tag"
+    override fun getFamilyName() = "[KPHP] Add @param tag"
     override fun getText() = "Add @param tag"
 
     override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {

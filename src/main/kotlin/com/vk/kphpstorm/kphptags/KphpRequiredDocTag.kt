@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpRequiredDocTag : KphpDocTag("@kphp-required") {
     override val description: String
-        get() = "Forces kphp to start compiling this function even if it is not used explicitly. Typically is required for callbacks passed as strings, as they are resolved much later."
+        get() = "[KPHP] Forces kphp to start compiling this function even if it is not used explicitly. Typically is required for callbacks passed as strings, as they are resolved much later."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function

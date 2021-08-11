@@ -14,7 +14,7 @@ class SwapTypeAndVarNamePrettification(
     private val varName get() = docTag.varName
 
     override fun getActionText() = "Swap type and \$$varName"
-    override fun getDescriptionText() = "Use $tagNameWithAt {type} $$varName, not $tagNameWithAt $$varName {type}"
+    override fun getDescriptionText() = "[KPHP] Use $tagNameWithAt {type} $$varName, not $tagNameWithAt $$varName {type}"
     override fun getHighlightElement() = docTag.firstChild!!
     override fun getHightlightType() = ProblemHighlightType.WARNING
 

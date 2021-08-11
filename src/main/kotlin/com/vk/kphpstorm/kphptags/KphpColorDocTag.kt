@@ -11,7 +11,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpColorDocTag : KphpDocTag("@kphp-color") {
     override val description: String
-        get() = "Used for coloring functions to fire compilation error if color mixing mismatches palette rules."
+        get() = "[KPHP] Used for coloring functions to fire compilation error if color mixing mismatches palette rules."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function
@@ -28,7 +28,7 @@ object KphpColorDocTag : KphpDocTag("@kphp-color") {
 
     override fun annotate(docTag: PhpDocTag, rhs: PsiElement?, holder: AnnotationHolder) {
         if (rhs == null) {
-            holder.errTag(docTag, "Specify a color from the palette (with an optional comment after)")
+            holder.errTag(docTag, "[KPHP] Specify a color from the palette (with an optional comment after)")
             return
         }
         // highlight a color name with bold italic (no customization, no validation that color exists)

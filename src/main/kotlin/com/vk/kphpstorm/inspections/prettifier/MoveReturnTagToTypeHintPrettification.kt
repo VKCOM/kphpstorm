@@ -15,7 +15,7 @@ class MoveReturnTagToTypeHintPrettification(
         private val typeHintS: String
 ) : PhpDocPrettification {
     override fun getActionText() = "Remove @return, set '$typeHintS' type hint"
-    override fun getDescriptionText() = "@return can be replaced with type hint '$typeHintS'"
+    override fun getDescriptionText() = "[KPHP] @return can be replaced with type hint '$typeHintS'"
     override fun getHighlightElement() = docTag.firstChild!!
     override fun getHightlightType() = ProblemHighlightType.WEAK_WARNING
 

@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpThrowsDocTag : KphpDocTag("@kphp-throws") {
     override val description: String
-        get() = "If a function turns out to throw exceptions other than specified, you will get a compilation error."
+        get() = "[KPHP] If a function turns out to throw exceptions other than specified, you will get a compilation error."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function
@@ -24,6 +24,6 @@ object KphpThrowsDocTag : KphpDocTag("@kphp-throws") {
 
     override fun annotate(docTag: PhpDocTag, rhs: PsiElement?, holder: AnnotationHolder) {
         if (rhs == null)
-            holder.errTag(docTag, "Specify a list of exception classes, separated by space")
+            holder.errTag(docTag, "[KPHP] Specify a list of exception classes, separated by space")
     }
 }

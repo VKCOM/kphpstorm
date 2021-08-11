@@ -12,7 +12,7 @@ import com.vk.kphpstorm.helpers.parentDocComment
 
 object KphpSerializedFieldDocTag : KphpDocTag("@kphp-serialized-field") {
     override val description: String
-        get() = "Unique serialization index in range of 0..127 within @kphp-serializable class."
+        get() = "[KPHP] Unique serialization index in range of 0..127 within @kphp-serializable class."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Field && !owner.isConstant && owner.modifier.isDynamic &&
@@ -28,7 +28,7 @@ object KphpSerializedFieldDocTag : KphpDocTag("@kphp-serialized-field") {
 
     override fun annotate(docTag: PhpDocTag, rhs: PsiElement?, holder: AnnotationHolder) {
         if (rhs == null)
-            return holder.errTag(docTag, "Specify index or 'none'")
+            return holder.errTag(docTag, "[KPHP] Specify index or 'none'")
 
         // rhs must be only-child: numeric index or 'none'
         val text = rhs.text.substringBefore(' ')
@@ -36,7 +36,7 @@ object KphpSerializedFieldDocTag : KphpDocTag("@kphp-serialized-field") {
             return
         val curIndex = text.toIntOrNull()
         if (curIndex == null || curIndex !in 0..127)
-            return holder.errTag(docTag, "Index must be a numeric 0..127")
+            return holder.errTag(docTag, "[KPHP] Index must be a numeric 0..127")
 
         // check for duplicates with other @kphp-serialized-field inside the same class
         val curField = docTag.parentDocComment?.owner as? Field ?: return
@@ -45,7 +45,7 @@ object KphpSerializedFieldDocTag : KphpDocTag("@kphp-serialized-field") {
             if (field != curField) {
                 val fIdx = parseIndexFromFieldPhpdoc(field)
                 if (fIdx == curIndex)
-                    holder.errTag(docTag, "Duplicate index with field \$${field.name}")
+                    holder.errTag(docTag, "[KPHP] Duplicate index with field \$${field.name}")
             }
 
         // check that curIndex is not listed in @kphp-reserved-tags above class
@@ -53,7 +53,7 @@ object KphpSerializedFieldDocTag : KphpDocTag("@kphp-serialized-field") {
         if (kphpReservedTag != null) {
             val reservedIndexes = KphpReservedFieldsDocTag.parseIndexes(PhpDocUtil.getTagValue(kphpReservedTag))
             if (reservedIndexes != null && reservedIndexes.contains(curIndex)) {
-                holder.errTag(docTag, "This index is listed in @kphp-reserved-fields")
+                holder.errTag(docTag, "[KPHP] This index is listed in @kphp-reserved-fields")
             }
         }
     }

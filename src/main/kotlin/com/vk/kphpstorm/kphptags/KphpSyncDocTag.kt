@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpSyncDocTag : KphpDocTag("@kphp-sync") {
     override val description: String
-        get() = "Marks a function to be sync. If such function turns out to be resumable, you will get compilation error."
+        get() = "[KPHP] Marks a function to be sync. If such function turns out to be resumable, you will get compilation error."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function

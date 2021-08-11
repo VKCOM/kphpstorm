@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass
 
 object KphpMemcacheClassDocTag : KphpDocTag("@kphp-memcache-class") {
     override val description: String
-        get() = "Global \$MC, \$MC_Ads and others are assumed to be instances of this class. Can appear only once in a project."
+        get() = "[KPHP] Global \$MC, \$MC_Ads and others are assumed to be instances of this class. Can appear only once in a project."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is PhpClass

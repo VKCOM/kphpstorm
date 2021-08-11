@@ -13,7 +13,7 @@ import com.vk.kphpstorm.inspections.prettifier.findFirstPhpDocPrettification
 class PrettifyPhpdocBlockIntention : PsiElementBaseIntentionAction() {
 
     override fun getText() = "Prettify phpdoc block"
-    override fun getFamilyName() = "Prettify phpdoc block"
+    override fun getFamilyName() = "[KPHP] Prettify phpdoc block"
 
     // where is intention available?
     // 1) inside phpdoc block

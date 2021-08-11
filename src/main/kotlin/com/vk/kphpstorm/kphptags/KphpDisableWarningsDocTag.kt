@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpDisableWarningsDocTag : KphpDocTag("@kphp-disable-warnings") {
     override val description: String
-        get() = "Very uncommon tag to suppress compilation warning of a specified function."
+        get() = "[KPHP] Very uncommon tag to suppress compilation warning of a specified function."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function
@@ -21,6 +21,6 @@ object KphpDisableWarningsDocTag : KphpDocTag("@kphp-disable-warnings") {
 
     override fun annotate(docTag: PhpDocTag, rhs: PsiElement?, holder: AnnotationHolder) {
         if (rhs == null)
-            holder.errTag(docTag, "Specify warning names to suppress")
+            holder.errTag(docTag, "[KPHP] Specify warning names to suppress")
     }
 }

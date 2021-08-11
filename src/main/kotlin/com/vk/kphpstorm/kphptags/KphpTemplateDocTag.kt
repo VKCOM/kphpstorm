@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpTemplateDocTag : KphpDocTag("@kphp-template") {
     override val description: String
-        get() = "Used above functions to implement duck typing: such functions are 'overloaded' and can accept variuos OOP-incompatible instances."
+        get() = "[KPHP] Used above functions to implement duck typing: such functions are 'overloaded' and can accept variuos OOP-incompatible instances."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function
@@ -26,7 +26,7 @@ object KphpTemplateDocTag : KphpDocTag("@kphp-template") {
 
     override fun annotate(docTag: PhpDocTag, rhs: PsiElement?, holder: AnnotationHolder) {
         if (rhs == null)
-            holder.errTag(docTag, "Expected: [T] \$arg [,\$arg2,...]")
+            holder.errTag(docTag, "[KPHP] Expected: [T] \$arg [,\$arg2,...]")
         // do not complicate rhs verification logic, because this tag is very rare
     }
 }

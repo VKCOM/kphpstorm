@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpWarnUnusedResultDocTag : KphpDocTag("@kphp-warn-unused-result") {
     override val description: String
-        get() = "This tag is for non-void functions. If an invocation doesn't use the result (not saved to variable, not passed as argument), you get compilation error."
+        get() = "[KPHP] This tag is for non-void functions. If an invocation doesn't use the result (not saved to variable, not passed as argument), you get compilation error."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function

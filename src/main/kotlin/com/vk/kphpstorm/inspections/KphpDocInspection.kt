@@ -44,13 +44,13 @@ class KphpDocInspection : PhpInspection() {
                 val clazz = field.containingClass ?: return
 
                 if (KphpSerializableDocTag.existsInDocComment(clazz) && !KphpSerializedFieldDocTag.existsInDocComment(field) && KphpSerializedFieldDocTag.isApplicableFor(field))
-                    holder.registerProblem(nameIdentifier, "Field has no @kphp-serialized-field tag", ProblemHighlightType.GENERIC_ERROR, AddKphpSerializedFieldQuickFix())
+                    holder.registerProblem(nameIdentifier, "[KPHP] Field has no @kphp-serialized-field tag", ProblemHighlightType.GENERIC_ERROR, AddKphpSerializedFieldQuickFix())
             }
 
             override fun visitPhpDocType(type: PhpDocType) {
                 // this is not prettification — just warning — as no quick fix can be auto-applied
                 if (type is ExPhpTypePrimitivePsiImpl && type.text == "array")
-                    holder.registerProblem(type, "Use 'T[]', not just 'array'")
+                    holder.registerProblem(type, "[KPHP] Use 'T[]', not just 'array'")
             }
 
         }

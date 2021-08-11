@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass
 
 object KphpTlClassDocTag : KphpDocTag("@kphp-tl-class") {
     override val description: String
-        get() = "Indicates that this class is auto-generated from tl scheme. Kphp will generate storing/fetching algorithms on compilation. Used only in auto-generated code."
+        get() = "[KPHP] Indicates that this class is auto-generated from tl scheme. Kphp will generate storing/fetching algorithms on compilation. Used only in auto-generated code."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is PhpClass

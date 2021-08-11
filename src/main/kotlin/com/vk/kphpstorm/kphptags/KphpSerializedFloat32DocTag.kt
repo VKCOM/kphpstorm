@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Field
 
 object KphpSerializedFloat32DocTag : KphpDocTag("@kphp-serialized-float32") {
     override val description: String
-        get() = "For a serialized field, specifies that all floats inside it are serialized as 32-bit, not 64-bit."
+        get() = "[KPHP] For a serialized field, specifies that all floats inside it are serialized as 32-bit, not 64-bit."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Field && KphpSerializedFieldDocTag.existsInDocComment(owner)

@@ -11,7 +11,7 @@ import com.vk.kphpstorm.kphptags.psi.KphpDocTagElementType
 
 object KphpAnalyzePerformanceDocTag : KphpDocTag("@kphp-analyze-performance") {
     override val description: String
-        get() = "Generates a report with potential optimizations, such as computing a constant value outside a loop or implicit arrays casting."
+        get() = "[KPHP] Generates a report with potential optimizations, such as computing a constant value outside a loop or implicit arrays casting."
 
     override val elementType: KphpDocTagElementType
         get() = KphpDocElementTypes.kphpDocTagWarnPerformance
@@ -26,7 +26,7 @@ object KphpAnalyzePerformanceDocTag : KphpDocTag("@kphp-analyze-performance") {
 
     override fun annotate(docTag: PhpDocTag, rhs: PsiElement?, holder: AnnotationHolder) {
         if (KphpWarnPerformanceDocTag.existsInDocComment(docTag.parentDocComment ?: return))
-            holder.errTag(docTag, "Both warn and analyze annotations exist")
+            holder.errTag(docTag, "[KPHP] Both warn and analyze annotations exist")
         else
             KphpWarnPerformanceDocTag.annotate(docTag, rhs, holder)
     }

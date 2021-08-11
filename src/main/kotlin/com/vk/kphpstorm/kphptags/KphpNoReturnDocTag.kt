@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpNoReturnDocTag : KphpDocTag("@kphp-no-return") {
     override val description: String
-        get() = "Indicates, that this function never returns (always calls exit()). While building control flow graph, kphp treats all code after such functions invocations as unaccessible, does not warn on missing break, etc."
+        get() = "[KPHP] Indicates, that this function never returns (always calls exit()). While building control flow graph, kphp treats all code after such functions invocations as unaccessible, does not warn on missing break, etc."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function

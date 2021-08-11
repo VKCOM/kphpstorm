@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpProfileDocTag : KphpDocTag("@kphp-profile") {
     override val description: String
-        get() = "Marks a function as an entrypoint for the profiler, which is enabled with KPHP_PROFILER=1 and generates reports for qcachegrind. Only for development, don't commit this annotation!"
+        get() = "[KPHP] Marks a function as an entrypoint for the profiler, which is enabled with KPHP_PROFILER=1 and generates reports for qcachegrind. Only for development, don't commit this annotation!"
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function

@@ -21,7 +21,7 @@ object KphpWarnPerformanceDocTag : KphpDocTag("@kphp-warn-performance") {
     )
 
     override val description: String
-        get() = "Same as @kphp-analyze-performance, but it doesn't generate a report: instead, it gives a compilation error if potential optimizations are available."
+        get() = "[KPHP] ame as @kphp-analyze-performance, but it doesn't generate a report: instead, it gives a compilation error if potential optimizations are available."
 
     override val elementType: KphpDocTagElementType
         get() = KphpDocElementTypes.kphpDocTagWarnPerformance
@@ -36,7 +36,7 @@ object KphpWarnPerformanceDocTag : KphpDocTag("@kphp-warn-performance") {
 
     override fun annotate(docTag: PhpDocTag, rhs: PsiElement?, holder: AnnotationHolder) {
         if (rhs == null)
-            return holder.errTag(docTag, "Provide arguments: 'all' or detailed inspections")
+            return holder.errTag(docTag, "[KPHP] Provide arguments: 'all' or detailed inspections")
 
         val items = mutableListOf<String>()
         var allMentioned = false
@@ -49,20 +49,20 @@ object KphpWarnPerformanceDocTag : KphpDocTag("@kphp-warn-performance") {
                 if (name == "all") {
                     allMentioned = true
                     if (item.isNegation())
-                        holder.newAnnotation(HighlightSeverity.ERROR, "All can't be negated").range(item).create()
+                        holder.newAnnotation(HighlightSeverity.ERROR, "[KPHP] All can't be negated").range(item).create()
                     if (items.isNotEmpty())
-                        holder.newAnnotation(HighlightSeverity.ERROR, "Use 'all' at the beginning").range(item).create()
+                        holder.newAnnotation(HighlightSeverity.ERROR, "[KPHP] Use 'all' at the beginning").range(item).create()
                 }
                 else if (!AVAILABLE_ITEMS.contains(name)) {
-                    holder.newAnnotation(HighlightSeverity.WARNING, "Unknown item").range(item).withFix(RemoveWarnPerformanceItemQuickFix(item, "Remove unknown $name")).create()
+                    holder.newAnnotation(HighlightSeverity.WARNING, "[KPHP] Unknown item").range(item).withFix(RemoveWarnPerformanceItemQuickFix(item, "[KPHP] Remove unknown $name")).create()
                 }
                 else {
                     if (allMentioned && !item.isNegation())
-                        holder.newAnnotation(HighlightSeverity.WARNING, "'all' exists, this item has no effect").range(item).withFix(RemoveWarnPerformanceItemQuickFix(item, "Remove excessive $name")).create()
+                        holder.newAnnotation(HighlightSeverity.WARNING, "[KPHP] 'all' exists, this item has no effect").range(item).withFix(RemoveWarnPerformanceItemQuickFix(item, "[KPHP] Remove excessive $name")).create()
                     if (!allMentioned && item.isNegation())
-                        holder.newAnnotation(HighlightSeverity.WARNING, "Using negation without 'all' is confusing").range(item).create()
+                        holder.newAnnotation(HighlightSeverity.WARNING, "[KPHP] Using negation without 'all' is confusing").range(item).create()
                     if (items.contains(name))
-                        holder.newAnnotation(HighlightSeverity.WARNING, "Duplicate item").range(item).withFix(RemoveWarnPerformanceItemQuickFix(item, "Remove duplicated $name")).create()
+                        holder.newAnnotation(HighlightSeverity.WARNING, "[KPHP] Duplicate item").range(item).withFix(RemoveWarnPerformanceItemQuickFix(item, "[KPHP] Remove duplicated $name")).create()
                     items.add(name)
                 }
             }

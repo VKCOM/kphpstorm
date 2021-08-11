@@ -50,7 +50,7 @@ object KphpDocTagTemplateClassElementType : PhpStubElementType<PhpDocTagStub, Ph
                 val marker = builder.mark()
                 if (!builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)) {
                     marker.drop()
-                    builder.error(PhpParserErrors.expected("Template argument name (like T)"))
+                    builder.error(PhpParserErrors.expected("[KPHP] Template argument name (like T)"))
                     break
                 }
                 marker.done(KphpDocTplParameterDeclPsiImpl.elementType)

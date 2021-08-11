@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.elements.FunctionReference
  * Converts 'intval($x)' to '$x'
  */
 class RemoveRedundantCastCall : LocalQuickFix {
-    override fun getFamilyName() = "Remove redundant cast"
+    override fun getFamilyName() = "[KPHP] Remove redundant cast"
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val funcCall = descriptor.psiElement.parent as? FunctionReference ?: return

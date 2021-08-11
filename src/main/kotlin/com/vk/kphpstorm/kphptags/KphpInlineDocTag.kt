@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpInlineDocTag : KphpDocTag("@kphp-inline") {
     override val description: String
-        get() = "Marks this function as 'inline' for gcc and codegen implementation is places in .h file (not .cpp)."
+        get() = "[KPHP] Marks this function as 'inline' for gcc and codegen implementation is places in .h file (not .cpp)."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function

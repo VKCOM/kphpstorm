@@ -15,7 +15,7 @@ class MoveParamTagToTypeHintPrettification(
         private val typeHintS: String
 ) : PhpDocPrettification {
     override fun getActionText() = "Remove @param, set '$typeHintS' type hint"
-    override fun getDescriptionText() = "@param can be replaced with type hint '$typeHintS'"
+    override fun getDescriptionText() = "[KPHP] @param can be replaced with type hint '$typeHintS'"
     override fun getHighlightElement() = docTag.firstChild!!
     override fun getHightlightType() = ProblemHighlightType.WEAK_WARNING
 

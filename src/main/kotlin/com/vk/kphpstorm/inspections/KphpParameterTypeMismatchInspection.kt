@@ -77,7 +77,7 @@ class KphpParameterTypeMismatchInspection : PhpInspection() {
             val argType = PsiToExPhpType.getArgumentDeclaredType(fArg, project) ?: continue
 
             if (!argType.isAssignableFrom(callType, project) && needsReporting(f)) {
-                holder.registerProblem(callParam, "Can't pass '${callType.toHumanReadable(call)}' to '${argType.toHumanReadable(call)}' \$${fArg.name}", ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+                holder.registerProblem(callParam, "[KPHP] Can't pass '${callType.toHumanReadable(call)}' to '${argType.toHumanReadable(call)}' \$${fArg.name}", ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
             }
         }
 
@@ -90,7 +90,7 @@ class KphpParameterTypeMismatchInspection : PhpInspection() {
                     if (!fArg.isOptional && !fArg.isVariadic) {
                         val closingBracket = call.lastChild
                         if (closingBracket.elementType == PhpTokenTypes.chRPAREN || closingBracket is FunctionReference || closingBracket is ClassReference)
-                            holder.registerProblem(closingBracket, "No value passed for \$${fArg.name}")
+                            holder.registerProblem(closingBracket, "[KPHP] No value passed for \$${fArg.name}")
                     }
                     break@loopFArg
                 }

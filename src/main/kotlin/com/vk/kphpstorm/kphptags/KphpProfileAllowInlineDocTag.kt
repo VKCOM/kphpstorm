@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpProfileAllowInlineDocTag : KphpDocTag("@kphp-profile-allow-inline") {
     override val description: String
-        get() = "Forces profiling the current function even if it is automatically inlined. By default, inlined functions are not profiled (and are not present in a report). This annotation is supposed to be commitable."
+        get() = "[KPHP] Forces profiling the current function even if it is automatically inlined. By default, inlined functions are not profiled (and are not present in a report). This annotation is supposed to be commitable."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function

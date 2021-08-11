@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Function
 
 object KphpRuntimeCheckDocTag : KphpDocTag("@kphp-runtime-check") {
     override val description: String
-        get() = "Previously used, now deprecated and to be recondisered."
+        get() = "[KPHP] Previously used, now deprecated and to be recondisered."
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function

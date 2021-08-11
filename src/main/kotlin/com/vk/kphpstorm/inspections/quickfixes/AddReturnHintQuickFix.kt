@@ -13,7 +13,7 @@ import com.vk.kphpstorm.helpers.setSelectionInEditor
 
 class AddReturnHintQuickFix(function: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(function) {
 
-    override fun getFamilyName() = "Add return hint"
+    override fun getFamilyName() = "[KPHP] Add return hint"
     override fun getText() = "Add return hint"
 
     override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {

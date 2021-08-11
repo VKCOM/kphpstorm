@@ -8,7 +8,7 @@ class ConvertVarToSingleLinePrettification(
         private val docComment: PhpDocComment
 ) : PhpDocPrettification {
     override fun getActionText() = "Convert @var to single line"
-    override fun getDescriptionText() = "Convert @var to single line"
+    override fun getDescriptionText() = "[KPHP] Convert @var to single line"
     override fun getHighlightElement() = docComment
     override fun getHightlightType() = ProblemHighlightType.WEAK_WARNING
 

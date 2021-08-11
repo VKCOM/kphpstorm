@@ -27,7 +27,7 @@ class NoTypeDeclarationInspection : PhpInspection() {
                     return
 
                 if (!KphpTypingAnalyzer.doesFieldHaveType(field))
-                    holder.registerProblem(nameIdentifier, "All fields must have @var phpdoc or default value", AddVarTagQuickFix(field), AddVarHintQuickFix(field), AddVarDefaultValueQuickFix(field))
+                    holder.registerProblem(nameIdentifier, "[KPHP] All fields must have @var phpdoc or default value", AddVarTagQuickFix(field), AddVarHintQuickFix(field), AddVarDefaultValueQuickFix(field))
             }
 
             override fun visitPhpMethod(method: Method) {
@@ -47,12 +47,12 @@ class NoTypeDeclarationInspection : PhpInspection() {
                 for (parameter in function.parameters) {
                     val pName = parameter.nameIdentifier ?: continue
                     if (PsiToExPhpType.getArgumentDeclaredType(parameter, holder.project) == null)
-                        holder.registerProblem(pName, "Declare type hint or @param for this argument", AddParamTagQuickFix(parameter), AddParamHintQuickFix(parameter))
+                        holder.registerProblem(pName, "[KPHP] Declare type hint or @param for this argument", AddParamTagQuickFix(parameter), AddParamHintQuickFix(parameter))
                 }
 
                 // check that function return value is typed
                 if (PsiToExPhpType.getReturnDeclaredType(function, holder.project) == null && !KphpTypingAnalyzer.isFunctionInferredReturnTypeVoid(function))
-                    holder.registerProblem(nameIdentifier, "Declare return hint or @return in phpdoc", AddReturnTagQuickFix(function), AddReturnHintQuickFix(function))
+                    holder.registerProblem(nameIdentifier, "[KPHP] Declare return hint or @return in phpdoc", AddReturnTagQuickFix(function), AddReturnHintQuickFix(function))
             }
         }
     }

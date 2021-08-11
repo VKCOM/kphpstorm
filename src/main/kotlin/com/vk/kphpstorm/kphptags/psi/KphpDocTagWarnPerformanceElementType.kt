@@ -51,7 +51,7 @@ object KphpDocTagWarnPerformanceElementType : PhpStubElementType<PhpDocTagStub, 
 
                 if (!builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)) {
                     marker.drop()
-                    builder.error(PhpParserErrors.expected("'all' or 'some' or '!some'"))
+                    builder.error(PhpParserErrors.expected("[KPHP] 'all' or 'some' or '!some'"))
                     break
                 }
                 marker.done(KphpDocWarnPerformanceItemPsiImpl.elementType)
