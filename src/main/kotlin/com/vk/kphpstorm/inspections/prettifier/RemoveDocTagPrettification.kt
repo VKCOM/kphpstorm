@@ -10,8 +10,8 @@ class RemoveDocTagPrettification(
         private val actionText: String,
         private val highlightType: ProblemHighlightType = ProblemHighlightType.WEAK_WARNING
 ) : PhpDocPrettification {
-    override fun getActionText() = "[KPHP] " + actionText
-    override fun getDescriptionText() = "[KPHP] " + descriptionText
+    override fun getActionText() = actionText
+    override fun getDescriptionText() = "[KPHP] $descriptionText"
     override fun getHighlightElement() = docTag.firstChild!!
     override fun getHightlightType() = highlightType
 
