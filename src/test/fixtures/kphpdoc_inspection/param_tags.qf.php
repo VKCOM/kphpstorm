@@ -124,7 +124,8 @@ function lambdaInside() {
 
     /**
      * @param int $s
+     * @param int $asdf comment
      */
-    function($s, $i) {
+    function($s, $asdf) {
     };
 }

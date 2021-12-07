@@ -81,6 +81,7 @@ function demo() {
     $a->s = str_replace('search', 'replace', getS());
     $a->s = str_replace('search', 'replace', getSArr()[1]);
 
+    // this seems failing since 2021.2, probably because of built-in functions are seen in the other way than in a real ide
     $s_arr = str_replace('search', 'replace', ['subject1']);
     <error descr="Can't assign 'string[]' to 'string' $s">$a->s = $s_arr</error>;
     $a->s_arr = $s_arr;

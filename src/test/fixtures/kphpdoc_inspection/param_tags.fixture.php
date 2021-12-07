@@ -161,8 +161,8 @@ function lambdaInside() {
 
     /**
      * @param int $s
-     * <error descr="@param tag for unexisting argument">@param</error> $asdf int comment
+     * <warning descr="Use @param {type} $asdf, not @param $asdf {type}">@param</warning> $asdf int comment
      */
-    function($s, $i) {
+    function($s, $asdf) {
     };
 }
