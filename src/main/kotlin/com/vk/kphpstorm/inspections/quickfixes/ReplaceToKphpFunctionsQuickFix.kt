@@ -32,4 +32,3 @@ class ReplaceToKphpFunctionsQuickFix(private val maybeFunctionName: String) : Lo
         )
     }
 }
-
