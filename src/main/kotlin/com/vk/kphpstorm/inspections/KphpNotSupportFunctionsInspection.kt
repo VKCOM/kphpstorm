@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.php.lang.inspections.PhpInspection
 import com.jetbrains.php.lang.psi.elements.FunctionReference
+import com.jetbrains.php.lang.psi.elements.PhpReference
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.vk.kphpstorm.inspections.quickfixes.ReplaceToKphpFunctionsQuickFix
 
@@ -19,6 +20,12 @@ class KphpNotSupportFunctionsInspection : PhpInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : PhpElementVisitor() {
             override fun visitPhpFunctionCall(reference: FunctionReference) {
+                if (reference.immediateNamespaceName != "")
+                    return
+
+                if ((reference as PhpReference).resolveLocal().isNotEmpty())
+                    return
+
                 val functionName = reference.name
                 if (functionName !in PHP_TO_KPHP_FUNCTIONS.keys)
                     return
