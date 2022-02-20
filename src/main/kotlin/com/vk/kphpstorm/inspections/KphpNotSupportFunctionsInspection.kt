@@ -26,8 +26,8 @@ class KphpNotSupportFunctionsInspection : PhpInspection() {
                 val fixes = mutableListOf<LocalQuickFix>()
 
                 val maybeFunction = PHP_TO_KPHP_FUNCTIONS[functionName]
-                maybeFunction?.forEach { maybeFunctionName ->
-                    fixes.add(ReplaceToKphpFunctionsQuickFix(maybeFunctionName))
+                maybeFunction?.forEachIndexed { index, maybeFunctionName ->
+                    fixes.add(ReplaceToKphpFunctionsQuickFix(maybeFunctionName, index == 0))
                 }
 
                 holder.registerProblem(
