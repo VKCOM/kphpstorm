@@ -20,7 +20,7 @@ class KphpNotSupportFunctionsInspection : PhpInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : PhpElementVisitor() {
             override fun visitPhpFunctionCall(reference: FunctionReference) {
-                if (reference.immediateNamespaceName != "")
+                if (reference.immediateNamespaceName != "" && reference.immediateNamespaceName != "\\")
                     return
 
                 if ((reference as PhpReference).resolveLocal().isNotEmpty())
