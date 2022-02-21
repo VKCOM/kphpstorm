@@ -40,7 +40,7 @@ intellij {
     ]
 }
 runIde {
-    // ideDir.set(file("/Users/alexandr.kirsanov/Library/Application Support/JetBrains/Toolbox/apps/PhpStorm/ch-0/213.5744.279/PhpStorm.app/Contents"))
+    ideDir.set(file("/Users/alexandr.kirsanov/Library/Application Support/JetBrains/Toolbox/apps/PhpStorm/ch-0/213.5744.279/PhpStorm.app/Contents"))
 }
 
 patchPluginXml {
