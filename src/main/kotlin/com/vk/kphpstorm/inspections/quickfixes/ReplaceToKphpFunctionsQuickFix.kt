@@ -24,17 +24,17 @@ class ReplaceToKphpFunctionsQuickFix(
         if (unsupportedFunction !is FunctionReference)
             return
 
-        val newFunctionNameNode = unsupportedFunction.nameNode ?: return
+        val unsupportedFunctionNameNode = unsupportedFunction.nameNode ?: return
 
-        val newFunction = PhpPsiElementFactory.createFromText(
+        val newFunctionNameNode = PhpPsiElementFactory.createFromText(
             project,
             PhpTokenTypes.IDENTIFIER,
             replaceFunction
         ).node
 
         unsupportedFunction.node.replaceChild(
-            newFunctionNameNode,
-            newFunction
+            unsupportedFunctionNameNode,
+            newFunctionNameNode
         )
     }
 }
