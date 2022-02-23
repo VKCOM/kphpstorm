@@ -9,4 +9,16 @@ class KphpNotSupportFunctionsInspectionTest : InspectionTestBase(KphpNotSupportF
         runFixture("kphp_functions/not_support_functions.fixture.php")
     }
 
+    fun testNotSupportFunctionsWithNamespace1() {
+        runFixture("kphp_functions/not_support_functions_with_namespace-1.fixture.php")
+    }
+
+    fun testNotSupportFunctionsWithNamespace2() {
+        runFixture("kphp_functions/not_support_functions_with_namespace-2.fixture.php")
+    }
+
+    fun testNotSupportFunctionsWithNamespace3() {
+        runFixture("kphp_functions/not_support_functions_with_namespace-3.fixture.php")
+    }
+
 }
