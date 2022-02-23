@@ -3,9 +3,11 @@ package com.vk.kphpstorm.inspections.quickfixes
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.php.lang.lexer.PhpTokenTypes
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory
 import com.jetbrains.php.lang.psi.elements.FunctionReference
+import com.jetbrains.php.lang.psi.elements.PhpNamespaceReference
 
 class ReplaceToKphpFunctionsQuickFix(
     private val replaceFunction: String,
@@ -31,6 +33,11 @@ class ReplaceToKphpFunctionsQuickFix(
             PhpTokenTypes.IDENTIFIER,
             replaceFunction
         ).node
+
+        if (unsupportedFunction.namespaceName == "\\") {
+            val namespaceReference = PsiTreeUtil.findChildOfType(unsupportedFunction, PhpNamespaceReference::class.java)
+            namespaceReference?.delete()
+        }
 
         unsupportedFunction.node.replaceChild(
             unsupportedFunctionNameNode,

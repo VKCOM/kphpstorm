@@ -11,3 +11,9 @@ function demo2() {
 
     array_first_key($arr);
 }
+
+function demo3() {
+    $arr = [];
+
+    array_first_key($arr);
+}

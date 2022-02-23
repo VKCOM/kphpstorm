@@ -11,3 +11,9 @@ function demo2() {
 
     <error descr="KPHP does not support reset()">reset($arr)</error>;
 }
+
+function demo3() {
+    $arr = [];
+
+    <error descr="KPHP does not support reset()">\reset($arr)</error>;
+}
