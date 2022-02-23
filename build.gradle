@@ -11,10 +11,8 @@ version '1.2.2'
 
 repositories {
     mavenCentral()
-    maven {
-        url 'https://www.jetbrains.com/intellij-repository/snapshots'
-    }
 }
+
 dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
 }
@@ -36,11 +34,8 @@ intellij {
     // for EAPs: https://www.jetbrains.com/intellij-repository/snapshots
     version = '2021.3'
     plugins = [
-        'com.jetbrains.php:213.5744.223', // https://plugins.jetbrains.com/plugin/6610-php/versions
+        'com.jetbrains.php:213.5744.279', // https://plugins.jetbrains.com/plugin/6610-php/versions
     ]
-}
-runIde {
-    ideDir.set(file("/Users/alexandr.kirsanov/Library/Application Support/JetBrains/Toolbox/apps/PhpStorm/ch-0/213.5744.279/PhpStorm.app/Contents"))
 }
 
 patchPluginXml {
