@@ -242,6 +242,11 @@ object PhpTypeToExPhpTypeParsing {
             return ExPhpTypeNullable(expr)
         }
 
+        if (builder.compareAndEat('%')) {
+            val genericsT = builder.parseFQN() ?: return null
+            return ExPhpTypeGenericsT(genericsT)
+        }
+
         val fqn = builder.parseFQN() ?: return null
 
         if (fqn == "tuple" && builder.compare('(')) {

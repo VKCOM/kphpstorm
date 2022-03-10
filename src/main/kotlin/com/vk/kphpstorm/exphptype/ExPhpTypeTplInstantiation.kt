@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType
 
 /**
  * C<T...>, e.g. Wrapper<int>, Container<tuple<int, A>[]>, future<int>
+ *     todo не знаю, нужно ли будет потом (или удалится)
  */
 class ExPhpTypeTplInstantiation(val classFqn: String, val specializationList: List<ExPhpType>) : ExPhpType {
     override fun toString() = "$classFqn<${specializationList.joinToString(",")}>"

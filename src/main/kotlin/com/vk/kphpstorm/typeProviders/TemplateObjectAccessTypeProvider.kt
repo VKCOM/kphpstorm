@@ -27,6 +27,8 @@ import kotlin.math.min
  * 
  * Support for generics, i.e. template class ItemWrapper, @param ItemWrapper<A>
  * KPHP has no support for them now, it's just experiments with IDE for future.
+ *
+ * todo скорее всего, это удалится, т.к. это было изначально оставлено чтобы подглядывать в код
  */
 class TemplateObjectAccessTypeProvider : PhpTypeProvider4 {
     override fun getKey(): Char {

@@ -13,4 +13,7 @@ class KphpUndefinedClassInspectionTest : InspectionTestBase(KphpUndefinedClassIn
         runFixture("strict_typing/undef_class_import.fixture.php")
     }
 
+    fun testGenericsOk() {
+        runFixture("generics/generics_tst.fixture.php")
+    }
 }

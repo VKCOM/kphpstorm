@@ -41,4 +41,8 @@ class KphpParameterTypeMismatchInspectionTest : InspectionTestBase(KphpParameter
         runFixture("strict_typing/call_args_9.fixture.php")
     }
 
+    fun testCallArgs10() {
+        runFixture("strict_typing/call_args_10.fixture.php")
+    }
+
 }
