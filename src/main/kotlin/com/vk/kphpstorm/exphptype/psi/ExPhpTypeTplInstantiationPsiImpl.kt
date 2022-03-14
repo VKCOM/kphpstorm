@@ -22,12 +22,12 @@ class ExPhpTypeTplInstantiationPsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
     override fun getNameNode(): ASTNode? = null
 
     override fun getType(): PhpType {
-        // kphp as built-in future<T> and future_queue<T>, which are ints an runtime and in php code, not classes
-        val templateClassName = (firstChild as? PhpDocType)?.type?.types?.firstOrNull() ?: return PhpType.EMPTY
+        // kphp as built-in future<T> and future_queue<T>, which are ints a runtime and in php code, not classes
+        val genericClassName = (firstChild as? PhpDocType)?.type?.types?.firstOrNull() ?: return PhpType.EMPTY
 
-        if (templateClassName == "future")
+        if (genericClassName == "future")
             return PhpType.INT
-        if (templateClassName == "future_queue")
+        if (genericClassName == "future_queue")
             return KphpPrimitiveTypes.PHP_TYPE_ARRAY_OF_ANY
 
         var innerTypesStr = ""
@@ -41,6 +41,6 @@ class ExPhpTypeTplInstantiationPsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
             child = child.nextSibling
         }
 
-        return PhpType().add(templateClassName).add("$templateClassName<$innerTypesStr>")
+        return PhpType().add(genericClassName).add("$genericClassName<$innerTypesStr>")
     }
 }

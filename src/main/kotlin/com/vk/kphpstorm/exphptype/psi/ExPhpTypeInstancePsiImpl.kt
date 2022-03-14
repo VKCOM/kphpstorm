@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocElementType
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
+import com.vk.kphpstorm.generics.GenericFunctionUtil
 
 /**
  * 'A', 'asdf\Instance', '\VK\Memcache' — instances (not primitives!) — psi is just PhpDocType
@@ -16,7 +17,15 @@ class ExPhpTypeInstancePsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
 
     override fun getType(): PhpType {
         // for "future" don't invoke getType(), because it will be treated as relative class name in namespace
-        return if (isKphpBuiltinClass()) PhpType().add(text) else getType(this, text)
+        if (isKphpBuiltinClass()) {
+            PhpType().add(text)
+        }
+
+        if (GenericFunctionUtil.nameIsGeneric(this, text)) {
+            return PhpType().add("%$text")
+        }
+
+        return getType(this, text)
     }
 
     fun isKphpBuiltinClass() = text.let {

@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType
  * Quite similar to phpdoc.cpp parsing logic in kphp.
  */
 object PhpTypeToExPhpTypeParsing {
-    private val RE_VALID_FQN = Regex("[a-zA-Z0-9_\\\\]+")
+    private val RE_VALID_FQN = Regex("[a-zA-Z0-9-_\\\\]+")
 
     /**
      * Pre-cached parsed for primitives and common cases
@@ -123,7 +123,7 @@ object PhpTypeToExPhpTypeParsing {
         fun parseFQN(): String? {
             skipWhitespace()
             val cur = if (offset < type.length) type[offset] else '\b'
-            if (!cur.isLetterOrDigit() && cur != '\\')
+            if (!cur.isLetterOrDigit() && cur != '\\' && cur != '-')
                 return null
             val match = RE_VALID_FQN.find(type, offset) ?: return null
             offset = match.range.last + 1
@@ -179,7 +179,7 @@ object PhpTypeToExPhpTypeParsing {
         }
     }
 
-    private fun parseTemplateSpecialization(builder: ExPhpTypeBuilder): List<ExPhpType>? {
+    private fun parseGenericSpecialization(builder: ExPhpTypeBuilder): List<ExPhpType>? {
         if (!builder.compareAndEat('<'))
             return null
 
@@ -242,6 +242,11 @@ object PhpTypeToExPhpTypeParsing {
             return ExPhpTypeNullable(expr)
         }
 
+        if (builder.compareAndEat('%')) {
+            val genericsT = builder.parseFQN() ?: return null
+            return ExPhpTypeGenericsT(genericsT)
+        }
+
         val fqn = builder.parseFQN() ?: return null
 
         if (fqn == "tuple" && builder.compare('(')) {
@@ -264,8 +269,22 @@ object PhpTypeToExPhpTypeParsing {
             return ExPhpTypeForcing(inner)
         }
 
+        if (fqn == "class-string" && (builder.compare('<') || builder.compare('('))) {
+            if (!builder.compareAndEat('(') && !builder.compareAndEat('<'))
+                return null
+
+            val genericT = parseSimpleType(builder) ?: return null
+
+            if (genericT !is ExPhpTypeInstance && genericT !is ExPhpTypeGenericsT)
+                return null
+            if (!builder.compareAndEat(')') && !builder.compareAndEat('>'))
+                return null
+
+            return ExPhpTypeClassString(genericT)
+        }
+
         if (builder.compare('<')) {
-            val specialization = parseTemplateSpecialization(builder) ?: return null
+            val specialization = parseGenericSpecialization(builder) ?: return null
             return ExPhpTypeTplInstantiation(fqn, specialization)
         }
 

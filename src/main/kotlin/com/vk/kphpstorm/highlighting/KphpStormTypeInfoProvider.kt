@@ -3,6 +3,7 @@ package com.vk.kphpstorm.highlighting
 import com.intellij.lang.ExpressionTypeProvider
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement
+import com.vk.kphpstorm.exphptype.PsiToExPhpType
 import com.vk.kphpstorm.helpers.toExPhpType
 
 /**
@@ -15,10 +16,9 @@ import com.vk.kphpstorm.helpers.toExPhpType
 class KphpStormTypeInfoProvider : ExpressionTypeProvider<PhpTypedElement>() {
     private val delegate = com.jetbrains.php.actions.PhpExpressionTypeProvider()
 
-
     override fun getInformationHint(element: PhpTypedElement): String {
         val phpType = element.type.global(element.project)
-        return phpType.toExPhpType()?.toHumanReadable(element) ?: phpType.toString()
+        return phpType.toExPhpType()?.let { PsiToExPhpType.dropGenerics(it).toHumanReadable(element) } ?: phpType.toString()
     }
 
     override fun getExpressionsAt(elementAt: PsiElement): List<PhpTypedElement> {

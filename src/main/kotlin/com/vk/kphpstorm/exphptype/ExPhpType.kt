@@ -48,7 +48,7 @@ interface ExPhpType {
     fun toPhpType(): PhpType
     fun toHumanReadable(expr: PhpPsiElement): String
     fun getSubkeyByIndex(indexKey: String): ExPhpType?
-    fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType
+    fun instantiateGeneric(nameMap: Map<String, ExPhpType>): ExPhpType
     fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean
 
     companion object {

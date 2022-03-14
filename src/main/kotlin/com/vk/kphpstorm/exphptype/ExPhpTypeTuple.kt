@@ -25,8 +25,8 @@ class ExPhpTypeTuple(val items: List<ExPhpType>) : ExPhpType {
         return if (idx >= 0 && idx < items.size) items[idx] else null
     }
 
-    override fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType {
-        return ExPhpTypeTuple(items.map { it.instantiateTemplate(nameMap) })
+    override fun instantiateGeneric(nameMap: Map<String, ExPhpType>): ExPhpType {
+        return ExPhpTypeTuple(items.map { it.instantiateGeneric(nameMap) })
     }
 
     override fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean = when (rhs) {

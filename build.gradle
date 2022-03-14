@@ -30,17 +30,23 @@ idea {
     }
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += '-Xjvm-default=all'
+    }
+}
+
 intellij {
     type = 'IU'
     // for release versions: https://www.jetbrains.com/intellij-repository/releases (com.jetbrains.intellij.idea)
     // for EAPs: https://www.jetbrains.com/intellij-repository/snapshots
-    version = '2021.3'
+    version = '2021.3.1'
     plugins = [
         'com.jetbrains.php:213.5744.223', // https://plugins.jetbrains.com/plugin/6610-php/versions
     ]
 }
 runIde {
-    ideDir.set(file("/Users/alexandr.kirsanov/Library/Application Support/JetBrains/Toolbox/apps/PhpStorm/ch-0/213.5744.279/PhpStorm.app/Contents"))
+//    ideDir.set(file("/Users/alexandr.kirsanov/Library/Application Support/JetBrains/Toolbox/apps/PhpStorm/ch-0/213.5744.279/PhpStorm.app/Contents"))
 }
 
 patchPluginXml {

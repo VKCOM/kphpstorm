@@ -21,8 +21,8 @@ class ExPhpTypeTplInstantiation(val classFqn: String, val specializationList: Li
         return null
     }
 
-    override fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType {
-        val replacedSpecialization = specializationList.map { it.instantiateTemplate(nameMap) }
+    override fun instantiateGeneric(nameMap: Map<String, ExPhpType>): ExPhpType {
+        val replacedSpecialization = specializationList.map { it.instantiateGeneric(nameMap) }
         return ExPhpTypeTplInstantiation(classFqn, replacedSpecialization)
     }
 

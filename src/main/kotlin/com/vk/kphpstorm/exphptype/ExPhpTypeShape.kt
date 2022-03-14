@@ -29,8 +29,8 @@ class ExPhpTypeShape(val items: List<ShapeItem>) : ExPhpType {
         return items.find { it.keyName == indexKey }?.type
     }
 
-    override fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType {
-        return ExPhpTypeShape(items.map { ShapeItem(it.keyName, it.nullable, it.type.instantiateTemplate(nameMap)) })
+    override fun instantiateGeneric(nameMap: Map<String, ExPhpType>): ExPhpType {
+        return ExPhpTypeShape(items.map { ShapeItem(it.keyName, it.nullable, it.type.instantiateGeneric(nameMap)) })
     }
 
     override fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean = when (rhs) {

@@ -23,8 +23,8 @@ class ExPhpTypeArray(val inner: ExPhpType) : ExPhpType {
         return inner
     }
 
-    override fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType {
-        return ExPhpTypeArray(inner.instantiateTemplate(nameMap))
+    override fun instantiateGeneric(nameMap: Map<String, ExPhpType>): ExPhpType {
+        return ExPhpTypeArray(inner.instantiateGeneric(nameMap))
     }
 
     override fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean {

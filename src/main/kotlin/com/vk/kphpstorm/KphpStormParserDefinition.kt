@@ -30,25 +30,27 @@ class KphpStormParserDefinition() : PhpParserDefinition() {
      */
     override fun createElement(node: ASTNode): PsiElement {
         return when (node.elementType) {
-            KphpDocElementTypes.kphpDocTagSimple          -> KphpDocTagSimplePsiImpl(node)
-            KphpDocElementTypes.kphpDocTagTemplateClass   -> KphpDocTagTemplateClassPsiImpl(node)
-            KphpDocTplParameterDeclPsiImpl.elementType    -> KphpDocTplParameterDeclPsiImpl(node)
-            KphpDocElementTypes.kphpDocTagWarnPerformance -> KphpDocTagWarnPerformancePsiImpl(node)
-            KphpDocWarnPerformanceItemPsiImpl.elementType -> KphpDocWarnPerformanceItemPsiImpl(node)
+            KphpDocElementTypes.kphpDocTagSimple           -> KphpDocTagSimplePsiImpl(node)
+            KphpDocElementTypes.kphpDocTagTemplateClass    -> KphpDocTagTemplateClassPsiImpl(node)
+            KphpDocElementTypes.kphpDocTagGeneric          -> KphpDocTagGenericPsiImpl(node)
+            KphpDocGenericParameterDeclPsiImpl.elementType -> KphpDocGenericParameterDeclPsiImpl(node)
+            KphpDocElementTypes.kphpDocTagWarnPerformance  -> KphpDocTagWarnPerformancePsiImpl(node)
+            KphpDocWarnPerformanceItemPsiImpl.elementType  -> KphpDocWarnPerformanceItemPsiImpl(node)
 
-            ExPhpTypePrimitivePsiImpl.elementType        -> ExPhpTypePrimitivePsiImpl(node)
-            ExPhpTypeInstancePsiImpl.elementType         -> ExPhpTypeInstancePsiImpl(node)
-            ExPhpTypePipePsiImpl.elementType             -> ExPhpTypePipePsiImpl(node)
-            ExPhpTypeAnyPsiImpl.elementType              -> ExPhpTypeAnyPsiImpl(node)
-            ExPhpTypeArrayPsiImpl.elementType            -> ExPhpTypeArrayPsiImpl(node)
-            ExPhpTypeTuplePsiImpl.elementType            -> ExPhpTypeTuplePsiImpl(node)
-            ExPhpTypeShapePsiImpl.elementType            -> ExPhpTypeShapePsiImpl(node)
-            ExPhpTypeNullablePsiImpl.elementType         -> ExPhpTypeNullablePsiImpl(node)
-            ExPhpTypeTplInstantiationPsiImpl.elementType -> ExPhpTypeTplInstantiationPsiImpl(node)
-            ExPhpTypeCallablePsiImpl.elementType         -> ExPhpTypeCallablePsiImpl(node)
-            ExPhpTypeForcingPsiImpl.elementType          -> ExPhpTypeForcingPsiImpl(node)
+            ExPhpTypePrimitivePsiImpl.elementType          -> ExPhpTypePrimitivePsiImpl(node)
+            ExPhpTypeInstancePsiImpl.elementType           -> ExPhpTypeInstancePsiImpl(node)
+            ExPhpTypePipePsiImpl.elementType               -> ExPhpTypePipePsiImpl(node)
+            ExPhpTypeAnyPsiImpl.elementType                -> ExPhpTypeAnyPsiImpl(node)
+            ExPhpTypeArrayPsiImpl.elementType              -> ExPhpTypeArrayPsiImpl(node)
+            ExPhpTypeTuplePsiImpl.elementType              -> ExPhpTypeTuplePsiImpl(node)
+            ExPhpTypeShapePsiImpl.elementType              -> ExPhpTypeShapePsiImpl(node)
+            ExPhpTypeNullablePsiImpl.elementType           -> ExPhpTypeNullablePsiImpl(node)
+            ExPhpTypeTplInstantiationPsiImpl.elementType   -> ExPhpTypeTplInstantiationPsiImpl(node)
+            ExPhpTypeCallablePsiImpl.elementType           -> ExPhpTypeCallablePsiImpl(node)
+            ExPhpTypeClassStringPsiImpl.elementType        -> ExPhpTypeClassStringPsiImpl(node)
+            ExPhpTypeForcingPsiImpl.elementType            -> ExPhpTypeForcingPsiImpl(node)
 
-            else                                         -> PhpPsiElementCreator.create(node)
+            else                                           -> PhpPsiElementCreator.create(node)
         }
     }
 }

@@ -20,8 +20,8 @@ class ExPhpTypeNullable(val inner: ExPhpType) : ExPhpType {
         return inner.getSubkeyByIndex(indexKey)
     }
 
-    override fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType {
-        return ExPhpTypeNullable(inner.instantiateTemplate(nameMap))
+    override fun instantiateGeneric(nameMap: Map<String, ExPhpType>): ExPhpType {
+        return ExPhpTypeNullable(inner.instantiateGeneric(nameMap))
     }
 
     override fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean = when (rhs) {

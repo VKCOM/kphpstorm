@@ -81,8 +81,8 @@ class ExPhpTypePipe(val items: List<ExPhpType>) : ExPhpType {
         }
     }
 
-    override fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType {
-        return ExPhpTypePipe(items.map { it.instantiateTemplate(nameMap) })
+    override fun instantiateGeneric(nameMap: Map<String, ExPhpType>): ExPhpType {
+        return ExPhpTypePipe(items.map { it.instantiateGeneric(nameMap) })
     }
 
     override fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean {
@@ -133,6 +133,10 @@ class ExPhpTypePipe(val items: List<ExPhpType>) : ExPhpType {
                             items.any { !assignable.contains(it) && it.isAssignableFrom(okClass, project) }
                         })
                     ok = true
+            }
+
+            if (ExPhpTypeClassString.isNativePipeWithString(this)) {
+                return lhs.isAssignableFrom(ExPhpTypeClassString.getClassFromNativePipeWithString(this), project)
             }
         }
 

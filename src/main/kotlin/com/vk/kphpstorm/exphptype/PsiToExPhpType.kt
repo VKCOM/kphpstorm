@@ -11,9 +11,26 @@ import com.vk.kphpstorm.helpers.toExPhpType
 object PsiToExPhpType {
     fun getTypeOfExpr(e: PsiElement, project: Project): ExPhpType? =
             when (e) {
-                is PhpTypedElement -> e.type.toExPhpType(project)
+                is PhpTypedElement -> e.type.toExPhpType(project)?.let { dropGenerics(it) }
                 else               -> null
             }
+
+    fun dropGenerics(type: ExPhpType): ExPhpType {
+        // TODO: добавить все типы
+        if (type is ExPhpTypePipe) {
+            return ExPhpTypePipe(type.items.filter { it !is ExPhpTypeGenericsT }.map { dropGenerics(it) })
+        }
+
+        if (type is ExPhpTypeNullable) {
+            return ExPhpTypeNullable(dropGenerics(type.inner))
+        }
+
+        if (type is ExPhpTypeArray) {
+            return ExPhpTypeArray(dropGenerics(type.inner))
+        }
+
+        return type
+    }
 
     fun getFieldDeclaredType(field: Field, project: Project): ExPhpType? {
         val fieldType = field.docType.takeIf { !it.isEmpty } ?: field.type

@@ -63,6 +63,24 @@
                      enabledByDefault="false" level="WARNING"
                      implementationClass="com.vk.kphpstorm.inspections.RedundantCastInspection"/>
 
+    <!-- Generics inspections-->
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="FunctionGenericInstantiationArgsCountMismatchInspection"
+                     displayName="Function generic instantiation args count mismatch"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.vk.kphpstorm.inspections.FunctionGenericInstantiationArgsCountMismatchInspection"/>
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="FunctionUnnecessaryExplicitGenericInstantiationListInspection"
+                     displayName="Unnecessary explicit instantiation list for generic function"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.vk.kphpstorm.inspections.FunctionUnnecessaryExplicitGenericInstantiationListInspection"/>
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="FunctionGenericNoEnoughInformationInspection"
+                     displayName="No information to reify generic types"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.vk.kphpstorm.inspections.FunctionGenericNoEnoughInformationInspection"/>
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="FunctionGenericSeveralGenericTypesInspection"
+                     displayName="Several possibly type for generic type"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.vk.kphpstorm.inspections.FunctionGenericSeveralGenericTypesInspection"/>
+
     <intentionAction>
       <className>com.vk.kphpstorm.inspections.PrettifyPhpdocBlockIntention</className>
       <category>PHP</category>
@@ -77,8 +95,14 @@
                             implementationClass="com.vk.kphpstorm.completion.KphpStormCompletionContributor"/>
     <lang.parserDefinition language="PHP" order="first"
                            implementationClass="com.vk.kphpstorm.KphpStormParserDefinition"/>
+    <lang.ast.factory
+        language="PHP"
+        order="first"
+        implementationClass="com.vk.kphpstorm.KphpStormASTFactory" />
+
     <stubElementTypeHolder class="com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes"/>
     <annotator language="PHP" implementationClass="com.vk.kphpstorm.highlighting.KphpStormAnnotator"/>
+    <annotator language="PHP" implementationClass="com.vk.kphpstorm.highlighting.KphpStormGenericCommentsAnnotator"/>
 
     <lang.documentationProvider language="PHP" order="first"
                                 implementationClass="com.vk.kphpstorm.highlighting.KphpStormDocumentationProvider"/>
@@ -86,13 +110,25 @@
                           implementationClass="com.vk.kphpstorm.highlighting.KphpStormTypeInfoProvider"/>
 
     <postStartupActivity implementation="com.vk.kphpstorm.configuration.KphpStormStartupActivity"/>
+
+    <lang.foldingBuilder language="PHP"
+                         implementationClass="com.vk.kphpstorm.highlighting.KphpGenericCommentFolderBuilder"/>
+    <codeInsight.inlayProvider language="PHP"
+                               implementationClass="com.vk.kphpstorm.highlighting.hints.GenericsInlayTypeHintsProvider"/>
+    <psi.referenceContributor
+      order="first"
+      language="PHP"
+      implementation="com.vk.kphpstorm.completion.KphpGenericsReferenceContributor"/>
+
   </extensions>
 
   <extensions defaultExtensionNs="com.jetbrains.php">
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.TupleShapeTypeProvider"/>
-<!--    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.TemplateObjectAccessTypeProvider"/>-->
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.GenericObjectAccessTypeProvider"/>
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.GenericFunctionsTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.FunctionsTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.ForeachTypeProvider"/>
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.ClassConstTypeProvider"/>
 
     <docTagParserExtension tagName="return" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />
     <docTagParserExtension tagName="returns" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />

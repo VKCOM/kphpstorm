@@ -3,6 +3,7 @@ package com.vk.kphpstorm.typeProviders
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.psi.elements.*
+import com.jetbrains.php.lang.psi.elements.impl.ArrayCreationExpressionImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
 import com.vk.kphpstorm.exphptype.*
@@ -245,9 +246,23 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
             }
         }
 
-        // for shape([...]) let it be just shape(), without detalization; all shapes are compatible with each other
+        // ввиду шаблонов нам может понадобиться точный тип для шейпов, поэтому мы выводим его здесь
         if (funcName == "shape") {
-            return PhpType().add("shape()")
+            val innerArray = p.parameters.firstOrNull() as? ArrayCreationExpression ?: return null
+
+            val types = ArrayCreationExpressionImpl.children(innerArray).mapNotNull {
+                if (it !is ArrayHashElement) return@mapNotNull null
+                if (it.value !is PhpTypedElement) return@mapNotNull null
+                if (it.key == null) return@mapNotNull null
+                if (it.key !is StringLiteralExpression) return@mapNotNull null
+
+                val key = (it.key as StringLiteralExpression).contents
+                val type = (it.value as PhpTypedElement).type.global(p.project).toStringAsNested()
+
+                "$key:$type"
+            }.joinToString(",")
+
+            return PhpType().add("shape($types)")
         }
 
 //        println("unhandled function: $funcName")

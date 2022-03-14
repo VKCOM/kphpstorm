@@ -23,20 +23,21 @@ class ExPhpTypePrimitive(val typeStr: String) : ExPhpType {
         return if (this === ExPhpType.KMIXED || this === ExPhpType.STRING) this else null
     }
 
-    override fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType {
+    override fun instantiateGeneric(nameMap: Map<String, ExPhpType>): ExPhpType {
         return this
     }
 
     override fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean = when (rhs) {
-        is ExPhpTypeAny       -> true
-        is ExPhpTypePipe      -> rhs.isAssignableTo(this, project)
-        is ExPhpTypePrimitive -> canBeAssigned(this, rhs)
-        is ExPhpTypeNullable  -> canBeAssigned(this, ExPhpType.NULL) && isAssignableFrom(rhs.inner, project)
-        is ExPhpTypeArray     -> canBeAssigned(this, ExPhpType.KMIXED) && isAssignableFrom(rhs.inner, project)
+        is ExPhpTypeAny         -> true
+        is ExPhpTypePipe        -> rhs.isAssignableTo(this, project)
+        is ExPhpTypePrimitive   -> canBeAssigned(this, rhs)
+        is ExPhpTypeNullable    -> canBeAssigned(this, ExPhpType.NULL) && isAssignableFrom(rhs.inner, project)
+        is ExPhpTypeArray       -> canBeAssigned(this, ExPhpType.KMIXED) && isAssignableFrom(rhs.inner, project)
                 || this === ExPhpType.CALLABLE  // ['class', 'name'] is assignable to "callable" :(
-        is ExPhpTypeInstance  -> this === ExPhpType.OBJECT
-        is ExPhpTypeForcing   -> isAssignableFrom(rhs.inner, project)
-        else                  -> false
+        is ExPhpTypeInstance    -> this === ExPhpType.OBJECT
+        is ExPhpTypeForcing     -> isAssignableFrom(rhs.inner, project)
+        is ExPhpTypeClassString -> this === ExPhpType.STRING
+        else                    -> false
     }
 
     companion object {

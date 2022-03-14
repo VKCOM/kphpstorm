@@ -10,6 +10,8 @@ import com.jetbrains.php.lang.inspections.PhpInspection
 import com.jetbrains.php.lang.inspections.quickfix.PhpImportClassQuickFix
 import com.jetbrains.php.lang.psi.elements.*
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
+import com.vk.kphpstorm.exphptype.ExPhpTypeInstance
+import com.vk.kphpstorm.exphptype.PhpTypeToExPhpTypeParsing
 import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
 import com.vk.kphpstorm.inspections.helpers.KphpTypingAnalyzer
 
@@ -82,12 +84,14 @@ class KphpUndefinedClassInspection : PhpInspection() {
              * report if this class is unknown (primitives 'int', 'mixed', etc have another psi impl)
              */
             override fun visitPhpDocType(type: PhpDocType) {
-                if (type !is ExPhpTypeInstancePsiImpl || type.isKphpBuiltinClass())
+                if (type !is ExPhpTypeInstancePsiImpl)
                     return
 
-                val resolved = type.multiResolve(false)
-                if (resolved.isEmpty())
-                    reportUndefinedClassUsage(type)
+                val resolvedType = PhpTypeToExPhpTypeParsing.parse(type.type)
+                if (resolvedType is ExPhpTypeInstance) {
+                    if (PhpIndex.getInstance(type.project).getAnyByFQN(resolvedType.fqn).isEmpty())
+                        reportUndefinedClassUsage(type)
+                }
             }
 
             /**

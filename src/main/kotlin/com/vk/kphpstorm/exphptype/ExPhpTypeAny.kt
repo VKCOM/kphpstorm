@@ -31,7 +31,7 @@ class ExPhpTypeAny : ExPhpType {
         return this
     }
 
-    override fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType {
+    override fun instantiateGeneric(nameMap: Map<String, ExPhpType>): ExPhpType {
         return this
     }
 

@@ -12,17 +12,21 @@ import com.jetbrains.php.lang.parser.PhpPsiBuilder
 import com.jetbrains.php.lang.psi.stubs.PhpStubElementType
 
 /**
- * '@kphp-template-class T1, T2' has a separate elementType, psi for 'T1' and 'T2' and stub contents
- * @see KphpDocElementTypes.kphpDocTagTemplateClass
+ * '@kphp-generic T1, T2: ExtendsClass' has a separate elementType,
+ * psi for 'T1' and 'T2: ExtendsClass' and stub contents.
+ *
+ * @see KphpDocElementTypes.kphpDocTagGeneric
  */
-object KphpDocTagTemplateClassElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>("@kphp-template-class"), KphpDocTagElementType {
+object KphpDocTagGenericElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>("@kphp-generic"),
+    KphpDocTagElementType {
     override fun createPsi(stub: PhpDocTagStub): PhpDocTag {
-        return KphpDocTagTemplateClassPsiImpl(stub, stub.stubType)
+        return KphpDocTagGenericPsiImpl(stub, stub.stubType)
     }
 
     override fun createStub(psi: PhpDocTag, parentStub: StubElement<*>?): PhpDocTagStub {
+        // TODO: Add `: ExtendsName`
         // stub value is 'T1,T2' — without spaces
-        val stubValue = (psi as KphpDocTagTemplateClassPsiImpl).getTemplateArguments().joinToString(",")
+        val stubValue = (psi as KphpDocTagGenericPsiImpl).getGenericArguments().joinToString(",")
         return KphpDocTagStubImpl(parentStub, this, psi.name, stubValue)
     }
 
@@ -43,15 +47,27 @@ object KphpDocTagTemplateClassElementType : PhpStubElementType<PhpDocTagStub, Ph
      * @see KphpDocGenericParameterDeclPsiImpl
      */
     override fun getTagParser() = object : PhpDocTagParser() {
-        override fun getElementType() = KphpDocTagTemplateClassElementType
+        override fun getElementType() = KphpDocTagGenericElementType
 
         override fun parseContents(builder: PhpPsiBuilder): Boolean {
             do {
                 val marker = builder.mark()
                 if (!builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)) {
                     marker.drop()
-                    builder.error(PhpParserErrors.expected("Template argument name (like T)"))
+                    builder.error(PhpParserErrors.expected("Generic argument name (like T)"))
                     break
+                }
+
+                if (builder.compare(PhpDocTokenTypes.DOC_TEXT)) {
+                    val text = builder.tokenText?.trim()
+                    builder.advanceLexer()
+                    if (text == ":") {
+                        if (!builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)) {
+                            marker.drop()
+                            builder.error(PhpParserErrors.expected("Extends class name"))
+                            break
+                        }
+                    }
                 }
                 marker.done(KphpDocGenericParameterDeclPsiImpl.elementType)
             } while (builder.compareAndEat(PhpDocTokenTypes.DOC_COMMA))

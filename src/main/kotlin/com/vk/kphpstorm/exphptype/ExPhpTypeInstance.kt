@@ -25,7 +25,7 @@ class ExPhpTypeInstance(val fqn: String) : ExPhpType {
         return null
     }
 
-    override fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType {
+    override fun instantiateGeneric(nameMap: Map<String, ExPhpType>): ExPhpType {
         return nameMap[fqn] ?: this
     }
 
@@ -41,6 +41,20 @@ class ExPhpTypeInstance(val fqn: String) : ExPhpType {
             val lhsClass = phpIndex.getAnyByFQN(fqn).firstOrNull() ?: return false
             var rhsIsChild = false
             phpIndex.getAnyByFQN(rhs.fqn).forEach { rhsClass ->
+                PhpClassHierarchyUtils.processSuperWithoutMixins(rhsClass, true, true) { clazz ->
+                    if (PhpClassHierarchyUtils.classesEqual(lhsClass, clazz))
+                        rhsIsChild = true
+                    !rhsIsChild
+                }
+            }
+            rhsIsChild
+        }
+
+        is ExPhpTypeTplInstantiation -> rhs.classFqn == fqn || run {
+            val phpIndex = PhpIndex.getInstance(project)
+            val lhsClass = phpIndex.getAnyByFQN(fqn).firstOrNull() ?: return false
+            var rhsIsChild = false
+            phpIndex.getAnyByFQN(rhs.classFqn).forEach { rhsClass ->
                 PhpClassHierarchyUtils.processSuperWithoutMixins(rhsClass, true, true) { clazz ->
                     if (PhpClassHierarchyUtils.classesEqual(lhsClass, clazz))
                         rhsIsChild = true

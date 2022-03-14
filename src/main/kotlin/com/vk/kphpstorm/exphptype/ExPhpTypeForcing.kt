@@ -27,8 +27,8 @@ class ExPhpTypeForcing(val inner: ExPhpType) : ExPhpType {
         return ExPhpTypeForcing(inner.getSubkeyByIndex(indexKey) ?: return null)
     }
 
-    override fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType {
-        return ExPhpTypeForcing(inner.instantiateTemplate(nameMap))
+    override fun instantiateGeneric(nameMap: Map<String, ExPhpType>): ExPhpType {
+        return ExPhpTypeForcing(inner.instantiateGeneric(nameMap))
     }
 
     override fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean {
