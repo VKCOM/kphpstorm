@@ -14,16 +14,15 @@ class FunctionGenericInstantiationArgsCountMismatchInspection : PhpInspection() 
         return object : PhpElementVisitor() {
             override fun visitPhpFunctionCall(reference: FunctionReference) {
                 val call = GenericFunctionCall(reference)
-                call.resolveFunction()
                 if (call.function == null) return
 
-                val countGenericNames = call.function!!.genericNames().size
+                val countGenericNames = call.function.genericNames().size
                 val countExplicitSpecs = call.explicitSpecs.size
 
                 if (countGenericNames != countExplicitSpecs && call.explicitSpecsPsi != null) {
                     holder.registerProblem(
                         call.explicitSpecsPsi,
-                        "$countGenericNames type arguments expected for ${call.function!!.fqn}",
+                        "$countGenericNames type arguments expected for ${call.function.fqn}",
                         ProblemHighlightType.GENERIC_ERROR
                     )
                 }

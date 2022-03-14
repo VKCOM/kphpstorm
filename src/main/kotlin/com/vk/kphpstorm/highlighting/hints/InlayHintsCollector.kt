@@ -37,7 +37,6 @@ class InlayHintsCollector(
 
     private fun showAnnotation(element: FunctionReference) {
         val call = GenericFunctionCall(element)
-        call.resolveFunction()
         if (!call.isGeneric() || call.withExplicitSpecs()) {
             return
         }

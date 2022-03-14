@@ -2,19 +2,15 @@ package com.vk.kphpstorm.typeProviders
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.psi.elements.FunctionReference
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement
 import com.jetbrains.php.lang.psi.resolve.types.PhpCharBasedTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
 import com.vk.kphpstorm.exphptype.ExPhpType
-import com.vk.kphpstorm.exphptype.ExPhpTypeNullable
-import com.vk.kphpstorm.exphptype.ExPhpTypePipe
-import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
-import com.vk.kphpstorm.generics.GenericFunctionCall
-import com.vk.kphpstorm.generics.GenericFunctionUtil.genericNames
 import com.vk.kphpstorm.generics.GenericFunctionUtil.isReturnGeneric
+import com.vk.kphpstorm.generics.IndexingGenericFunctionCall
+import com.vk.kphpstorm.generics.ResolvingGenericFunctionCall
 import com.vk.kphpstorm.helpers.toExPhpType
 import kotlin.math.min
 
@@ -34,21 +30,8 @@ class GenericFunctionsTypeProvider : PhpTypeProvider4 {
             return null
         }
 
-        val call = GenericFunctionCall(p)
-        call.resolveFunction()
-        if (call.function == null) return null
-
-        // Если возвращаемый тип функции не зависит от шаблонного типа,
-        // то нет смысла как-то уточнять ее тип.
-        if (!call.function!!.isReturnGeneric()) {
-            return null
-        }
-
-        val specs = call.explicitSpecs.ifEmpty { call.implicitSpecs }
-
-        val specTypes = specs.joinToString(",")
-
-        return PhpType().add("#П${call.function!!.fqn}<$specTypes>")
+        val data = IndexingGenericFunctionCall(p).pack()
+        return PhpType().add("#П$data")
     }
 
     override fun complete(incompleteTypeStr: String, project: Project): PhpType? {
@@ -56,28 +39,28 @@ class GenericFunctionsTypeProvider : PhpTypeProvider4 {
             return null
         }
 
-        val functionName = incompleteTypeStr.substring(2 until incompleteTypeStr.indexOf('<'))
-        val function = PhpIndex.getInstance(project).getFunctionsByFQN(functionName).firstOrNull() ?: return null
+        val packedData = incompleteTypeStr.substring(2)
 
-        val lhsTypeStr = incompleteTypeStr.substring(2)
-        val lhsType = PhpType().add(lhsTypeStr).global(project)
-        val parsed = lhsType.toExPhpType()
+        val call = ResolvingGenericFunctionCall(project)
+        if (!call.unpack(packedData)) {
+            return null
+        }
 
-        val instantiation = when (parsed) {
-            is ExPhpTypePipe -> parsed.items.firstOrNull { it is ExPhpTypeTplInstantiation }
-            is ExPhpTypeNullable -> parsed.inner
-            else -> parsed
-        } as? ExPhpTypeTplInstantiation ?: return null
+        // Если возвращаемый тип функции не зависит от шаблонного типа,
+        // то нет смысла как-то уточнять ее тип.
+        if (!call.function.isReturnGeneric()) {
+            return null
+        }
 
-        val docTNames = function.genericNames()
+        val specialization = call.specialization()
 
         val specializationNameMap = mutableMapOf<String, ExPhpType>()
 
-        for (i in 0 until min(docTNames.size, instantiation.specializationList.size)) {
-            specializationNameMap[docTNames[i]] = instantiation.specializationList[i]
+        for (i in 0 until min( call.genericTs.size, specialization.size)) {
+            specializationNameMap[ call.genericTs[i]] = specialization[i]!!
         }
 
-        val methodReturnTag = function.docComment?.returnTag ?: return null
+        val methodReturnTag = call.function.docComment?.returnTag ?: return null
         val methodTypeParsed = methodReturnTag.type.toExPhpType() ?: return null
         val methodTypeSpecialized = methodTypeParsed.instantiateGeneric(specializationNameMap)
 

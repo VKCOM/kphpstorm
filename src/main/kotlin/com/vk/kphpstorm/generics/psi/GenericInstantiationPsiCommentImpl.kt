@@ -4,6 +4,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.impl.source.tree.PsiCommentImpl
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
@@ -24,7 +26,9 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeSignatureKey
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.vk.kphpstorm.completion.KphpGenericsReferenceContributor
+import com.vk.kphpstorm.exphptype.ExPhpType
 import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
+import com.vk.kphpstorm.helpers.toExPhpType
 
 /**
  * Комментарий вида `/*<T[, T2, ...]>*/` который пишется в вызове
@@ -98,18 +102,18 @@ class GenericInstantiationPsiCommentImpl(type: IElementType, text: CharSequence)
 
         val psi = PhpPsiElementFactory.createPsiFileFromText(
             project,
-            "use \\Some\\Doo; /** @return __ClassT$genericSpecs */class __ClassT {}"
+            "/** @return __ClassT$genericSpecs */class __ClassT {}"
         )
 
         val returnTag = PsiTreeUtil.findChildOfType(psi, PhpDocReturnTagImpl::class.java)!!
 
         val pseudoReturnTag = returnTag.firstChild
         val startOfTemplate = pseudoReturnTag.startOffset + "@return __ClassT".length + 1
-        val templatePsi = returnTag.lastChild?.prevSibling!!
+        val genericPsi = returnTag.lastChild?.prevSibling!!
 
         val startInRealCode = startOffset + 3
         var instanceIndex = 0
-        templatePsi.accept(object : PhpElementVisitor() {
+        genericPsi.accept(object : PhpElementVisitor() {
             private fun resolveInstanceByName(name: String, startOffset: Int, endOffset: Int) {
                 val fqn = resolveInstance(name)
                 result["$name$instanceIndex"] = Instance(
@@ -138,6 +142,68 @@ class GenericInstantiationPsiCommentImpl(type: IElementType, text: CharSequence)
         return result
     }
 
+    fun instantiationParts(): List<PsiElement> {
+        val psi = PhpPsiElementFactory.createPsiFileFromText(
+            project,
+            "/** @return __ClassT$genericSpecs */class __ClassT {}"
+        )
+
+        val returnTag = PsiTreeUtil.findChildOfType(psi, PhpDocReturnTagImpl::class.java)!!
+        val genericPsi = returnTag.lastChild?.prevSibling!!
+
+        genericPsi.accept(object : PhpElementVisitor() {
+            override fun visitElement(element: PsiElement) {
+                if (element is ExPhpTypeInstancePsiImpl && element.name != "__ClassT") {
+                    val newName = resolveInstance(element.text)
+                    val namePsi = element.firstChild
+                    if (namePsi is LeafPsiElement) {
+                        namePsi.rawReplaceWithText(newName)
+                    }
+                }
+
+                var child = element.firstChild
+                while (child != null) {
+                    child.accept(this)
+                    child = child.nextSibling
+                }
+            }
+        })
+
+        val firstElement = genericPsi.firstChild.nextSibling.nextSibling
+        val endElement = genericPsi.lastChild.prevSibling
+        var curElement = firstElement
+
+        if (firstElement == endElement) {
+            return listOf(endElement)
+        }
+
+        val genericSpecElements = mutableListOf<PsiElement>()
+
+        while (curElement != endElement) {
+            if (curElement is LeafPsiElement || curElement is PsiWhiteSpace) {
+                curElement = curElement.nextSibling
+                continue
+            }
+
+            genericSpecElements.add(curElement)
+            curElement = curElement.nextSibling
+        }
+
+        genericSpecElements.add(endElement)
+
+        return genericSpecElements
+    }
+
+    fun instantiationPartsTypes(): List<ExPhpType> {
+        val instantiationParts = instantiationParts()
+        val instantiationTypes = instantiationParts.map {
+            PhpType().add(it.text).toExPhpType()!!
+        }
+
+        return instantiationTypes
+    }
+
+
     private fun resolveInstance(rawName: String): String {
         val (name, namespaceName) = splitAndResolveNamespace(this, rawName)
 
@@ -162,7 +228,7 @@ class GenericInstantiationPsiCommentImpl(type: IElementType, text: CharSequence)
                 else
                     pluralisedType
             } else {
-                aClass = name + reference
+                aClass = namespaceName + name
             }
         }
 

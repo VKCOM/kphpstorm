@@ -14,7 +14,6 @@ class FunctionUnnecessaryExplicitGenericInstantiationListInspection : PhpInspect
         return object : PhpElementVisitor() {
             override fun visitPhpFunctionCall(reference: FunctionReference) {
                 val call = GenericFunctionCall(reference)
-                call.resolveFunction()
                 if (call.function == null) return
                 if (call.explicitSpecsPsi == null) return
 

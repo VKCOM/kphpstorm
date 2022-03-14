@@ -79,7 +79,6 @@ class KphpParameterTypeMismatchInspection : PhpInspection() {
 
             val actualArgType = if (call is FunctionReference) {
                 val genericCall = GenericFunctionCall(call)
-                genericCall.resolveFunction()
                 if (genericCall.isGeneric())
                     genericCall.typeOfParam(argIdx) ?: argType
                 else

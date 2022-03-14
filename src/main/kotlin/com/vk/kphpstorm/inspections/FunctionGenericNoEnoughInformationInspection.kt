@@ -14,10 +14,9 @@ class FunctionGenericNoEnoughInformationInspection : PhpInspection() {
         return object : PhpElementVisitor() {
             override fun visitPhpFunctionCall(reference: FunctionReference) {
                 val call = GenericFunctionCall(reference)
-                call.resolveFunction()
                 if (call.function == null) return
 
-                val genericNames = call.function!!.genericNames()
+                val genericNames = call.function.genericNames()
 
                 if (call.explicitSpecsPsi == null) {
                     genericNames.any {

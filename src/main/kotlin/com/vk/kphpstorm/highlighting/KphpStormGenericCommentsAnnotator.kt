@@ -20,7 +20,6 @@ class KphpStormGenericCommentsAnnotator : Annotator {
         val parent = element.parent
         if (parent is FunctionReference) {
             val call = GenericFunctionCall(parent)
-            call.resolveFunction()
             if (call.isNoNeedExplicitSpec()) {
                 holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
                     .range(TextRange(element.textRange.startOffset, element.textRange.endOffset))
