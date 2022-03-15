@@ -43,7 +43,7 @@ class ExPhpTypeClassString(val inner: ExPhpType) : ExPhpType {
             if (rhs.items.size == 2 && containsString) {
                 val otherType = rhs.items.find { it != ExPhpType.STRING }
                 if (otherType == null) false
-                else inner.isAssignableFrom(otherType, project)
+                else isAssignableFrom(otherType, project)
             } else false
         }
         // class-string<T> совместим только с class-string<E> при условии
