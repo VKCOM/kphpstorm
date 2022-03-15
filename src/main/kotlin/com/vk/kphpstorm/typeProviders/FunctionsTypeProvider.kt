@@ -250,6 +250,7 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
         if (funcName == "shape") {
             val innerArray = p.parameters.firstOrNull() as? ArrayCreationExpression ?: return null
 
+            var containsUnresolved = false
             val types = ArrayCreationExpressionImpl.children(innerArray).mapNotNull {
                 if (it !is ArrayHashElement) return@mapNotNull null
                 if (it.value !is PhpTypedElement) return@mapNotNull null
@@ -257,12 +258,21 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
                 if (it.key !is StringLiteralExpression) return@mapNotNull null
 
                 val key = (it.key as StringLiteralExpression).contents
-                val type = (it.value as PhpTypedElement).type.global(p.project).toStringAsNested()
+                val type = (it.value as PhpTypedElement).type
+                if (!type.isComplete) {
+                    containsUnresolved = true
+                }
 
-                "$key:$type"
-            }.joinToString(",")
+                Pair(key, type)
+            }
 
-            return PhpType().add("shape($types)")
+            if (containsUnresolved) {
+                return PhpType().add(
+                    "#!h ${types.joinToString("ꄴ") { it.first + ":" + it.second.toStringAsNested("ꄶ") }}"
+                )
+            }
+
+            return inferShape(types)
         }
 
 //        println("unhandled function: $funcName")
@@ -281,6 +291,19 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
                 }.global(project)
             }
             return inferTuple(parameterTypes)
+        }
+
+        // inferring for "shape(...)" needs special decoding: any arguments are encoded to a single string
+        if (funcChar == 'h') {
+            val parameterTypes = argTypeStr.split('ꄴ').map {
+                val (key, unresolvedType) = it.split(':')
+                val type = PhpType().apply {
+                    unresolvedType.split('ꄶ').forEach { add(it) }
+                }.global(project)
+
+                Pair(key, type)
+            }
+            return inferShape(parameterTypes)
         }
 
         // for all other cases, just a single argument is encoded
@@ -351,6 +374,12 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
     private fun inferTuple(parameterTypes: List<PhpType>): PhpType {
         return PhpType().add(
                 parameterTypes.joinToString(",", "tuple(", ")") { it.toStringAsNested() }
+        )
+    }
+
+    private fun inferShape(parameterTypes: List<Pair<String, PhpType>>): PhpType {
+        return PhpType().add(
+            parameterTypes.joinToString(",", "shape(", ")") { it.first + ":" + it.second.toStringAsNested() }
         )
     }
 }
