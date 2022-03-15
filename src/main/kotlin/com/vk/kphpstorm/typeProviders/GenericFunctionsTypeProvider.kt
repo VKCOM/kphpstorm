@@ -30,7 +30,7 @@ class GenericFunctionsTypeProvider : PhpTypeProvider4 {
             return null
         }
 
-        val data = IndexingGenericFunctionCall(p.fqn!!, p.parameters, p).pack()
+        val data = IndexingGenericFunctionCall(p.fqn!!, p.parameters, p).pack() ?: return null
         return PhpType().add("#П$data")
     }
 

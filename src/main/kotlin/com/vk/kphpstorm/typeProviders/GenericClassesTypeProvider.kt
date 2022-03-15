@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
 import com.vk.kphpstorm.exphptype.ExPhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeGenericsT
 import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
+import com.vk.kphpstorm.generics.GenericUtil.isGeneric
 import com.vk.kphpstorm.generics.GenericUtil.isReturnGeneric
 import com.vk.kphpstorm.generics.IndexingGenericFunctionCall
 import com.vk.kphpstorm.generics.ResolvingGenericConstructorCall
@@ -40,7 +41,7 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
             val resultType = PhpType()
             lhsType.types.forEach { type ->
                 val fqn = "$type.$methodName"
-                val data = IndexingGenericFunctionCall(fqn, p.parameters, p, "@MC@").pack()
+                val data = IndexingGenericFunctionCall(fqn, p.parameters, p, "@MC@").pack() ?: return@forEach
 
                 resultType.add("#±:$data")
             }
@@ -52,7 +53,7 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
         if (p is NewExpressionImpl) {
             val classRef = p.classReference ?: return null
             val fqn = classRef.fqn + "__construct"
-            val data = IndexingGenericFunctionCall(fqn, p.parameters, p, "@CO@").pack()
+            val data = IndexingGenericFunctionCall(fqn, p.parameters, p, "@CO@").pack() ?: return null
             return PhpType().add("#±$data")
         }
 
@@ -103,6 +104,10 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
     private fun completeConstruct(project: Project, packedData: String): PhpType? {
         val call = ResolvingGenericConstructorCall(project)
         if (!call.unpack(packedData)) {
+            return null
+        }
+
+        if (!call.klass!!.isGeneric()) {
             return null
         }
 

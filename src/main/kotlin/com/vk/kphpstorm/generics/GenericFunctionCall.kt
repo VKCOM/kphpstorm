@@ -195,9 +195,13 @@ class IndexingGenericFunctionCall(
 ) {
     private val explicitSpecsPsi = findInstantiationComment(reference)
 
-    fun pack(): String {
+    fun pack(): String? {
         val explicitSpecsString = extractExplicitGenericsT().joinToString("$$")
         val callArgsString = argumentsTypes().joinToString("$$")
+        // В случае когда нет информации, то мы не сможем вывести более точный тип
+        if (explicitSpecsString.isEmpty() && callArgsString.isEmpty()) {
+            return null
+        }
         return "${fqn}$separator$explicitSpecsString$separator$callArgsString"
     }
 
