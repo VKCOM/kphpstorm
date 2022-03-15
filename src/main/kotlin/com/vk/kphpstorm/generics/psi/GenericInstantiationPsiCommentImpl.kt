@@ -21,6 +21,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement
 import com.jetbrains.php.lang.psi.elements.PhpReference
 import com.jetbrains.php.lang.psi.elements.impl.ClassReferenceImpl
+import com.jetbrains.php.lang.psi.elements.impl.NewExpressionImpl
 import com.jetbrains.php.lang.psi.elements.impl.PhpReferenceImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeSignatureKey
@@ -207,8 +208,17 @@ class GenericInstantiationPsiCommentImpl(type: IElementType, text: CharSequence)
     private fun resolveInstance(rawName: String): String {
         val (name, namespaceName) = splitAndResolveNamespace(this, rawName)
 
+        val parent = prevSibling.parent
+        val reference = if (parent is FunctionReference) {
+            parent
+        } else if (parent is NewExpressionImpl) {
+            parent.classReference
+        } else {
+            null
+        } ?: return namespaceName + name
+
         return resolveLocal(
-            prevSibling.parent as FunctionReference,
+            reference,
             name, namespaceName
         )
     }

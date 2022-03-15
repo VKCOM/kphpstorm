@@ -9,12 +9,12 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType
  * C<T...>, e.g. Wrapper<int>, Container<tuple<int, A>[]>, future<int>
  */
 class ExPhpTypeTplInstantiation(val classFqn: String, val specializationList: List<ExPhpType>) : ExPhpType {
-    override fun toString() = "$classFqn<${specializationList.joinToString(",")}>"
+    override fun toString() = "$classFqn(${specializationList.joinToString(",")})"
 
-    override fun toHumanReadable(expr: PhpPsiElement) = "${PhpCodeInsightUtil.createQualifiedName(PhpCodeInsightUtil.findScopeForUseOperator(expr)!!, classFqn)}<${specializationList.joinToString(",") { it.toHumanReadable(expr) }}>"
+    override fun toHumanReadable(expr: PhpPsiElement) = "${PhpCodeInsightUtil.createQualifiedName(PhpCodeInsightUtil.findScopeForUseOperator(expr)!!, classFqn)}(${specializationList.joinToString(",") { it.toHumanReadable(expr) }})"
 
     override fun toPhpType(): PhpType {
-        return PhpType().add("$classFqn<${specializationList.joinToString(",")}>")
+        return PhpType().add("$classFqn(${specializationList.joinToString(",")})")
     }
 
     override fun getSubkeyByIndex(indexKey: String): ExPhpType? {

@@ -1,15 +1,15 @@
 package com.vk.kphpstorm.generics
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.jetbrains.php.PhpIndex
+import com.jetbrains.php.lang.psi.elements.*
 import com.jetbrains.php.lang.psi.elements.Function
-import com.jetbrains.php.lang.psi.elements.FunctionReference
-import com.jetbrains.php.lang.psi.elements.Parameter
-import com.jetbrains.php.lang.psi.elements.PhpTypedElement
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.*
-import com.vk.kphpstorm.generics.GenericFunctionUtil.genericNames
-import com.vk.kphpstorm.generics.GenericFunctionUtil.isGeneric
+import com.vk.kphpstorm.generics.GenericUtil.findInstantiationComment
+import com.vk.kphpstorm.generics.GenericUtil.genericNames
+import com.vk.kphpstorm.generics.GenericUtil.isGeneric
 import com.vk.kphpstorm.generics.psi.GenericInstantiationPsiCommentImpl
 import com.vk.kphpstorm.helpers.toExPhpType
 import kotlin.math.min
@@ -26,10 +26,7 @@ class GenericsReifier(val project: Project) {
      * Having a call `f(...)` of a template function `f<T1, T2>(...)`, deduce T1 and T2
      * "auto deducing" for generics arguments is typically called "reification".
      */
-    fun reifyAllGenericsT(function: Function, argumentsTypes: List<ExPhpType?>) {
-        val genericTs = function.genericNames()
-        val parameters = function.parameters
-
+    fun reifyAllGenericsT(parameters: Array<Parameter>, genericTs: List<String>, argumentsTypes: List<ExPhpType?>) {
         for (i in 0 until min(argumentsTypes.size, parameters.size)) {
             val param = parameters[i] as? PhpTypedElement ?: continue
             val paramType = param.type.global(project)
@@ -190,17 +187,18 @@ class GenericInstantiationExtractor {
  * Полученная строка может быть передана далее в [ResolvingGenericFunctionCall.unpack],
  * для дальнейшей обработки.
  */
-class IndexingGenericFunctionCall(val call: FunctionReference) {
-    private val fqn = call.fqn
-    private val callArgs = call.parameters
-    private val explicitSpecsPsi = call.firstChild?.nextSibling?.takeIf {
-        it is GenericInstantiationPsiCommentImpl
-    } as? GenericInstantiationPsiCommentImpl
+class IndexingGenericFunctionCall(
+    private val fqn: String,
+    private val callArgs: Array<PsiElement>,
+    reference: PsiElement,
+    private val separator: String = "@@",
+) {
+    private val explicitSpecsPsi = findInstantiationComment(reference)
 
     fun pack(): String {
         val explicitSpecsString = extractExplicitGenericsT().joinToString("$$")
         val callArgsString = argumentsTypes().joinToString("$$")
-        return "${fqn}@@$explicitSpecsString@@$callArgsString"
+        return "${fqn}$separator$explicitSpecsString$separator$callArgsString"
     }
 
     private fun argumentsTypes(): List<ExPhpType?> {
@@ -221,29 +219,43 @@ class IndexingGenericFunctionCall(val call: FunctionReference) {
  * [specialization], данный метод возвращает список шаблонных типов
  * для данного вызова.
  */
-class ResolvingGenericFunctionCall(val project: Project) {
-    lateinit var function: Function
-    lateinit var genericTs: List<String>
-    private lateinit var parameters: Array<Parameter>
-    private lateinit var argumentsTypes: List<ExPhpType?>
-    private lateinit var explicitGenericsT: List<ExPhpType?>
+abstract class ResolvingGenericBase(val project: Project) {
+    abstract var parameters: Array<Parameter>
+    abstract var genericTs: List<String>
+
+    protected lateinit var argumentsTypes: List<ExPhpType>
+    protected lateinit var explicitGenericsT: List<ExPhpType>
 
     private val reifier = GenericsReifier(project)
 
-    fun specialization(): List<ExPhpType?> {
+    fun specialization(): List<ExPhpType> {
         return explicitGenericsT.ifEmpty { reifier.implicitSpecs }
     }
 
     fun unpack(packedData: String): Boolean {
         if (unpackImpl(packedData)) {
-            reifier.reifyAllGenericsT(function, argumentsTypes)
+            reifier.reifyAllGenericsT(parameters, genericTs, argumentsTypes)
             return true
         }
 
         return false
     }
 
-    private fun unpackImpl(packedData: String): Boolean {
+    protected abstract fun unpackImpl(packedData: String): Boolean
+
+    protected fun unpackTypeArray(text: String) = if (text.isNotEmpty())
+        text.split("$$").map { PhpType().add(it).toExPhpType()!! }
+    else
+        emptyList()
+}
+
+
+class ResolvingGenericFunctionCall(project: Project) : ResolvingGenericBase(project) {
+    lateinit var function: Function
+    override lateinit var parameters: Array<Parameter>
+    override lateinit var genericTs: List<String>
+
+    override fun unpackImpl(packedData: String): Boolean {
         val parts = packedData.split("@@")
         if (parts.size != 3) {
             return false
@@ -260,11 +272,83 @@ class ResolvingGenericFunctionCall(val project: Project) {
 
         return true
     }
+}
 
-    private fun unpackTypeArray(text: String) = if (text.isNotEmpty())
-        text.split("$$").map { PhpType().add(it).toExPhpType() }
-    else
-        emptyList()
+class ResolvingGenericConstructorCall(project: Project) : ResolvingGenericBase(project) {
+    var klass: PhpClass? = null
+    var method: Method? = null
+    override lateinit var parameters: Array<Parameter>
+    override lateinit var genericTs: List<String>
+
+    override fun unpackImpl(packedData: String): Boolean {
+        val parts = packedData.split("@CO@")
+        if (parts.size != 3) {
+            return false
+        }
+
+        val fqn = parts[0]
+        val className = fqn.substring(0, fqn.indexOf("__construct"))
+
+        klass = PhpIndex.getInstance(project).getClassesByFQN(className).firstOrNull() ?: return false
+        method = klass!!.constructor
+
+        parameters = if (klass!!.constructor != null) klass!!.constructor!!.parameters else emptyArray()
+        genericTs = klass!!.genericNames()
+
+        explicitGenericsT = unpackTypeArray(parts[1])
+        argumentsTypes = unpackTypeArray(parts[2])
+
+        return true
+    }
+}
+
+class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(project) {
+    var klass: PhpClass? = null
+    var method: Method? = null
+    var classGenericType: ExPhpTypeTplInstantiation? = null
+    override lateinit var parameters: Array<Parameter>
+    override lateinit var genericTs: List<String>
+    lateinit var classGenericTs: List<String>
+
+    override fun unpackImpl(packedData: String): Boolean {
+        val parts = packedData.split("@MC@")
+        if (parts.size != 3) {
+            return false
+        }
+
+        val fqn = parts[0]
+
+        val classNameTypeString = fqn.substring(1, fqn.indexOf('.'))
+
+        val classType = PhpType().add(classNameTypeString).global(project)
+        val parsed = classType.toExPhpType()
+
+        // for IDE we return PhpType "A"|"A<T>", that's why
+        // A<A<T>> is resolved as "A"|"A<A/A<T>>", so if pipe — search for instantiation
+        val instantiation = when (parsed) {
+            is ExPhpTypePipe     -> parsed.items.firstOrNull { it is ExPhpTypeTplInstantiation }
+            is ExPhpTypeNullable -> parsed.inner
+            else                 -> parsed
+        } as? ExPhpTypeTplInstantiation ?: return false
+
+        classGenericType = instantiation
+        val methodName = fqn.substring(fqn.indexOf('.') + 1, fqn.length)
+
+        klass = PhpIndex.getInstance(project).getClassesByFQN(instantiation.classFqn).firstOrNull() ?: return false
+        method = klass!!.findMethodByName(methodName)
+        if (method == null) {
+            return false
+        }
+
+        parameters = method!!.parameters
+        genericTs = method!!.genericNames()
+        classGenericTs = klass!!.genericNames()
+
+        explicitGenericsT = unpackTypeArray(parts[1])
+        argumentsTypes = unpackTypeArray(parts[2])
+
+        return true
+    }
 }
 
 /**
@@ -311,9 +395,7 @@ class GenericFunctionCall(call: FunctionReference) {
     private val callArgs = call.parameters
     private val argumentsTypes = callArgs.filterIsInstance<PhpTypedElement>().map { it.type.toExPhpType() }
 
-    val explicitSpecsPsi = call.firstChild?.nextSibling?.takeIf {
-        it is GenericInstantiationPsiCommentImpl
-    } as? GenericInstantiationPsiCommentImpl
+    val explicitSpecsPsi = findInstantiationComment(call)
 
     private val extractor = GenericInstantiationExtractor()
     private val reifier = GenericsReifier(call.project)
@@ -338,7 +420,7 @@ class GenericFunctionCall(call: FunctionReference) {
         // необходимы обв списка для дальнейших инспекций
 
         // В первую очередь, выводим все типы шаблонов из аргументов функции (при наличии)
-        reifier.reifyAllGenericsT(function, argumentsTypes)
+        reifier.reifyAllGenericsT(function.parameters, function.genericNames(), argumentsTypes)
         // Далее, выводим все типы шаблонов из явного списка типов (при наличии)
         extractor.extractExplicitGenericsT(function, explicitSpecsPsi)
     }

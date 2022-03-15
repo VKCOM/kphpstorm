@@ -5,11 +5,19 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment
 import com.jetbrains.php.lang.psi.elements.Function
+import com.jetbrains.php.lang.psi.elements.PhpClass
+import com.jetbrains.php.lang.psi.elements.impl.MethodReferenceImpl
+import com.jetbrains.php.lang.psi.elements.impl.NewExpressionImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
+import com.vk.kphpstorm.generics.psi.GenericInstantiationPsiCommentImpl
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagGenericPsiImpl
 
-object GenericFunctionUtil {
+object GenericUtil {
     fun Function.isGeneric(): Boolean {
+        return docComment?.getTagElementsByName("@kphp-generic")?.firstOrNull() != null
+    }
+
+    fun PhpClass.isGeneric(): Boolean {
         return docComment?.getTagElementsByName("@kphp-generic")?.firstOrNull() != null
     }
 
@@ -18,10 +26,15 @@ object GenericFunctionUtil {
         return isGeneric(genericNames)
     }
 
+    fun PhpType.isGeneric(c: PhpClass): Boolean {
+        val genericNames = c.genericNames()
+        return isGeneric(genericNames)
+    }
+
     fun PhpType.isGeneric(genericNames: List<String>): Boolean {
         // TODO: Подумать как сделать улучшить
         return genericNames.any { name -> types.contains("%$name") } ||
-                genericNames.any { types.first().contains("%$it") }
+                genericNames.any { types.any { type -> type.contains("%$it")  } }
     }
 
     fun Function.isReturnGeneric(): Boolean {
@@ -32,10 +45,32 @@ object GenericFunctionUtil {
         }
     }
 
-    fun Function.genericNames(): List<String> {
+    fun Function.genericNames(): List<String> = genericNames(docComment)
+
+    fun PhpClass.genericNames(): List<String> = genericNames(docComment)
+
+    private fun genericNames(docComment: PhpDocComment?): List<String> {
         val docT = docComment?.getTagElementsByName("@kphp-generic")?.firstOrNull() as? KphpDocTagGenericPsiImpl
             ?: return emptyList()
         return docT.getGenericArguments()
+    }
+
+    fun findInstantiationComment(el: PsiElement): GenericInstantiationPsiCommentImpl? {
+        val candidate = when (el) {
+            is NewExpressionImpl -> {
+                el.classReference?.nextSibling
+            }
+            is MethodReferenceImpl -> {
+                el.firstChild?.nextSibling?.nextSibling?.nextSibling
+            }
+            else -> {
+                el.firstChild?.nextSibling
+            }
+        }
+
+        if (candidate == null) return null
+        if (candidate !is GenericInstantiationPsiCommentImpl) return null
+        return candidate
     }
 
     fun nameIsGeneric(el: PsiElement, text: String): Boolean {
@@ -52,6 +87,17 @@ object GenericFunctionUtil {
             }
             // например, когда мы внутри @var T, то когда дойдём до функции/класса вверх, @kphp-generic будет в нём
             if (parent is Function) {
+                val doc = PsiTreeUtil.skipWhitespacesBackward(parent) as? PhpDocComment
+                if (doc != null) {
+                    for (child in doc.children) {
+                        if (child is KphpDocTagGenericPsiImpl && child.getGenericArguments().contains(text)) {
+                            return true
+                        }
+                    }
+                }
+            }
+
+            if (parent is PhpClass) {
                 val doc = PsiTreeUtil.skipWhitespacesBackward(parent) as? PhpDocComment
                 if (doc != null) {
                     for (child in doc.children) {

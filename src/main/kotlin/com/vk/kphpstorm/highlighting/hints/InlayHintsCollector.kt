@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.suggested.endOffset
 import com.jetbrains.php.lang.psi.elements.FunctionReference
 import com.vk.kphpstorm.generics.GenericFunctionCall
-import com.vk.kphpstorm.generics.GenericFunctionUtil.genericNames
+import com.vk.kphpstorm.generics.GenericUtil.genericNames
 
 @Suppress("UnstableApiUsage")
 class InlayHintsCollector(

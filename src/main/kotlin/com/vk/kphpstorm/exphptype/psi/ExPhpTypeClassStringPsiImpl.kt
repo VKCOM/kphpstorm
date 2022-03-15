@@ -4,7 +4,7 @@ import com.intellij.lang.ASTNode
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocElementType
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
-import com.vk.kphpstorm.generics.GenericFunctionUtil
+import com.vk.kphpstorm.generics.GenericUtil
 
 /**
  * class-string<Foo> — psi is class-string(Foo) corresponding type of Foo::class
@@ -23,7 +23,7 @@ class ExPhpTypeClassStringPsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
 
         // В случае когда класс на самом деле является шаблонным типом нам нужно мимикрировать тип
         // и добавить знак процента к имени типа, чтобы в дальнейшем работать с ним как с шаблоном.
-        val genericMark = if (GenericFunctionUtil.nameIsGeneric(this, genericType)) "%" else ""
+        val genericMark = if (GenericUtil.nameIsGeneric(this, genericType)) "%" else ""
 
         return PhpType().add("class-string($genericMark$genericType)")
     }

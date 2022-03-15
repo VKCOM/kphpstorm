@@ -41,6 +41,6 @@ class ExPhpTypeTplInstantiationPsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
             child = child.nextSibling
         }
 
-        return PhpType().add(genericClassName).add("$genericClassName<$innerTypesStr>")
+        return PhpType().add(genericClassName).add("$genericClassName($innerTypesStr)")
     }
 }

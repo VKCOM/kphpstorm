@@ -180,13 +180,13 @@ object PhpTypeToExPhpTypeParsing {
     }
 
     private fun parseGenericSpecialization(builder: ExPhpTypeBuilder): List<ExPhpType>? {
-        if (!builder.compareAndEat('<'))
+        if (!builder.compareAndEat('<') && !builder.compareAndEat('('))
             return null
 
         val specialization = mutableListOf<ExPhpType>()
         while (true) {
             specialization.add(parseTypeExpression(builder) ?: return null)
-            if (builder.compareAndEat('>'))
+            if (builder.compareAndEat('>') || builder.compareAndEat(')'))
                 return specialization
 
             if (builder.compareAndEat(','))
@@ -283,7 +283,7 @@ object PhpTypeToExPhpTypeParsing {
             return ExPhpTypeClassString(genericT)
         }
 
-        if (builder.compare('<')) {
+        if (builder.compare('<') || builder.compare('(')) {
             val specialization = parseGenericSpecialization(builder) ?: return null
             return ExPhpTypeTplInstantiation(fqn, specialization)
         }

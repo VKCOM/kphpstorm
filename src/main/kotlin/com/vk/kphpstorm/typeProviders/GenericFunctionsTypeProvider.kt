@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpCharBasedTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
 import com.vk.kphpstorm.exphptype.ExPhpType
-import com.vk.kphpstorm.generics.GenericFunctionUtil.isReturnGeneric
+import com.vk.kphpstorm.generics.GenericUtil.isReturnGeneric
 import com.vk.kphpstorm.generics.IndexingGenericFunctionCall
 import com.vk.kphpstorm.generics.ResolvingGenericFunctionCall
 import com.vk.kphpstorm.helpers.toExPhpType
@@ -30,7 +30,7 @@ class GenericFunctionsTypeProvider : PhpTypeProvider4 {
             return null
         }
 
-        val data = IndexingGenericFunctionCall(p).pack()
+        val data = IndexingGenericFunctionCall(p.fqn!!, p.parameters, p).pack()
         return PhpType().add("#П$data")
     }
 
@@ -57,7 +57,7 @@ class GenericFunctionsTypeProvider : PhpTypeProvider4 {
         val specializationNameMap = mutableMapOf<String, ExPhpType>()
 
         for (i in 0 until min( call.genericTs.size, specialization.size)) {
-            specializationNameMap[ call.genericTs[i]] = specialization[i]!!
+            specializationNameMap[ call.genericTs[i]] = specialization[i]
         }
 
         val methodReturnTag = call.function.docComment?.returnTag ?: return null

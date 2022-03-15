@@ -4,7 +4,7 @@ import com.intellij.lang.ASTNode
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocElementType
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
-import com.vk.kphpstorm.generics.GenericFunctionUtil
+import com.vk.kphpstorm.generics.GenericUtil
 
 /**
  * 'A', 'asdf\Instance', '\VK\Memcache' — instances (not primitives!) — psi is just PhpDocType
@@ -21,7 +21,7 @@ class ExPhpTypeInstancePsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
             PhpType().add(text)
         }
 
-        if (GenericFunctionUtil.nameIsGeneric(this, text)) {
+        if (GenericUtil.nameIsGeneric(this, text)) {
             return PhpType().add("%$text")
         }
 

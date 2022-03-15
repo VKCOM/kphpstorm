@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection
 import com.jetbrains.php.lang.psi.elements.FunctionReference
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.vk.kphpstorm.generics.GenericFunctionCall
-import com.vk.kphpstorm.generics.GenericFunctionUtil.genericNames
+import com.vk.kphpstorm.generics.GenericUtil.genericNames
 
 class FunctionGenericInstantiationArgsCountMismatchInspection : PhpInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
