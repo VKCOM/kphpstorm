@@ -205,8 +205,8 @@ class IndexingGenericFunctionCall(
         return "${fqn}$separator$explicitSpecsString$separator$callArgsString"
     }
 
-    private fun argumentsTypes(): List<ExPhpType?> {
-        return callArgs.filterIsInstance<PhpTypedElement>().map { it.type.toExPhpType() }
+    private fun argumentsTypes(): List<PhpType> {
+        return callArgs.filterIsInstance<PhpTypedElement>().map { it.type }
     }
 
     private fun extractExplicitGenericsT(): List<ExPhpType> {
@@ -248,7 +248,7 @@ abstract class ResolvingGenericBase(val project: Project) {
     protected abstract fun unpackImpl(packedData: String): Boolean
 
     protected fun unpackTypeArray(text: String) = if (text.isNotEmpty())
-        text.split("$$").map { PhpType().add(it).toExPhpType()!! }
+        text.split("$$").mapNotNull { PhpType().add(it).global(project).toExPhpType() }
     else
         emptyList()
 }
@@ -260,19 +260,21 @@ class ResolvingGenericFunctionCall(project: Project) : ResolvingGenericBase(proj
     override lateinit var genericTs: List<String>
 
     override fun unpackImpl(packedData: String): Boolean {
-        val parts = packedData.split("@@")
-        if (parts.size != 3) {
-            return false
-        }
+        val firstSeparatorIndex = packedData.indexOf("@@")
+        val functionName = packedData.substring(0, firstSeparatorIndex)
 
-        val functionName = parts[0]
+        val remainingPackedData = packedData.substring(firstSeparatorIndex + "@@".length)
+        val secondSeparatorIndex = remainingPackedData.indexOf("@@")
+        val explicitGenericsString = remainingPackedData.substring(0, secondSeparatorIndex)
+        val argumentsTypesString = remainingPackedData.substring(secondSeparatorIndex + "@@".length)
+
         function = PhpIndex.getInstance(project).getFunctionsByFQN(functionName).firstOrNull() ?: return false
 
         genericTs = function.genericNames()
         parameters = function.parameters
 
-        explicitGenericsT = unpackTypeArray(parts[1])
-        argumentsTypes = unpackTypeArray(parts[2])
+        explicitGenericsT = unpackTypeArray(explicitGenericsString)
+        argumentsTypes = unpackTypeArray(argumentsTypesString)
 
         return true
     }
@@ -397,7 +399,7 @@ class GenericFunctionCall(call: FunctionReference) {
     val genericTs = mutableListOf<String>()
     private val parameters = mutableListOf<Parameter>()
     private val callArgs = call.parameters
-    private val argumentsTypes = callArgs.filterIsInstance<PhpTypedElement>().map { it.type.toExPhpType() }
+    private val argumentsTypes = callArgs.filterIsInstance<PhpTypedElement>().map { it.type.global(project).toExPhpType() }
 
     val explicitSpecsPsi = findInstantiationComment(call)
 

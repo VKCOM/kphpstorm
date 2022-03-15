@@ -7,7 +7,23 @@ class GenericsTypesTest : TypeTestBase() {
         runFixture("generics/simple_functions.fixture.php")
     }
 
-    fun testClassResolving() {
+    fun testClassResolvingExplicit() {
         runFixture("generics/class_resolving.fixture.php")
+    }
+
+    fun testClassImplicit() {
+        runFixture("generics/class_implicit.fixture.php")
+    }
+
+    fun testPrimitivesExplicit() {
+        runFixture("generics/primitives_explicit.fixture.php")
+    }
+
+    fun testPrimitivesImplicit() {
+        runFixture("generics/primitives_implicit.fixture.php")
+    }
+
+    fun testClassString() {
+        runFixture("generics/class-string.fixture.php")
     }
 }

@@ -242,7 +242,7 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
                 parameterTypes.all { it.isComplete } -> inferTuple(parameterTypes)
                 else                                 -> PhpType().add(
                         // use special chars do decode parameters and pipes in a single string; avoid | and even / characters
-                        "#!t ${parameterTypes.joinToString("ꄳ") { it.toStringAsNested("⎋") }}")
+                        "#!t ${parameterTypes.joinToString("ꄳ") { it.toStringAsNested("⎋") } + "ꄳ"}")
             }
         }
 
@@ -285,9 +285,14 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
 
         // inferring for "tuple(...)" needs special decoding: any arguments are encoded to a single string
         if (funcChar == 't') {
-            val parameterTypes = argTypeStr.split('ꄳ').map {
+            val fixedArgTypeStr = if (argTypeStr.contains("ꄳ|#")) {
+                argTypeStr.substring(0, argTypeStr.indexOf("ꄳ|#"))
+            } else {
+                argTypeStr.removeSuffix("ꄳ")
+            }
+            val parameterTypes = fixedArgTypeStr.split('ꄳ').map {
                 PhpType().apply {
-                    it.split('⎋').forEach { add(it) }
+                    it.removePrefix("|").split('⎋').forEach { add(it) }
                 }.global(project)
             }
             return inferTuple(parameterTypes)
@@ -338,7 +343,7 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
         val argType = (arg as? PhpTypedElement)?.type ?: return null
         return if (argType.isEmpty) KphpPrimitiveTypes.PHP_TYPE_ANY else argType
     }
-    
+
 
     private fun inferTypeSameAs(argType: PhpType): PhpType {
         return argType.force()

@@ -5,6 +5,10 @@ namespace Classes {
   class B {}
   class C {}
   class D {}
+
+  class Child1 extends Base {}
+  class Child2 extends Base {}
+  class Base {}
 }
 
 namespace {

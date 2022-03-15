@@ -18,7 +18,9 @@ object PsiToExPhpType {
     fun dropGenerics(type: ExPhpType): ExPhpType {
         // TODO: добавить все типы
         if (type is ExPhpTypePipe) {
-            return ExPhpTypePipe(type.items.filter { it !is ExPhpTypeGenericsT }.map { dropGenerics(it) })
+            return ExPhpTypePipe(type.items.filter {
+                it !is ExPhpTypeGenericsT && (it !is ExPhpTypeArray || it.inner !is ExPhpTypeGenericsT)
+            }.map { dropGenerics(it) })
         }
 
         if (type is ExPhpTypeNullable) {
