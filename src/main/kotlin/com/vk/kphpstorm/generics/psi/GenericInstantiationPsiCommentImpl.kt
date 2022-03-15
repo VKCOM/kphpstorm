@@ -5,6 +5,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.impl.source.tree.PsiCommentImpl
 import com.intellij.psi.tree.IElementType
@@ -158,7 +159,9 @@ class GenericInstantiationPsiCommentImpl(type: IElementType, text: CharSequence)
                     val newName = resolveInstance(element.text)
                     val namePsi = element.firstChild
                     if (namePsi is LeafPsiElement) {
-                        namePsi.rawReplaceWithText(newName)
+                        DebugUtil.performPsiModification<Exception>(null) {
+                            namePsi.rawReplaceWithText(newName)
+                        }
                     }
                 }
 
@@ -170,9 +173,9 @@ class GenericInstantiationPsiCommentImpl(type: IElementType, text: CharSequence)
             }
         })
 
-        val firstElement = genericPsi.firstChild.nextSibling.nextSibling
-        val endElement = genericPsi.lastChild.prevSibling
-        var curElement = firstElement
+        val firstElement = genericPsi.firstChild?.nextSibling?.nextSibling
+        val endElement = genericPsi.lastChild?.prevSibling
+        var curElement: PsiElement? = firstElement ?: return emptyList()
 
         if (firstElement == endElement) {
             return listOf(endElement)
@@ -180,7 +183,7 @@ class GenericInstantiationPsiCommentImpl(type: IElementType, text: CharSequence)
 
         val genericSpecElements = mutableListOf<PsiElement>()
 
-        while (curElement != endElement) {
+        while (curElement != endElement && curElement != null) {
             if (curElement is LeafPsiElement || curElement is PsiWhiteSpace) {
                 curElement = curElement.nextSibling
                 continue
@@ -190,15 +193,17 @@ class GenericInstantiationPsiCommentImpl(type: IElementType, text: CharSequence)
             curElement = curElement.nextSibling
         }
 
-        genericSpecElements.add(endElement)
+        if (endElement != null) {
+            genericSpecElements.add(endElement)
+        }
 
         return genericSpecElements
     }
 
     fun instantiationPartsTypes(): List<ExPhpType> {
         val instantiationParts = instantiationParts()
-        val instantiationTypes = instantiationParts.map {
-            PhpType().add(it.text).toExPhpType()!!
+        val instantiationTypes = instantiationParts.mapNotNull {
+            PhpType().add(it.text).toExPhpType()
         }
 
         return instantiationTypes
