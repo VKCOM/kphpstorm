@@ -18,7 +18,8 @@ class KphpStormTypeInfoProvider : ExpressionTypeProvider<PhpTypedElement>() {
 
     override fun getInformationHint(element: PhpTypedElement): String {
         val phpType = element.type.global(element.project)
-        return phpType.toExPhpType()?.let { PsiToExPhpType.dropGenerics(it).toHumanReadable(element) } ?: phpType.toString()
+        val exPhpType = phpType.toExPhpType() ?: return phpType.toString()
+        return PsiToExPhpType.dropGenerics(exPhpType)?.toHumanReadable(element) ?: phpType.toString()
     }
 
     override fun getExpressionsAt(elementAt: PsiElement): List<PhpTypedElement> {

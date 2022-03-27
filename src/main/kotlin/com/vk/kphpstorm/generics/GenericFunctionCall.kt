@@ -3,6 +3,7 @@ package com.vk.kphpstorm.generics
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.PhpIndex
+import com.jetbrains.php.lang.psi.PhpPsiElementFactory
 import com.jetbrains.php.lang.psi.elements.*
 import com.jetbrains.php.lang.psi.elements.Function
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
@@ -76,6 +77,25 @@ class GenericsReifier(val project: Project) {
         }
 
         if (paramExType is ExPhpTypePipe) {
+            // если случай paramExType это Vector|Vector<%T> и argExType это Vector|Vector<A>
+            val instantiationParamType =
+                paramExType.items.find { it is ExPhpTypeTplInstantiation } as ExPhpTypeTplInstantiation?
+            if (instantiationParamType != null && argExType is ExPhpTypePipe) {
+                val instantiationArgType =
+                    argExType.items.find { it is ExPhpTypeTplInstantiation } as ExPhpTypeTplInstantiation?
+                if (instantiationArgType != null) {
+                    for (i in 0 until min(
+                        instantiationArgType.specializationList.size,
+                        instantiationParamType.specializationList.size
+                    )) {
+                        reifyArgumentGenericsT(
+                            instantiationArgType.specializationList[i],
+                            instantiationParamType.specializationList[i]
+                        )
+                    }
+                }
+            }
+
             // если случай T|false
             if (paramExType.items.size == 2 && paramExType.items.any { it == ExPhpType.FALSE }) {
                 if (argExType is ExPhpTypePipe) {
@@ -377,6 +397,125 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
     }
 }
 
+class GenericConstructorCall(call: NewExpression) : GenericCall(call.project) {
+    override val callArgs: Array<PsiElement> = call.parameters
+    override val argumentsTypes: List<ExPhpType?> = callArgs
+        .filterIsInstance<PhpTypedElement>().map { it.type.global(project).toExPhpType() }
+    override val explicitSpecsPsi = findInstantiationComment(call)
+
+    private val klass: PhpClass?
+    private val method: Method?
+
+    init {
+        val className = call.classReference?.fqn
+        klass = PhpIndex.getInstance(project).getClassesByFQN(className).firstOrNull()
+        val constructor = klass?.constructor
+
+        // Если у класса нет конструктора, то создаем его псевдо версию
+        method = constructor ?: createPseudoConstructor(project, klass?.name ?: "Foo")
+
+        init()
+    }
+
+    override fun function() = method
+
+    override fun isResolved() = method != null && klass != null
+
+    override fun genericNames(): List<String> {
+        val methodsNames = method?.genericNames() ?: emptyList()
+        val classesNames = klass?.genericNames() ?: emptyList()
+
+        return mutableListOf<String>()
+            .apply { addAll(methodsNames) }
+            .apply { addAll(classesNames) }
+            .toList()
+    }
+
+    override fun isGeneric() = genericNames().isNotEmpty()
+
+    override fun toString(): String {
+        val function = function()
+        val explicit = explicitSpecs.joinToString(",")
+        val implicit = implicitSpecs.joinToString(",")
+        return "${klass?.fqn ?: "UnknownClass"}->__construct<$explicit>($implicit)"
+    }
+
+    private fun createPseudoConstructor(project: Project, className: String): Method {
+        return PhpPsiElementFactory.createPhpPsiFromText(
+            project,
+            Method::class.java, "class $className{ public function __construct() {} }"
+        )
+    }
+}
+
+class GenericMethodCall(call: MethodReference) : GenericCall(call.project) {
+    override val callArgs: Array<PsiElement> = call.parameters
+    override val argumentsTypes: List<ExPhpType?> = callArgs
+        .filterIsInstance<PhpTypedElement>().map { it.type.global(project).toExPhpType() }
+    override val explicitSpecsPsi = findInstantiationComment(call)
+
+    private val klass: PhpClass?
+    private val method: Method?
+
+    init {
+//        val classTypes = call.classReference?.type?.global(project)?.toExPhpType()
+//
+//        val classType = if (classTypes is ExPhpTypePipe) {
+//            classTypes.items.firstOrNull { it is ExPhpTypeInstance } as? ExPhpTypeInstance
+//        } else {
+//            classTypes as? ExPhpTypeInstance
+//        }
+
+        method = call.resolve() as? Method
+        klass = method?.containingClass
+
+        init()
+    }
+
+    override fun function() = method
+
+    override fun isResolved() = method != null && klass != null
+
+    override fun genericNames() = method?.genericNames() ?: emptyList()
+
+    override fun isGeneric() = genericNames().isNotEmpty()
+
+    override fun toString(): String {
+        val function = function()
+        val explicit = explicitSpecs.joinToString(",")
+        val implicit = implicitSpecs.joinToString(",")
+        return "${klass?.fqn ?: "UnknownClass"}->${function?.name ?: "UnknownMethod"}<$explicit>($implicit)"
+    }
+}
+
+class GenericFunctionCall(call: FunctionReference) : GenericCall(call.project) {
+    override val callArgs: Array<PsiElement> = call.parameters
+    override val argumentsTypes: List<ExPhpType?> = callArgs
+        .filterIsInstance<PhpTypedElement>().map { it.type.global(project).toExPhpType() }
+    override val explicitSpecsPsi = findInstantiationComment(call)
+
+    private val function: Function? = call.resolve() as? Function
+
+    init {
+        init()
+    }
+
+    override fun function() = function
+
+    override fun isResolved() = function != null
+
+    override fun genericNames() = function?.genericNames() ?: emptyList()
+
+    override fun isGeneric() = function()?.isGeneric() == true
+
+    override fun toString(): String {
+        val function = function()
+        val explicit = explicitSpecs.joinToString(",")
+        val implicit = implicitSpecs.joinToString(",")
+        return "${function?.fqn ?: "UnknownFunction"}<$explicit>($implicit)"
+    }
+}
+
 /**
  * Ввиду причин описанных в [IndexingGenericFunctionCall], мы не можем использовать
  * объединенный класс для обработки вызова во время вывода типов. Однако в других
@@ -413,51 +552,48 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
  * f/*<C, D>*/(new A, new B); // => T1 = C, T2 = D
  * ```
  */
-class GenericFunctionCall(call: FunctionReference) {
-    val project = call.project
-    val function = call.resolve() as? Function
+abstract class GenericCall(val project: Project) {
+    abstract val callArgs: Array<PsiElement>
+    abstract val explicitSpecsPsi: GenericInstantiationPsiCommentImpl?
+    abstract val argumentsTypes: List<ExPhpType?>
+
+    abstract fun function(): Function?
+    abstract fun isResolved(): Boolean
+    abstract fun genericNames(): List<String>
+    abstract fun isGeneric(): Boolean
+
     val genericTs = mutableListOf<String>()
     private val parameters = mutableListOf<Parameter>()
-    private val callArgs = call.parameters
-    private val argumentsTypes =
-        callArgs.filterIsInstance<PhpTypedElement>().map { it.type.global(project).toExPhpType() }
 
-    val explicitSpecsPsi = findInstantiationComment(call)
-
-    private val extractor = GenericInstantiationExtractor()
-    private val reifier = GenericsReifier(call.project)
+    protected val extractor = GenericInstantiationExtractor()
+    protected val reifier = GenericsReifier(project)
 
     val explicitSpecs get() = extractor.explicitSpecs
     val implicitSpecs get() = reifier.implicitSpecs
     val implicitSpecializationNameMap get() = reifier.implicitSpecializationNameMap
     val implicitSpecializationErrors get() = reifier.implicitSpecializationErrors
 
-    init {
-        init()
-    }
+    protected fun init() {
+        val function = function() ?: return
+        if (!isGeneric()) return
 
-    private fun init() {
-        if (function == null || !isGeneric()) return
+        val genericNames = genericNames()
 
         parameters.addAll(function.parameters)
-        genericTs.addAll(function.genericNames())
+        genericTs.addAll(genericNames)
 
         // Несмотря на то, что явный список является превалирующим над
         // типами выведенными из аргументов функций, нам все равно
         // необходимы обв списка для дальнейших инспекций
 
         // В первую очередь, выводим все типы шаблонов из аргументов функции (при наличии)
-        reifier.reifyAllGenericsT(function.parameters, function.genericNames(), argumentsTypes)
+        reifier.reifyAllGenericsT(function.parameters, genericNames, argumentsTypes)
         // Далее, выводим все типы шаблонов из явного списка типов (при наличии)
         extractor.extractExplicitGenericsT(function, explicitSpecsPsi)
     }
 
     fun withExplicitSpecs(): Boolean {
         return explicitSpecsPsi != null
-    }
-
-    fun isGeneric(): Boolean {
-        return function?.isGeneric() == true
     }
 
     /**
@@ -478,10 +614,9 @@ class GenericFunctionCall(call: FunctionReference) {
      * ```
      */
     fun isNoNeedExplicitSpec(): Boolean {
-        if (function == null) return false
         if (explicitSpecsPsi == null) return false
 
-        val countGenericNames = function.genericNames().size
+        val countGenericNames = genericNames().size
         val countExplicitSpecs = explicitSpecs.size
         val countImplicitSpecs = implicitSpecs.size
 
@@ -523,7 +658,7 @@ class GenericFunctionCall(call: FunctionReference) {
      * В примере выше в результате будет возвращен тип `Foo`.
      */
     fun typeOfParam(index: Int): ExPhpType? {
-        if (function == null) return null
+        val function = function() ?: return null
 
         val param = function.getParameter(index) ?: return null
         val paramType = param.type
@@ -537,9 +672,5 @@ class GenericFunctionCall(call: FunctionReference) {
         return null
     }
 
-    override fun toString(): String {
-        val explicit = explicitSpecs.joinToString(",")
-        val implicit = implicitSpecs.joinToString(",")
-        return "${function?.fqn ?: "UnknownFunction"}<$explicit>($implicit)"
-    }
+    abstract override fun toString(): String
 }

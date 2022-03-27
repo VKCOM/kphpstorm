@@ -29,6 +29,7 @@ class ExPhpTypeTplInstantiation(val classFqn: String, val specializationList: Li
     override fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean = when (rhs) {
         is ExPhpTypeAny              -> true
         // not finished
+        is ExPhpTypePipe             -> rhs.items.any { it.isAssignableFrom(this, project) }
         is ExPhpTypeTplInstantiation -> classFqn == rhs.classFqn && specializationList.size == rhs.specializationList.size
         else                         -> false
     }

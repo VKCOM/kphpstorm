@@ -64,22 +64,22 @@
                      implementationClass="com.vk.kphpstorm.inspections.RedundantCastInspection"/>
 
     <!-- Generics inspections-->
-    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="FunctionGenericInstantiationArgsCountMismatchInspection"
-                     displayName="Function generic instantiation args count mismatch"
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="GenericInstantiationArgsCountMismatchInspection"
+                     displayName="Generic instantiation args count mismatch"
                      enabledByDefault="false" level="WARNING"
-                     implementationClass="com.vk.kphpstorm.inspections.FunctionGenericInstantiationArgsCountMismatchInspection"/>
-    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="FunctionUnnecessaryExplicitGenericInstantiationListInspection"
-                     displayName="Unnecessary explicit instantiation list for generic function"
+                     implementationClass="com.vk.kphpstorm.inspections.GenericInstantiationArgsCountMismatchInspection"/>
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="GenericUnnecessaryExplicitInstantiationListInspection"
+                     displayName="Unnecessary explicit instantiation list for generic call"
                      enabledByDefault="false" level="WARNING"
-                     implementationClass="com.vk.kphpstorm.inspections.FunctionUnnecessaryExplicitGenericInstantiationListInspection"/>
-    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="FunctionGenericNoEnoughInformationInspection"
+                     implementationClass="com.vk.kphpstorm.inspections.GenericUnnecessaryExplicitInstantiationListInspection"/>
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="GenericNoEnoughInformationInspection"
                      displayName="No information to reify generic types"
                      enabledByDefault="false" level="WARNING"
-                     implementationClass="com.vk.kphpstorm.inspections.FunctionGenericNoEnoughInformationInspection"/>
-    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="FunctionGenericSeveralGenericTypesInspection"
+                     implementationClass="com.vk.kphpstorm.inspections.GenericNoEnoughInformationInspection"/>
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="GenericSeveralGenericTypesInspection"
                      displayName="Several possibly type for generic type"
                      enabledByDefault="false" level="WARNING"
-                     implementationClass="com.vk.kphpstorm.inspections.FunctionGenericSeveralGenericTypesInspection"/>
+                     implementationClass="com.vk.kphpstorm.inspections.GenericSeveralGenericTypesInspection"/>
 
     <intentionAction>
       <className>com.vk.kphpstorm.inspections.PrettifyPhpdocBlockIntention</className>

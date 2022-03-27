@@ -15,20 +15,31 @@ object PsiToExPhpType {
                 else               -> null
             }
 
-    fun dropGenerics(type: ExPhpType): ExPhpType {
+    fun dropGenerics(type: ExPhpType): ExPhpType? {
         // TODO: добавить все типы
         if (type is ExPhpTypePipe) {
-            return ExPhpTypePipe(type.items.filter {
-                it !is ExPhpTypeGenericsT && (it !is ExPhpTypeArray || it.inner !is ExPhpTypeGenericsT)
-            }.map { dropGenerics(it) })
+            val items = type.items.mapNotNull { dropGenerics(it) }
+            if (items.isEmpty()) return null
+
+            return ExPhpTypePipe(items)
+        }
+
+        if (type is ExPhpTypeTplInstantiation) {
+            val list = type.specializationList.mapNotNull { dropGenerics(it) }
+            if (list.isEmpty()) return null
+            return ExPhpTypeTplInstantiation(type.classFqn, list)
         }
 
         if (type is ExPhpTypeNullable) {
-            return ExPhpTypeNullable(dropGenerics(type.inner))
+            return dropGenerics(type.inner)?.let { ExPhpTypeNullable(it) }
         }
 
         if (type is ExPhpTypeArray) {
-            return ExPhpTypeArray(dropGenerics(type.inner))
+            return dropGenerics(type.inner)?.let { ExPhpTypeArray(it) }
+        }
+
+        if (type is ExPhpTypeGenericsT) {
+            return null
         }
 
         return type

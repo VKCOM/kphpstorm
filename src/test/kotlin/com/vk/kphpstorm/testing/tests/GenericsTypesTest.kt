@@ -26,4 +26,10 @@ class GenericsTypesTest : TypeTestBase() {
     fun testClassString() {
         runFixture("generics/class-string.fixture.php")
     }
+
+    // Classes
+
+    fun testSimpleClasses() {
+        runFixture("generics/classes/simple_classes.fixture.php", "generics/classes/Vector.fixture.php")
+    }
 }

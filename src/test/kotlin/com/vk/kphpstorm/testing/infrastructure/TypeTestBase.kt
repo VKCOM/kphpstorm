@@ -32,9 +32,9 @@ abstract class TypeTestBase : BasePlatformTestCase() {
         return result
     }
 
-    protected fun runFixture(fixtureFile: String) {
+    protected fun runFixture(vararg fixtureFiles: String) {
         KphpStormConfiguration.saveThatSetupForProjectDone(project)
-        myFixture.configureByFile(fixtureFile)
+        myFixture.configureByFiles(*fixtureFiles)
 
         val exprTypeCalls = findExprTypeCalls()
 

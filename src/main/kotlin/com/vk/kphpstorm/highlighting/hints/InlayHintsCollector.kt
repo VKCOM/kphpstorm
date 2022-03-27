@@ -9,8 +9,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.suggested.endOffset
 import com.jetbrains.php.lang.psi.elements.FunctionReference
+import com.jetbrains.php.lang.psi.elements.MethodReference
 import com.vk.kphpstorm.generics.GenericFunctionCall
-import com.vk.kphpstorm.generics.GenericUtil.genericNames
 
 @Suppress("UnstableApiUsage")
 class InlayHintsCollector(
@@ -41,11 +41,17 @@ class InlayHintsCollector(
             return
         }
 
-        val genericNames = call.function!!.genericNames().joinToString(", ")
+        val genericNames = call.genericNames().joinToString(", ")
         val simplePresentation = myHintsFactory.inlayHint("<$genericNames>")
 
         val namePsi = element.firstChild
+        val offset = if (element is MethodReference) {
+            // offset after "->method_name"
+            namePsi.nextSibling.nextSibling.endOffset
+        } else {
+            namePsi.endOffset
+        }
 
-        sink.addInlineElement(namePsi.endOffset, false, simplePresentation, false)
+        sink.addInlineElement(offset, false, simplePresentation, false)
     }
 }
