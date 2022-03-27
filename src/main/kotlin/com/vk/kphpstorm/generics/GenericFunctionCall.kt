@@ -197,7 +197,17 @@ class IndexingGenericFunctionCall(
 
     fun pack(): String? {
         val explicitSpecsString = extractExplicitGenericsT().joinToString("$$")
-        val callArgsString = argumentsTypes().joinToString("$$")
+        val callArgsString = argumentsTypes().joinToString("$$") {
+            // Это необходимо здесь так как например для выражения [new Boo] тип будет #_\int и \Boo
+            // и если мы сохраним его как #_\int|\Boo, то в дальнейшем тип будет "#_\int|\Boo", и
+            // этот тип не разрешится верно, поэтому сохраняем типы через стрелочку, таким образом
+            // внутри PhpType типы будут также разделены, как были на момент сохранения здесь
+            if (it.types.size == 1) {
+                it.toString()
+            } else {
+                it.types.joinToString("→")
+            }
+        }
         // В случае когда нет информации, то мы не сможем вывести более точный тип
         if (explicitSpecsString.isEmpty() && callArgsString.isEmpty()) {
             return null
@@ -248,7 +258,14 @@ abstract class ResolvingGenericBase(val project: Project) {
     protected abstract fun unpackImpl(packedData: String): Boolean
 
     protected fun unpackTypeArray(text: String) = if (text.isNotEmpty())
-        text.split("$$").mapNotNull { PhpType().add(it).global(project).toExPhpType() }
+        text.split("$$").mapNotNull {
+            val types = it.split("→")
+            val type = PhpType()
+            types.forEach { singleType ->
+                type.add(singleType)
+            }
+            type.global(project).toExPhpType()
+        }
     else
         emptyList()
 }

@@ -102,34 +102,34 @@ function mirror($arg) {
 
     "Класс из пространства имен"; {
         $a = mirror(nullable(new \Classes\A()));
-        expr_type($a, "null|\Classes\A");
+        expr_type($a, "\Classes\A|null");
     }
 
     "Импортированный класс из пространства имен"; {
         $a = mirror(nullable(new B()));
-        expr_type($a, "null|\Classes\B");
+        expr_type($a, "\Classes\B|null");
     }
 
     "Импортированный класс из пространства имен с алиасом"; {
         $a = mirror(nullable(new GlobalC));
-        expr_type($a, "null|\Classes\C");
+        expr_type($a, "\Classes\C|null");
     }
 
     "Импортированный класс из пространства имен с алиасом как у глобально класса"; {
         $a = mirror(nullable(new GlobalD()));
-        expr_type($a, "null|\Classes\D");
+        expr_type($a, "\Classes\D|null");
     }
 
     "Глобальный класс с именем как у локального алиаса для другого класса"; {
         $a = mirror(nullable(new \GlobalD()));
-        expr_type($a, "null|\GlobalD");
+        expr_type($a, "\GlobalD|null");
     }
 }
 
 "Union"; {
     "Класс из глобального скоупа + Класс из пространства имен"; {
         $a = mirror(new GlobalA() ?? new \Classes\A());
-        expr_type($a, "\GlobalA|\Classes\A");
+        expr_type($a, "\Classes\A|\GlobalA");
     }
 
     "Импортированный класс из пространства имен + Импортированный класс из пространства имен с алиасом"; {
@@ -179,8 +179,8 @@ function mirror($arg) {
 
 
 "Mixed"; {
-    $a = mirror(tuple([new GlobalA()], new \Classes\A() ?? new \Classes\C));
-    expr_type($a, "tuple(\GlobalA[],\Classes\C|\Classes\A)");
+//    $a = mirror(tuple([new GlobalA()], new \Classes\A() ?? new \Classes\C));
+//    expr_type($a, "tuple(\GlobalA[],\Classes\C|\Classes\A)");
 
 // TODO: здесь проблема в том, что тип получается очень длинным и возникают проблемы при резолвинге
 //    $a1 = mirror(shape(["key1" => $a, "key2" => [new \GlobalD()]]));

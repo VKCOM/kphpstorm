@@ -23,8 +23,7 @@ function mirror($arg) {
     return $arg;
 }
 
-$a1 = mirror([new GlobalA()]);
-expr_type($a1, "\GlobalA[]");
-
+$a = mirror(tuple([new GlobalA()], new \Classes\A() ?? new \Classes\C));
+expr_type($a, "tuple(\GlobalA[],\Classes\C|\Classes\A)");
 
 
