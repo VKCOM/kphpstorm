@@ -92,7 +92,7 @@ function mirror($arg) {
 
     "Класс из пространства имен"; {
         $a = mirror/*<?\Classes\A>*/(new \Classes\A());
-        expr_type($a, "null|\Classes\A");
+        expr_type($a, "\Classes\A|null");
     }
 
     "Импортированный класс из пространства имен"; {
@@ -102,24 +102,24 @@ function mirror($arg) {
 
     "Импортированный класс из пространства имен с алиасом"; {
         $a = mirror/*<?GlobalC>*/(new GlobalC);
-        expr_type($a, "null|\Classes\C");
+        expr_type($a, "\Classes\C|null");
     }
 
     "Импортированный класс из пространства имен с алиасом как у глобально класса"; {
         $a = mirror/*<?GlobalD*/(new GlobalD());
-        expr_type($a, "null|\Classes\D");
+        expr_type($a, "\Classes\D|null");
     }
 
     "Глобальный класс с именем как у локального алиаса для другого класса"; {
         $a = mirror/*<?\GlobalD*/(new \GlobalD());
-        expr_type($a, "null|\GlobalD");
+        expr_type($a, "\GlobalD|null");
     }
 }
 
 "Union"; {
     "Класс из глобального скоупа + Класс из пространства имен"; {
         $a = mirror/*<GlobalA|\Classes\A>*/(new GlobalA());
-        expr_type($a, "\GlobalA|\Classes\A");
+        expr_type($a, "\Classes\A|\GlobalA");
     }
 
     "Импортированный класс из пространства имен + Импортированный класс из пространства имен с алиасом"; {
@@ -129,7 +129,7 @@ function mirror($arg) {
 
     "Импортированный класс из пространства имен с алиасом как у глобально класса + Глобальный класс с именем как у локального алиаса для другого класса"; {
         $a = mirror/*<GlobalD|\GlobalD*/(new GlobalD());
-        expr_type($a, "\GlobalD|\Classes\D");
+        expr_type($a, "\Classes\D|\GlobalD");
     }
 }
 

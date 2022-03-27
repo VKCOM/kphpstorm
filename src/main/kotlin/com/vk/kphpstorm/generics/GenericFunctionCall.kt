@@ -261,6 +261,9 @@ class ResolvingGenericFunctionCall(project: Project) : ResolvingGenericBase(proj
 
     override fun unpackImpl(packedData: String): Boolean {
         val firstSeparatorIndex = packedData.indexOf("@@")
+        if (firstSeparatorIndex == -1) {
+            return false
+        }
         val functionName = packedData.substring(0, firstSeparatorIndex)
 
         val remainingPackedData = packedData.substring(firstSeparatorIndex + "@@".length)
@@ -332,9 +335,9 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
         // for IDE we return PhpType "A"|"A<T>", that's why
         // A<A<T>> is resolved as "A"|"A<A/A<T>>", so if pipe — search for instantiation
         val instantiation = when (parsed) {
-            is ExPhpTypePipe     -> parsed.items.firstOrNull { it is ExPhpTypeTplInstantiation }
+            is ExPhpTypePipe -> parsed.items.firstOrNull { it is ExPhpTypeTplInstantiation }
             is ExPhpTypeNullable -> parsed.inner
-            else                 -> parsed
+            else -> parsed
         } as? ExPhpTypeTplInstantiation ?: return false
 
         classGenericType = instantiation
@@ -399,7 +402,8 @@ class GenericFunctionCall(call: FunctionReference) {
     val genericTs = mutableListOf<String>()
     private val parameters = mutableListOf<Parameter>()
     private val callArgs = call.parameters
-    private val argumentsTypes = callArgs.filterIsInstance<PhpTypedElement>().map { it.type.global(project).toExPhpType() }
+    private val argumentsTypes =
+        callArgs.filterIsInstance<PhpTypedElement>().map { it.type.global(project).toExPhpType() }
 
     val explicitSpecsPsi = findInstantiationComment(call)
 

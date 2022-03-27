@@ -120,7 +120,14 @@ class TupleShapeTypeProvider : PhpTypeProvider4 {
      * So, we decode indexKey, know a complete lhs type and call [ExPhpType.getSubkeyByIndex]
      */
     override fun complete(incompleteTypeStr: String, project: Project): PhpType? {
+        if (!incompleteTypeStr.startsWith("#Й")) {
+            return null
+        }
         val spacePos = incompleteTypeStr.indexOf(' ')
+        if (spacePos == -1) {
+            return null
+        }
+
         val indexKey = incompleteTypeStr.substring(3, spacePos)
         val lhsTypeStr = incompleteTypeStr.substring(spacePos + 1)
         val wholeType = PhpType().add(lhsTypeStr).global(project)

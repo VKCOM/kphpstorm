@@ -107,7 +107,7 @@ function mirror($arg) {
 
     "Импортированный класс из пространства имен"; {
         $a = mirror(nullable(new B()));
-        expr_type($a, "\Classes\B|null");
+        expr_type($a, "null|\Classes\B");
     }
 
     "Импортированный класс из пространства имен с алиасом"; {
@@ -139,7 +139,7 @@ function mirror($arg) {
 
     "Импортированный класс из пространства имен с алиасом как у глобально класса + Глобальный класс с именем как у локального алиаса для другого класса"; {
         $a = mirror(new GlobalD() ?? new \GlobalD());
-        expr_type($a, "\GlobalD|\Classes\D");
+        expr_type($a, "\Classes\D|\GlobalD");
     }
 }
 

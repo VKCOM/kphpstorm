@@ -55,8 +55,8 @@ function combine($a1, $a2) {
 
 "Примитивные типы в комплексных"; {
     $a = combine/*<string, tuple(int, string)>*/("", tuple(1, ""));
-    expr_type($a, "tuple(int,string)|string");
+    expr_type($a, "string|tuple(int,string)");
 
     $a1 = combine/*<string[], shape(key1: int, key2: ?string)>*/([""], shape(["key1" => 1, "key2" => ""]));
-    expr_type($a1, "string[]|shape(key1:int,key2:?string)");
+    expr_type($a1, "shape(key1:int,key2:?string)|string[]");
 }

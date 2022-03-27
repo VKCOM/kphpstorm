@@ -81,10 +81,10 @@ use Classes\C as GlobalC;
 
       "Nullable"; {
         $a1 = mirror/*<?string>*/("hello");
-        expr_type($a1, "string|null");
+        expr_type($a1, "null|string");
 
         $a2 = mirror/*<?int>*/(1);
-        expr_type($a2, "null|int");
+        expr_type($a2, "int|null");
       }
 
       "Union"; {
@@ -92,10 +92,10 @@ use Classes\C as GlobalC;
         expr_type($a1, "int|string");
 
         $a2 = mirror/*<float|bool>*/(1.5);
-        expr_type($a2, "float|bool");
+        expr_type($a2, "bool|float");
 
         $a3 = mirror/*<float|bool>*/(1.5);
-        expr_type($a3, "float|bool");
+        expr_type($a3, "bool|float");
       }
 
       "tuple"; {
@@ -135,24 +135,24 @@ use Classes\C as GlobalC;
         expr_type($a1, "\GlobalA|null");
 
         $a2 = mirror/*<?\Classes\A>*/([new \Classes\A()]);
-        expr_type($a2, "null|\Classes\A");
+        expr_type($a2, "\Classes\A|null");
 
         $a3 = mirror/*<?B>*/([new B()]);
-        expr_type($a3, "null|\Classes\B");
+        expr_type($a3, "\Classes\B|null");
 
         $a4 = mirror/*<?GlobalC>*/([new GlobalC]);
-        expr_type($a4, "null|\Classes\C");
+        expr_type($a4, "\Classes\C|null");
       }
 
       "Union"; {
         $a1 = mirror/*<\GlobalA|\Classes\A>*/("hello");
-        expr_type($a1, "\GlobalA|\Classes\A");
+        expr_type($a1, "\Classes\A|\GlobalA");
 
         $a2 = mirror/*<B|GlobalC>*/(1.5);
         expr_type($a2, "\Classes\B|\Classes\C");
 
         $a3 = mirror/*<\Classes\A|\GlobalC>*/(1.5);
-        expr_type($a3, "\GlobalC|\Classes\A");
+        expr_type($a3, "\Classes\A|\GlobalC");
       }
 
       "tuple"; {

@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.PhpTypedElement
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.vk.kphpstorm.configuration.KphpStormConfiguration
+import com.vk.kphpstorm.exphptype.ExPhpTypePipe
 import com.vk.kphpstorm.exphptype.PsiToExPhpType
 import com.vk.kphpstorm.helpers.toExPhpType
 
@@ -47,7 +48,13 @@ abstract class TypeTestBase : BasePlatformTestCase() {
         val expectedTypePsi = call.parameters.last() as StringLiteralExpression
         val expectedType = expectedTypePsi.contents
         val type = expr.type.global(myFixture.project).toExPhpType()?.let { PsiToExPhpType.dropGenerics(it) }
-        val typeString = type.toString()
+
+        val sortedType = if (type is ExPhpTypePipe)
+            ExPhpTypePipe(type.items.sortedBy { it.toString() })
+        else type
+
+        val typeString = sortedType.toString().ifEmpty { "<empty>" }
+
         // TODO: add location (line and test name)
         check(typeString == expectedType) {
             "Type mismatch. Expected: $expectedType, found: $typeString"
