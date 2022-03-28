@@ -128,7 +128,6 @@
 
   <extensions defaultExtensionNs="com.jetbrains.php">
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.TupleShapeTypeProvider"/>
-<!--    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.GenericObjectAccessTypeProvider"/>-->
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.GenericFunctionsTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.GenericClassesTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.FunctionsTypeProvider"/>
