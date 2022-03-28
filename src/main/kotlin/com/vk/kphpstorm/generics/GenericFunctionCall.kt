@@ -22,13 +22,18 @@ import kotlin.math.min
 class GenericsReifier(val project: Project) {
     val implicitSpecs = mutableListOf<ExPhpType>()
     val implicitSpecializationNameMap = mutableMapOf<String, ExPhpType>()
+    val implicitClassSpecializationNameMap = mutableMapOf<String, ExPhpType>()
     val implicitSpecializationErrors = mutableMapOf<String, Pair<ExPhpType, ExPhpType>>()
 
     /**
      * Having a call `f(...)` of a template function `f<T1, T2>(...)`, deduce T1 and T2
      * "auto deducing" for generics arguments is typically called "reification".
      */
-    fun reifyAllGenericsT(parameters: Array<Parameter>, genericTs: List<KphpDocGenericParameterDecl>, argumentsTypes: List<ExPhpType?>) {
+    fun reifyAllGenericsT(
+        parameters: Array<Parameter>,
+        genericTs: List<KphpDocGenericParameterDecl>,
+        argumentsTypes: List<ExPhpType?>
+    ) {
         for (i in 0 until min(argumentsTypes.size, parameters.size)) {
             val param = parameters[i] as? PhpTypedElement ?: continue
             val paramType = param.type.global(project)
@@ -42,6 +47,8 @@ class GenericsReifier(val project: Project) {
             val argExType = argumentsTypes[i] ?: continue
             reifyArgumentGenericsT(argExType, paramExType)
         }
+
+        implicitSpecializationNameMap.putAll(implicitClassSpecializationNameMap)
     }
 
     /**
@@ -327,12 +334,21 @@ class ResolvingGenericConstructorCall(project: Project) : ResolvingGenericBase(p
     override lateinit var genericTs: List<KphpDocGenericParameterDecl>
 
     override fun unpackImpl(packedData: String): Boolean {
-        val parts = packedData.split("@CO@")
-        if (parts.size != 3) {
+        val firstSeparatorIndex = packedData.indexOf("@CO@")
+        if (firstSeparatorIndex == -1) {
             return false
         }
+        val fqn = packedData.substring(0, firstSeparatorIndex)
 
-        val fqn = parts[0]
+        val remainingPackedData = packedData.substring(firstSeparatorIndex + "@CO@".length)
+        val secondSeparatorIndex = remainingPackedData.indexOf("@CO@")
+        val secondSepIndex = if (secondSeparatorIndex == -1)
+            0
+        else
+            secondSeparatorIndex
+        val explicitGenericsString = remainingPackedData.substring(0, secondSepIndex)
+        val argumentsTypesString = remainingPackedData.substring(if (secondSepIndex == 0) 0 else secondSepIndex + "@CO@".length)
+
         val className = fqn.substring(0, fqn.indexOf("__construct"))
 
         klass = PhpIndex.getInstance(project).getClassesByFQN(className).firstOrNull() ?: return false
@@ -341,8 +357,8 @@ class ResolvingGenericConstructorCall(project: Project) : ResolvingGenericBase(p
         parameters = if (klass!!.constructor != null) klass!!.constructor!!.parameters else emptyArray()
         genericTs = klass!!.genericNames()
 
-        explicitGenericsT = unpackTypeArray(parts[1])
-        argumentsTypes = unpackTypeArray(parts[2])
+        explicitGenericsT = unpackTypeArray(explicitGenericsString)
+        argumentsTypes = unpackTypeArray(argumentsTypesString)
 
         return true
     }
@@ -434,7 +450,6 @@ class GenericConstructorCall(call: NewExpression) : GenericCall(call.project) {
     override fun isGeneric() = genericNames().isNotEmpty()
 
     override fun toString(): String {
-        val function = function()
         val explicit = explicitSpecs.joinToString(",")
         val implicit = implicitSpecs.joinToString(",")
         return "${klass?.fqn ?: "UnknownClass"}->__construct<$explicit>($implicit)"
@@ -458,16 +473,35 @@ class GenericMethodCall(call: MethodReference) : GenericCall(call.project) {
     private val method: Method?
 
     init {
-//        val classTypes = call.classReference?.type?.global(project)?.toExPhpType()
-//
-//        val classType = if (classTypes is ExPhpTypePipe) {
-//            classTypes.items.firstOrNull { it is ExPhpTypeInstance } as? ExPhpTypeInstance
-//        } else {
-//            classTypes as? ExPhpTypeInstance
-//        }
-
         method = call.resolve() as? Method
         klass = method?.containingClass
+
+        val callType = call.classReference?.type?.global(project)
+
+        val classType = PhpType().add(callType).global(project)
+        val parsed = classType.toExPhpType()
+
+        // for IDE we return PhpType "A"|"A<T>", that's why
+        // A<A<T>> is resolved as "A"|"A<A/A<T>>", so if pipe — search for instantiation
+        val instantiation = when (parsed) {
+            is ExPhpTypePipe -> parsed.items.firstOrNull { it is ExPhpTypeTplInstantiation }
+            is ExPhpTypeNullable -> parsed.inner
+            else -> parsed
+        } as? ExPhpTypeTplInstantiation
+
+        if (instantiation != null) {
+            val specialization = instantiation.specializationList
+            val classSpecializationNameMap = mutableMapOf<String, ExPhpType>()
+            val genericNames = klass?.genericNames() ?: emptyList()
+
+            for (i in 0 until min(genericNames.size, specialization.size)) {
+                classSpecializationNameMap[genericNames[i].name] = specialization[i]
+            }
+
+            classSpecializationNameMap.forEach { (name, type) ->
+                reifier.implicitClassSpecializationNameMap[name] = type
+            }
+        }
 
         init()
     }
@@ -476,7 +510,15 @@ class GenericMethodCall(call: MethodReference) : GenericCall(call.project) {
 
     override fun isResolved() = method != null && klass != null
 
-    override fun genericNames() = method?.genericNames() ?: emptyList()
+    override fun genericNames(): List<KphpDocGenericParameterDecl> {
+        val methodsNames = method?.genericNames() ?: emptyList()
+        val classesNames = klass?.genericNames() ?: emptyList()
+
+        return mutableListOf<KphpDocGenericParameterDecl>()
+            .apply { addAll(methodsNames) }
+            .apply { addAll(classesNames) }
+            .toList()
+    }
 
     override fun isGeneric() = genericNames().isNotEmpty()
 

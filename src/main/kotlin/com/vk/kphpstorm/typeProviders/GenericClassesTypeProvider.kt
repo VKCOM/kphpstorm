@@ -12,10 +12,8 @@ import com.vk.kphpstorm.exphptype.ExPhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeGenericsT
 import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.isGeneric
-import com.vk.kphpstorm.generics.GenericUtil.isReturnGeneric
 import com.vk.kphpstorm.generics.IndexingGenericFunctionCall
 import com.vk.kphpstorm.generics.ResolvingGenericConstructorCall
-import com.vk.kphpstorm.generics.ResolvingGenericFunctionCall
 import com.vk.kphpstorm.generics.ResolvingGenericMethodCall
 import com.vk.kphpstorm.helpers.toExPhpType
 import kotlin.math.min
@@ -72,36 +70,13 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
         }
 
         if (packedData.contains("__construct")) {
-            return completeConstruct(project, packedData)
+            return completeConstructCall(project, packedData)
         }
 
-        val call = ResolvingGenericFunctionCall(project)
-        if (!call.unpack(packedData)) {
-            return null
-        }
-
-        // Если возвращаемый тип функции не зависит от шаблонного типа,
-        // то нет смысла как-то уточнять ее тип.
-        if (!call.function.isReturnGeneric()) {
-            return null
-        }
-
-        val specialization = call.specialization()
-
-        val specializationNameMap = mutableMapOf<String, ExPhpType>()
-
-        for (i in 0 until min( call.genericTs.size, specialization.size)) {
-            specializationNameMap[ call.genericTs[i].name] = specialization[i]
-        }
-
-        val methodReturnTag = call.function.docComment?.returnTag ?: return null
-        val methodTypeParsed = methodReturnTag.type.toExPhpType() ?: return null
-        val methodTypeSpecialized = methodTypeParsed.instantiateGeneric(specializationNameMap)
-
-        return methodTypeSpecialized.toPhpType()
+        return null
     }
 
-    private fun completeConstruct(project: Project, packedData: String): PhpType? {
+    private fun completeConstructCall(project: Project, packedData: String): PhpType? {
         val call = ResolvingGenericConstructorCall(project)
         if (!call.unpack(packedData)) {
             return null

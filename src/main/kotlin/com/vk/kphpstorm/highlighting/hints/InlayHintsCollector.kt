@@ -15,6 +15,7 @@ import com.vk.kphpstorm.generics.GenericCall
 import com.vk.kphpstorm.generics.GenericConstructorCall
 import com.vk.kphpstorm.generics.GenericFunctionCall
 import com.vk.kphpstorm.generics.GenericMethodCall
+import com.vk.kphpstorm.generics.GenericUtil.genericNames
 
 @Suppress("UnstableApiUsage")
 class InlayHintsCollector(
@@ -53,8 +54,16 @@ class InlayHintsCollector(
             return
         }
 
-        val genericNames = call.genericNames()
-            .joinToString(", ") { it.name + if (it.extendsClass != null) ": " + it.extendsClass else "" }
+        val genericNames = if (call is GenericConstructorCall) {
+            call.genericNames()
+        } else {
+            call.function()!!.genericNames()
+        }.joinToString(", ") { it.name + if (it.extendsClass != null) ": " + it.extendsClass else "" }
+
+        if (genericNames.isEmpty()) {
+            return
+        }
+
         val simplePresentation = myHintsFactory.inlayHint("<$genericNames>")
 
         sink.addInlineElement(place.endOffset, false, simplePresentation, false)
