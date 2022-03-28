@@ -57,7 +57,7 @@ class GenericFunctionsTypeProvider : PhpTypeProvider4 {
         val specializationNameMap = mutableMapOf<String, ExPhpType>()
 
         for (i in 0 until min( call.genericTs.size, specialization.size)) {
-            specializationNameMap[ call.genericTs[i]] = specialization[i]
+            specializationNameMap[call.genericTs[i].name] = specialization[i]
         }
 
         val methodReturnTag = call.function.docComment?.returnTag ?: return null

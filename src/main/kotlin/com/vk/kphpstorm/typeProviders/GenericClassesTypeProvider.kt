@@ -91,7 +91,7 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
         val specializationNameMap = mutableMapOf<String, ExPhpType>()
 
         for (i in 0 until min( call.genericTs.size, specialization.size)) {
-            specializationNameMap[ call.genericTs[i]] = specialization[i]
+            specializationNameMap[ call.genericTs[i].name] = specialization[i]
         }
 
         val methodReturnTag = call.function.docComment?.returnTag ?: return null
@@ -116,10 +116,10 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
         val specializationNameMap = mutableMapOf<String, ExPhpType>()
 
         for (i in 0 until min(call.genericTs.size, specialization.size)) {
-            specializationNameMap[call.genericTs[i]] = specialization[i]
+            specializationNameMap[call.genericTs[i].name] = specialization[i]
         }
 
-        val genericsTypes = call.genericTs.map { ExPhpTypeGenericsT(it) }
+        val genericsTypes = call.genericTs.map { ExPhpTypeGenericsT(it.name) }
         val type = ExPhpTypeTplInstantiation(call.klass!!.fqn, genericsTypes)
 
         val methodTypeSpecialized = type.instantiateGeneric(specializationNameMap)
@@ -137,12 +137,12 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
         val specializationNameMap = mutableMapOf<String, ExPhpType>()
 
         for (i in 0 until min(call.genericTs.size, specialization.size)) {
-            specializationNameMap[call.genericTs[i]] = specialization[i]
+            specializationNameMap[call.genericTs[i].name] = specialization[i]
         }
 
         if (call.classGenericType != null) {
             for (i in 0 until min(call.classGenericTs.size, call.classGenericType!!.specializationList.size)) {
-                specializationNameMap[call.classGenericTs[i]] = call.classGenericType!!.specializationList[i]
+                specializationNameMap[call.classGenericTs[i].name] = call.classGenericType!!.specializationList[i]
             }
         }
 

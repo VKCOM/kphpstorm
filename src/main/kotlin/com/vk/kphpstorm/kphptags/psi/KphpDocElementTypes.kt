@@ -37,8 +37,8 @@ object KphpDocElementTypes {
     val kphpDocTagTemplateClass = KphpDocTagTemplateClassElementType
 
     /**
-     * '@kphp-generic T1, T2'
-     * This tag stores "T1,T2" in stubs and has custom psi for them, therefore is not simple
+     * '@kphp-generic T1, T2: ExtendsClass'
+     * This tag stores "T1,T2:ExtendsClass" in stubs and has custom psi for them, therefore is not simple
      */
     val kphpDocTagGeneric = KphpDocTagGenericElementType
 }

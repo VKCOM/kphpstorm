@@ -5,12 +5,23 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.jetbrains.php.lang.highlighter.PhpHighlightingData
 import com.jetbrains.php.lang.psi.elements.FunctionReference
 import com.vk.kphpstorm.generics.GenericFunctionCall
 import com.vk.kphpstorm.generics.psi.GenericInstantiationPsiCommentImpl
+import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDeclPsiImpl
 
 class KphpStormGenericCommentsAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
+        if (element is KphpDocGenericParameterDeclPsiImpl) {
+            val extendsClass = element.getExtendsClass() ?: return
+            holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                .range(extendsClass.textRange)
+                .textAttributes(PhpHighlightingData.IDENTIFIER)
+                .create()
+            return
+        }
+
         if (element !is GenericInstantiationPsiCommentImpl) {
             return
         }

@@ -9,7 +9,9 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStub
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.parser.PhpParserErrors
 import com.jetbrains.php.lang.parser.PhpPsiBuilder
+import com.jetbrains.php.lang.parser.parsing.Namespace
 import com.jetbrains.php.lang.psi.stubs.PhpStubElementType
+import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
 
 /**
  * '@kphp-generic T1, T2: ExtendsClass' has a separate elementType,
@@ -24,9 +26,11 @@ object KphpDocTagGenericElementType : PhpStubElementType<PhpDocTagStub, PhpDocTa
     }
 
     override fun createStub(psi: PhpDocTag, parentStub: StubElement<*>?): PhpDocTagStub {
-        // TODO: Add `: ExtendsName`
-        // stub value is 'T1,T2' — without spaces
-        val stubValue = (psi as KphpDocTagGenericPsiImpl).getGenericArguments().joinToString(",")
+        // stub value is 'T1,T2:ExtendsClass' — without spaces
+        val stubValue = (psi as KphpDocTagGenericPsiImpl).getGenericArgumentsWithExtends()
+            .joinToString(",") {
+                it.name + ":" + (it.extendsClass ?: "")
+            }
         return KphpDocTagStubImpl(parentStub, this, psi.name, stubValue)
     }
 
@@ -62,11 +66,19 @@ object KphpDocTagGenericElementType : PhpStubElementType<PhpDocTagStub, PhpDocTa
                     val text = builder.tokenText?.trim()
                     builder.advanceLexer()
                     if (text == ":") {
-                        if (!builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)) {
+                        val extendsMarker = builder.mark()
+
+                        if (!builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) && !builder.compare(PhpDocTokenTypes.DOC_NAMESPACE)) {
                             marker.drop()
+                            extendsMarker.drop()
                             builder.error(PhpParserErrors.expected("Extends class name"))
                             break
                         }
+
+                        Namespace.parseReference(builder)
+                        builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)
+
+                        extendsMarker.done(ExPhpTypeInstancePsiImpl.elementType)
                     }
                 }
                 marker.done(KphpDocGenericParameterDeclPsiImpl.elementType)

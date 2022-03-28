@@ -3,6 +3,7 @@ package com.vk.kphpstorm
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.documentation.phpdoc.parser.tags.PhpDocTagParserRegistry
+import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl
 import com.jetbrains.php.lang.parser.PhpParserDefinition
 import com.jetbrains.php.lang.parser.PhpPsiElementCreator
 import com.vk.kphpstorm.exphptype.psi.*
@@ -34,6 +35,7 @@ class KphpStormParserDefinition() : PhpParserDefinition() {
             KphpDocElementTypes.kphpDocTagTemplateClass    -> KphpDocTagTemplateClassPsiImpl(node)
             KphpDocElementTypes.kphpDocTagGeneric          -> KphpDocTagGenericPsiImpl(node)
             KphpDocGenericParameterDeclPsiImpl.elementType -> KphpDocGenericParameterDeclPsiImpl(node)
+            KphpDocGenericParameterDeclPsiImpl.extendsElementType -> PhpDocTypeImpl(node)
             KphpDocElementTypes.kphpDocTagWarnPerformance  -> KphpDocTagWarnPerformancePsiImpl(node)
             KphpDocWarnPerformanceItemPsiImpl.elementType  -> KphpDocWarnPerformanceItemPsiImpl(node)
 

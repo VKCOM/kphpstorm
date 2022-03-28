@@ -37,13 +37,13 @@ class GenericNoEnoughInformationInspection : PhpInspection() {
                 val genericNames = call.genericNames()
 
                 if (call.explicitSpecsPsi == null) {
-                    genericNames.any {
-                        val resolved = call.implicitSpecializationNameMap.contains(it)
+                    genericNames.any { decl ->
+                        val resolved = call.implicitSpecializationNameMap.contains(decl.name)
 
                         if (!resolved) {
                             holder.registerProblem(
                                 errorPsi,
-                                "Not enough information to infer generic $it",
+                                "Not enough information to infer generic ${decl.name}",
                                 ProblemHighlightType.GENERIC_ERROR
                             )
 

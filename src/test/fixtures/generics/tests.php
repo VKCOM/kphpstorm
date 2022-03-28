@@ -1,65 +1,63 @@
 <?php
-/** @noinspection FunctionUnnecessaryExplicitGenericInstantiationListInspection */
+/** @noinspection GenericUnnecessaryExplicitInstantiationListInspection */
 /** @noinspection PhpUndefinedFunctionInspection */
 /** @noinspection PhpExpressionResultUnusedInspection */
 
 
-/**
- * @kphp-generic T
- * @param T $arg
- * @return T
- */
-function nullable($arg) {
-    if (0) return null;
-    return $arg;
-}
-
-/**
- * @kphp-generic T
- * @param T $arg
- * @return T
- */
-function mirror($arg) {
-    return $arg;
-}
 //
 //$a = mirror(tuple([new GlobalA()], new \Classes\A() ?? new \Classes\C));
 //expr_type($a, "tuple(\GlobalA[],\Classes\C|\Classes\A)");
 //
 
-class AAA {
+use Classes\Base;
+
+class SerializableItem implements Serializable {
+    public function serialize() {}
+
     /**
-     * @kphp-generic T
-     * @param T $arg
-     * @return T
+     * @param mixed $data
      */
-    function mirror($arg) {
-        return $arg;
+    public function unserialize($data) {}
+}
+
+/**
+ * Not mutable generic collection.
+ *
+ * @kphp-generic T: Serializable
+ */
+class VectorList1 {
+    /** @var T[] */
+    protected $data = [];
+
+    /**
+     * @param T ...$els
+     */
+    public function __construct(...$els) {
+        $this->data = $els;
     }
 
     /**
-     * @kphp-generic T1, T2
-     * @param T1 $arg
-     * @param T2 $arg2
-     * @return T1|T2
+     * @return T
      */
-    function combine($arg, $arg2) {
-        return $arg;
+    public function get(int $index) {
+        return $this->data[$index];
     }
 }
 
-//$a = new Vector(100);
+/**
+ * @kphp-generic T: Serializable
+ * @param T $a
+ */
+function acceptSerializable($a) {
+    // Сделать тут тип $a == Serializable, чтобы было базовое автодополнение
+}
 
-//$a1 = new Vector("");
-//$res = $a->combine_with/*<string>*/($a1);
+//$vec = new VectorList1/*<string>*/(1, 2, 3);
+//$vec = new VectorList1/*<GlobalA>*/(1, 2, 3);
+$vec = new VectorList1/*<Base>*/(1, 2, 3);
+$vec = new VectorList1(new Base);
+$vec = new VectorList1/*<SerializableItem>*/(new SerializableItem());
 
-$aaa = new AAA();
-//$aaa->mirror/*<string>*/("");
-
-$aaa->combine/*<string, Vector<string>>*/("", new Vector(""));
-
-
-
-
-
-
+acceptSerializable(new Base);
+acceptSerializable/*<Base>*/(new Base);
+acceptSerializable(new SerializableItem);

@@ -209,7 +209,6 @@ class GenericInstantiationPsiCommentImpl(type: IElementType, text: CharSequence)
         return instantiationTypes
     }
 
-
     private fun resolveInstance(rawName: String): String {
         val (name, namespaceName) = splitAndResolveNamespace(this, rawName)
 

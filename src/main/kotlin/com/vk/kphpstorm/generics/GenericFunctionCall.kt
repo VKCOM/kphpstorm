@@ -13,6 +13,7 @@ import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.generics.GenericUtil.isGeneric
 import com.vk.kphpstorm.generics.psi.GenericInstantiationPsiCommentImpl
 import com.vk.kphpstorm.helpers.toExPhpType
+import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import kotlin.math.min
 
 /**
@@ -27,7 +28,7 @@ class GenericsReifier(val project: Project) {
      * Having a call `f(...)` of a template function `f<T1, T2>(...)`, deduce T1 and T2
      * "auto deducing" for generics arguments is typically called "reification".
      */
-    fun reifyAllGenericsT(parameters: Array<Parameter>, genericTs: List<String>, argumentsTypes: List<ExPhpType?>) {
+    fun reifyAllGenericsT(parameters: Array<Parameter>, genericTs: List<KphpDocGenericParameterDecl>, argumentsTypes: List<ExPhpType?>) {
         for (i in 0 until min(argumentsTypes.size, parameters.size)) {
             val param = parameters[i] as? PhpTypedElement ?: continue
             val paramType = param.type.global(project)
@@ -179,7 +180,7 @@ class GenericInstantiationExtractor {
      * comment `/*<A, B>*/`.
      */
     fun extractExplicitGenericsT(
-        function: Function,
+        genericsNames: List<KphpDocGenericParameterDecl>,
         explicitSpecsPsi: GenericInstantiationPsiCommentImpl?
     ) {
         if (explicitSpecsPsi == null) return
@@ -188,9 +189,8 @@ class GenericInstantiationExtractor {
 
         explicitSpecs.addAll(explicitSpecsTypes)
 
-        val genericTs = function.genericNames()
-        for (i in 0 until min(genericTs.size, explicitSpecsTypes.size)) {
-            specializationNameMap[genericTs[i]] = explicitSpecsTypes[i]
+        for (i in 0 until min(genericsNames.size, explicitSpecsTypes.size)) {
+            specializationNameMap[genericsNames[i].name] = explicitSpecsTypes[i]
         }
     }
 }
@@ -255,7 +255,7 @@ class IndexingGenericFunctionCall(
  */
 abstract class ResolvingGenericBase(val project: Project) {
     abstract var parameters: Array<Parameter>
-    abstract var genericTs: List<String>
+    abstract var genericTs: List<KphpDocGenericParameterDecl>
 
     protected lateinit var argumentsTypes: List<ExPhpType>
     protected lateinit var explicitGenericsT: List<ExPhpType>
@@ -294,7 +294,7 @@ abstract class ResolvingGenericBase(val project: Project) {
 class ResolvingGenericFunctionCall(project: Project) : ResolvingGenericBase(project) {
     lateinit var function: Function
     override lateinit var parameters: Array<Parameter>
-    override lateinit var genericTs: List<String>
+    override lateinit var genericTs: List<KphpDocGenericParameterDecl>
 
     override fun unpackImpl(packedData: String): Boolean {
         val firstSeparatorIndex = packedData.indexOf("@@")
@@ -324,7 +324,7 @@ class ResolvingGenericConstructorCall(project: Project) : ResolvingGenericBase(p
     var klass: PhpClass? = null
     var method: Method? = null
     override lateinit var parameters: Array<Parameter>
-    override lateinit var genericTs: List<String>
+    override lateinit var genericTs: List<KphpDocGenericParameterDecl>
 
     override fun unpackImpl(packedData: String): Boolean {
         val parts = packedData.split("@CO@")
@@ -353,8 +353,8 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
     var method: Method? = null
     var classGenericType: ExPhpTypeTplInstantiation? = null
     override lateinit var parameters: Array<Parameter>
-    override lateinit var genericTs: List<String>
-    lateinit var classGenericTs: List<String>
+    override lateinit var genericTs: List<KphpDocGenericParameterDecl>
+    lateinit var classGenericTs: List<KphpDocGenericParameterDecl>
 
     override fun unpackImpl(packedData: String): Boolean {
         val parts = packedData.split("@MC@")
@@ -421,11 +421,11 @@ class GenericConstructorCall(call: NewExpression) : GenericCall(call.project) {
 
     override fun isResolved() = method != null && klass != null
 
-    override fun genericNames(): List<String> {
+    override fun genericNames(): List<KphpDocGenericParameterDecl> {
         val methodsNames = method?.genericNames() ?: emptyList()
         val classesNames = klass?.genericNames() ?: emptyList()
 
-        return mutableListOf<String>()
+        return mutableListOf<KphpDocGenericParameterDecl>()
             .apply { addAll(methodsNames) }
             .apply { addAll(classesNames) }
             .toList()
@@ -559,16 +559,17 @@ abstract class GenericCall(val project: Project) {
 
     abstract fun function(): Function?
     abstract fun isResolved(): Boolean
-    abstract fun genericNames(): List<String>
+    abstract fun genericNames(): List<KphpDocGenericParameterDecl>
     abstract fun isGeneric(): Boolean
 
-    val genericTs = mutableListOf<String>()
+    val genericTs = mutableListOf<KphpDocGenericParameterDecl>()
     private val parameters = mutableListOf<Parameter>()
 
     protected val extractor = GenericInstantiationExtractor()
     protected val reifier = GenericsReifier(project)
 
     val explicitSpecs get() = extractor.explicitSpecs
+    val specializationNameMap get() = extractor.specializationNameMap
     val implicitSpecs get() = reifier.implicitSpecs
     val implicitSpecializationNameMap get() = reifier.implicitSpecializationNameMap
     val implicitSpecializationErrors get() = reifier.implicitSpecializationErrors
@@ -589,7 +590,7 @@ abstract class GenericCall(val project: Project) {
         // В первую очередь, выводим все типы шаблонов из аргументов функции (при наличии)
         reifier.reifyAllGenericsT(function.parameters, genericNames, argumentsTypes)
         // Далее, выводим все типы шаблонов из явного списка типов (при наличии)
-        extractor.extractExplicitGenericsT(function, explicitSpecsPsi)
+        extractor.extractExplicitGenericsT(genericNames(), explicitSpecsPsi)
     }
 
     fun withExplicitSpecs(): Boolean {
@@ -662,7 +663,7 @@ abstract class GenericCall(val project: Project) {
 
         val param = function.getParameter(index) ?: return null
         val paramType = param.type
-        if (paramType.isGeneric(function)) {
+        if (paramType.isGeneric(genericNames())) {
             val usedNameMap = extractor.specializationNameMap.ifEmpty {
                 reifier.implicitSpecializationNameMap
             }

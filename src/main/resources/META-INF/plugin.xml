@@ -80,6 +80,10 @@
                      displayName="Several possibly type for generic type"
                      enabledByDefault="false" level="WARNING"
                      implementationClass="com.vk.kphpstorm.inspections.GenericSeveralGenericTypesInspection"/>
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="GenericBoundViolationInspection"
+                     displayName="Type argument is not within its bounds"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.vk.kphpstorm.inspections.GenericBoundViolationInspection"/>
 
     <intentionAction>
       <className>com.vk.kphpstorm.inspections.PrettifyPhpdocBlockIntention</className>

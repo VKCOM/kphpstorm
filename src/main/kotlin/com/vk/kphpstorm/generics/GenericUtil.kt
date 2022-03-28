@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.psi.elements.impl.MethodReferenceImpl
 import com.jetbrains.php.lang.psi.elements.impl.NewExpressionImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.generics.psi.GenericInstantiationPsiCommentImpl
+import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagGenericPsiImpl
 
 object GenericUtil {
@@ -31,10 +32,10 @@ object GenericUtil {
         return isGeneric(genericNames)
     }
 
-    fun PhpType.isGeneric(genericNames: List<String>): Boolean {
+    fun PhpType.isGeneric(genericNames: List<KphpDocGenericParameterDecl>): Boolean {
         // TODO: Подумать как сделать улучшить
-        return genericNames.any { name -> types.contains("%$name") } ||
-                genericNames.any { types.any { type -> type.contains("%$it")  } }
+        return genericNames.any { decl -> types.contains("%${decl.name}") } ||
+                genericNames.any { decl -> types.any { type -> type.contains("%${decl.name}")  } }
     }
 
     fun Function.isReturnGeneric(): Boolean {
@@ -45,14 +46,14 @@ object GenericUtil {
         }
     }
 
-    fun Function.genericNames(): List<String> = genericNames(docComment)
+    fun Function.genericNames(): List<KphpDocGenericParameterDecl> = genericNames(docComment)
 
-    fun PhpClass.genericNames(): List<String> = genericNames(docComment)
+    fun PhpClass.genericNames(): List<KphpDocGenericParameterDecl> = genericNames(docComment)
 
-    private fun genericNames(docComment: PhpDocComment?): List<String> {
+    private fun genericNames(docComment: PhpDocComment?): List<KphpDocGenericParameterDecl> {
         val docT = docComment?.getTagElementsByName("@kphp-generic")?.firstOrNull() as? KphpDocTagGenericPsiImpl
             ?: return emptyList()
-        return docT.getGenericArguments()
+        return docT.getGenericArgumentsWithExtends()
     }
 
     fun findInstantiationComment(el: PsiElement): GenericInstantiationPsiCommentImpl? {

@@ -35,7 +35,7 @@ object KphpGenericDocTag : KphpDocTag("@kphp-generic") {
 
     override fun annotate(docTag: PhpDocTag, rhs: PsiElement?, holder: AnnotationHolder) {
         if (rhs == null) {
-            holder.errTag(docTag, "Expected: T [, T1, ...]")
+            holder.errTag(docTag, "Expected: T[: ExtendsClass] [, T1[: ExtendsClass], ...]")
             return
         }
 

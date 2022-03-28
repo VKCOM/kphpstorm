@@ -19,11 +19,11 @@ class KphpGenericsReferenceContributor : PsiReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
         registrar.registerReferenceProvider(
             PlatformPatterns.psiComment(),
-            PhpPsiReferenceProvider()
+            GenericInstantiationPhpPsiReferenceProvider()
         )
     }
 
-    class PhpPsiReferenceProvider : PsiReferenceProvider() {
+    class GenericInstantiationPhpPsiReferenceProvider : PsiReferenceProvider() {
         override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
             if (element !is GenericInstantiationPsiCommentImpl) {
                 return emptyArray()
@@ -37,59 +37,59 @@ class KphpGenericsReferenceContributor : PsiReferenceContributor() {
                 }
             }.flatten().toTypedArray()
         }
+    }
 
-        class PhpElementReference(element: PsiElement, result: PsiElement, private val myRange: TextRange? = null) :
-            PsiReference {
-            private val myElement: PsiElement
-            private val myResult: PsiElement
+    class PhpElementReference(element: PsiElement, result: PsiElement, private val myRange: TextRange? = null) :
+        PsiReference {
+        private val myElement: PsiElement
+        private val myResult: PsiElement
 
-            init {
-                myElement = element
-                myResult = result
-            }
-
-            override fun getElement() = myElement
-
-            override fun getRangeInElement(): TextRange {
-                if (myRange != null) {
-                    return myRange
-                }
-                val startOffset = 1
-                return TextRange(startOffset, myElement.textLength - 1)
-            }
-
-            override fun resolve() = myResult
-
-            override fun getCanonicalText(): String =
-                if (myResult is PhpNamedElement) myResult.fqn
-                else myElement.parent.text
-
-            override fun handleElementRename(newElementName: String): PsiElement {
-                val text = element.text
-                val start = text.slice(0 until rangeInElement.startOffset)
-                val end = text.slice(rangeInElement.endOffset until text.length)
-
-                val specText = start + newElementName + end
-
-                val psi = PhpPsiElementFactory.createPhpPsiFromText(
-                    element.project, FunctionReference::class.java, "f$specText();"
-                )
-
-                val comment = psi.firstChild.nextSibling
-
-                return myElement.replace(comment)
-            }
-
-            override fun bindToElement(element: PsiElement): PsiElement {
-                throw UnsupportedOperationException()
-            }
-
-            override fun isReferenceTo(element: PsiElement): Boolean {
-                return myResult === element
-            }
-
-            override fun isSoft() = true
+        init {
+            myElement = element
+            myResult = result
         }
+
+        override fun getElement() = myElement
+
+        override fun getRangeInElement(): TextRange {
+            if (myRange != null) {
+                return myRange
+            }
+            val startOffset = 1
+            return TextRange(startOffset, myElement.textLength - 1)
+        }
+
+        override fun resolve() = myResult
+
+        override fun getCanonicalText(): String =
+            if (myResult is PhpNamedElement) myResult.fqn
+            else myElement.parent.text
+
+        override fun handleElementRename(newElementName: String): PsiElement {
+            val text = element.text
+            val start = text.slice(0 until rangeInElement.startOffset)
+            val end = text.slice(rangeInElement.endOffset until text.length)
+
+            val specText = start + newElementName + end
+
+            val psi = PhpPsiElementFactory.createPhpPsiFromText(
+                element.project, FunctionReference::class.java, "f$specText();"
+            )
+
+            val comment = psi.firstChild.nextSibling
+
+            return myElement.replace(comment)
+        }
+
+        override fun bindToElement(element: PsiElement): PsiElement {
+            throw UnsupportedOperationException()
+        }
+
+        override fun isReferenceTo(element: PsiElement): Boolean {
+            return myResult === element
+        }
+
+        override fun isSoft() = true
     }
 }
 

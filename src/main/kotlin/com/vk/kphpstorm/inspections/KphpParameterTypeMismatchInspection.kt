@@ -14,7 +14,9 @@ import com.jetbrains.php.lang.psi.elements.*
 import com.jetbrains.php.lang.psi.elements.Function
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.vk.kphpstorm.exphptype.PsiToExPhpType
+import com.vk.kphpstorm.generics.GenericConstructorCall
 import com.vk.kphpstorm.generics.GenericFunctionCall
+import com.vk.kphpstorm.generics.GenericMethodCall
 import com.vk.kphpstorm.helpers.KPHP_NATIVE_FUNCTIONS
 import com.vk.kphpstorm.kphptags.KphpInferDocTag
 
@@ -77,8 +79,20 @@ class KphpParameterTypeMismatchInspection : PhpInspection() {
             val callType = PsiToExPhpType.getTypeOfExpr(callParam, project) ?: continue
             val argType = PsiToExPhpType.getArgumentDeclaredType(fArg, project) ?: continue
 
-            val actualArgType = if (call is FunctionReference) {
-                val genericCall = GenericFunctionCall(call)
+            val genericCall = when (call) {
+                is MethodReference -> {
+                    GenericMethodCall(call)
+                }
+                is FunctionReference -> {
+                    GenericFunctionCall(call)
+                }
+                is NewExpression -> {
+                    GenericConstructorCall(call)
+                }
+                else -> null
+            }
+
+            val actualArgType = if (genericCall != null) {
                 if (genericCall.isGeneric())
                     genericCall.typeOfParam(argIdx) ?: argType
                 else
@@ -88,7 +102,11 @@ class KphpParameterTypeMismatchInspection : PhpInspection() {
             }
 
             if (!actualArgType.isAssignableFrom(callType, project) && needsReporting(f)) {
-                holder.registerProblem(callParam, "Can't pass '${callType.toHumanReadable(call)}' to '${actualArgType.toHumanReadable(call)}' \$${fArg.name}", ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
+                holder.registerProblem(
+                    callParam,
+                    "Can't pass '${callType.toHumanReadable(call)}' to '${actualArgType.toHumanReadable(call)}' \$${fArg.name}",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                )
             }
         }
 

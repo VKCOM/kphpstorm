@@ -10,7 +10,11 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.suggested.endOffset
 import com.jetbrains.php.lang.psi.elements.FunctionReference
 import com.jetbrains.php.lang.psi.elements.MethodReference
+import com.jetbrains.php.lang.psi.elements.NewExpression
+import com.vk.kphpstorm.generics.GenericCall
+import com.vk.kphpstorm.generics.GenericConstructorCall
 import com.vk.kphpstorm.generics.GenericFunctionCall
+import com.vk.kphpstorm.generics.GenericMethodCall
 
 @Suppress("UnstableApiUsage")
 class InlayHintsCollector(
@@ -27,31 +31,32 @@ class InlayHintsCollector(
         if (file.project.service<DumbService>().isDumb) return true
 
         when {
+            element is MethodReference && settings.showForFunctions -> {
+                val call = GenericMethodCall(element)
+                showAnnotation(call, element.firstChild.nextSibling.nextSibling)
+            }
             element is FunctionReference && settings.showForFunctions -> {
-                showAnnotation(element)
+                val call = GenericFunctionCall(element)
+                showAnnotation(call, element.firstChild)
+            }
+            element is NewExpression && settings.showForFunctions -> {
+                val call = GenericConstructorCall(element)
+                showAnnotation(call, element.firstChild.nextSibling.nextSibling)
             }
         }
 
         return true
     }
 
-    private fun showAnnotation(element: FunctionReference) {
-        val call = GenericFunctionCall(element)
+    private fun showAnnotation(call: GenericCall, place: PsiElement) {
         if (!call.isGeneric() || call.withExplicitSpecs()) {
             return
         }
 
-        val genericNames = call.genericNames().joinToString(", ")
+        val genericNames = call.genericNames()
+            .joinToString(", ") { it.name + if (it.extendsClass != null) ": " + it.extendsClass else "" }
         val simplePresentation = myHintsFactory.inlayHint("<$genericNames>")
 
-        val namePsi = element.firstChild
-        val offset = if (element is MethodReference) {
-            // offset after "->method_name"
-            namePsi.nextSibling.nextSibling.endOffset
-        } else {
-            namePsi.endOffset
-        }
-
-        sink.addInlineElement(offset, false, simplePresentation, false)
+        sink.addInlineElement(place.endOffset, false, simplePresentation, false)
     }
 }
