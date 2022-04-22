@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.documentation.phpdoc.parser.tags.PhpDocTagParserRegistry
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl
+import com.jetbrains.php.lang.lexer.PhpTokenTypes
 import com.jetbrains.php.lang.parser.PhpParserDefinition
 import com.jetbrains.php.lang.parser.PhpPsiElementCreator
 import com.vk.kphpstorm.exphptype.psi.*
@@ -51,6 +52,10 @@ class KphpStormParserDefinition() : PhpParserDefinition() {
             ExPhpTypeCallablePsiImpl.elementType           -> ExPhpTypeCallablePsiImpl(node)
             ExPhpTypeClassStringPsiImpl.elementType        -> ExPhpTypeClassStringPsiImpl(node)
             ExPhpTypeForcingPsiImpl.elementType            -> ExPhpTypeForcingPsiImpl(node)
+
+            PhpTokenTypes.C_STYLE_COMMENT                  -> {
+                PhpDocTypeImpl(node)
+            }
 
             else                                           -> PhpPsiElementCreator.create(node)
         }

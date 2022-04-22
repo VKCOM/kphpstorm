@@ -115,6 +115,17 @@ class GenericsReifier(val project: Project) {
             }
         }
 
+        if (paramExType is ExPhpTypeCallable) {
+            if (argExType is ExPhpTypeCallable) {
+                if (argExType.returnType != null && paramExType.returnType != null) {
+                    reifyArgumentGenericsT(argExType.returnType, paramExType.returnType)
+                }
+                for (i in 0 until min(argExType.argTypes.size, paramExType.argTypes.size)) {
+                    reifyArgumentGenericsT(argExType.argTypes[i], paramExType.argTypes[i])
+                }
+            }
+        }
+
         if (paramExType is ExPhpTypeClassString) {
             val isPipeWithClassString = argExType is ExPhpTypePipe &&
                     argExType.items.any { it is ExPhpTypeClassString }
@@ -614,6 +625,7 @@ abstract class GenericCall(val project: Project) {
     val specializationNameMap get() = extractor.specializationNameMap
     val implicitSpecs get() = reifier.implicitSpecs
     val implicitSpecializationNameMap get() = reifier.implicitSpecializationNameMap
+    val implicitClassSpecializationNameMap get() = reifier.implicitClassSpecializationNameMap
     val implicitSpecializationErrors get() = reifier.implicitSpecializationErrors
 
     protected fun init() {

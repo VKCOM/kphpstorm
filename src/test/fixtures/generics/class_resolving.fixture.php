@@ -1,4 +1,8 @@
 <?php
+
+$a = mirror/*<GlobalA>*/(new GlobalA());
+
+
 /** @noinspection FunctionUnnecessaryExplicitGenericInstantiationListInspection */
 /** @noinspection PhpUndefinedFunctionInspection */
 /** @noinspection PhpExpressionResultUnusedInspection */

@@ -1,13 +1,13 @@
 plugins {
     id 'java'
     id 'idea'
-    id 'org.jetbrains.intellij' version '1.3.0'     // https://github.com/JetBrains/gradle-intellij-plugin
-    id 'org.jetbrains.kotlin.jvm' version '1.6.0'   // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm
+    id 'org.jetbrains.intellij' version '1.5.3'     // https://github.com/JetBrains/gradle-intellij-plugin
+    id 'org.jetbrains.kotlin.jvm' version '1.6.10'   // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm
 }
 
 group 'com.vk'
 // important! update changeNotes (below) on version bump
-version '1.2.2'
+version '1.2.3'
 
 repositories {
     mavenCentral()
@@ -40,9 +40,9 @@ intellij {
     type = 'IU'
     // for release versions: https://www.jetbrains.com/intellij-repository/releases (com.jetbrains.intellij.idea)
     // for EAPs: https://www.jetbrains.com/intellij-repository/snapshots
-    version = '2021.3.1'
+    version = '2022.1'
     plugins = [
-        'com.jetbrains.php:213.5744.223', // https://plugins.jetbrains.com/plugin/6610-php/versions
+        'com.jetbrains.php:221.5080.224', // https://plugins.jetbrains.com/plugin/6610-php/versions
     ]
 }
 runIde {
@@ -54,7 +54,7 @@ patchPluginXml {
     // <change-notes> is only for LATEST version and should be updated on every version bump
     changeNotes = """
 <ul>
-  <li>adapt code for 2021.3</li>
+  <li>adapt code for 2022.1</li>
 </ul>
 """
 }

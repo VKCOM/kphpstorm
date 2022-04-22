@@ -34,7 +34,7 @@ class GenericInstantiationArgsCountMismatchInspection : PhpInspection() {
             private fun checkGenericCall(call: GenericCall) {
                 if (!call.isResolved()) return
 
-                val countGenericNames = call.genericNames().size
+                val countGenericNames = call.genericNames().size - call.implicitClassSpecializationNameMap.size
                 val countExplicitSpecs = call.explicitSpecs.size
                 val explicitSpecsPsi = call.explicitSpecsPsi
 
