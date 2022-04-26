@@ -68,6 +68,16 @@
       <category>PHP</category>
       <descriptionDirectoryName>PrettifyPhpdocBlockIntention</descriptionDirectoryName>
     </intentionAction>
+    <intentionAction>
+      <className>com.vk.kphpstorm.inspections.CollapseGenericsInstantiationIntention</className>
+      <category>PHP</category>
+      <descriptionDirectoryName>CollapseGenericsInstantiationIntention</descriptionDirectoryName>
+    </intentionAction>
+    <intentionAction>
+      <className>com.vk.kphpstorm.inspections.DebugGenericsInstantiationIntention</className>
+      <category>PHP</category>
+      <descriptionDirectoryName>DebugGenericsInstantiationIntention</descriptionDirectoryName>
+    </intentionAction>
 
     <additionalTextAttributes scheme="Default" file="colorSchemes/KphpAddonsDefault.xml"/>
     <additionalTextAttributes scheme="Darcula" file="colorSchemes/KphpAddonsDarcula.xml"/>
@@ -86,6 +96,9 @@
                           implementationClass="com.vk.kphpstorm.highlighting.KphpStormTypeInfoProvider"/>
 
     <postStartupActivity implementation="com.vk.kphpstorm.configuration.KphpStormStartupActivity"/>
+
+    <multiHostInjector implementation="com.vk.kphpstorm.GenericsInstantiationInjector"/>
+    <lang.foldingBuilder language="PHP" implementationClass="com.vk.kphpstorm.GenericsInstatiationFolding"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.jetbrains.php">
