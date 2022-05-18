@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory
 import com.jetbrains.php.lang.psi.elements.FunctionReference
 import com.jetbrains.php.lang.psi.elements.PhpNamespaceReference
 
-class ReplaceToKphpFunctionsQuickFix(
+class ReplaceUnsupportedFunctionCallQuickFix(
     private val replaceFunction: String,
     private val isFirst: Boolean = false
 ) : LocalQuickFix {

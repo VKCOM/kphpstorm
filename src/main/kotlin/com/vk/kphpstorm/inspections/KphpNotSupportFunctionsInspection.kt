@@ -7,9 +7,9 @@ import com.jetbrains.php.lang.inspections.PhpInspection
 import com.jetbrains.php.lang.psi.elements.FunctionReference
 import com.jetbrains.php.lang.psi.elements.PhpReference
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
-import com.vk.kphpstorm.inspections.quickfixes.ReplaceToKphpFunctionsQuickFix
+import com.vk.kphpstorm.inspections.quickfixes.ReplaceUnsupportedFunctionCallQuickFix
 
-class KphpNotSupportFunctionsInspection : PhpInspection() {
+class KphpUnsupportedFunctionCallInspection : PhpInspection() {
     companion object {
         private val PHP_TO_KPHP_FUNCTIONS = mapOf(
             "end" to listOf("array_last_value", "array_last_key"),
@@ -34,7 +34,7 @@ class KphpNotSupportFunctionsInspection : PhpInspection() {
 
                 val replaceFunction = PHP_TO_KPHP_FUNCTIONS[functionName]
                 replaceFunction?.forEachIndexed { index, replaceFunctionName ->
-                    fixes.add(ReplaceToKphpFunctionsQuickFix(replaceFunctionName, index == 0))
+                    fixes.add(ReplaceUnsupportedFunctionCallQuickFix(replaceFunctionName, index == 0))
                 }
 
                 holder.registerProblem(

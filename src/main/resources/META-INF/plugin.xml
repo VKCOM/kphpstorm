@@ -62,10 +62,10 @@
                      displayName="Redundant cast (int)/(array)/etc"
                      enabledByDefault="false" level="WARNING"
                      implementationClass="com.vk.kphpstorm.inspections.RedundantCastInspection"/>
-    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="KphpNotSupportFunctionsInspection"
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="KphpUnsupportedFunctionCallInspection"
                      displayName="KPHP does not support functions"
                      enabledByDefault="false" level="ERROR"
-                     implementationClass="com.vk.kphpstorm.inspections.KphpNotSupportFunctionsInspection"/>
+                     implementationClass="com.vk.kphpstorm.inspections.KphpUnsupportedFunctionCallInspection"/>
 
     <intentionAction>
       <className>com.vk.kphpstorm.inspections.PrettifyPhpdocBlockIntention</className>
