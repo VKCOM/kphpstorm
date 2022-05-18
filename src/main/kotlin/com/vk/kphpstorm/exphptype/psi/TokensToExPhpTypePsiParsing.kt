@@ -208,7 +208,6 @@ internal object TokensToExPhpTypePsiParsing {
                 marker.drop()
                 return false
             }
-
             marker.done(ExPhpTypeAnyPsiImpl.elementType)
             return true
         }
