@@ -1,14 +1,5 @@
 <?php /** @noinspection ALL */
 
-/**
- * @kphp-generic T
- * @param T $arg
- * @return T
- */
-function mirror($arg) {
-  return $arg;
-}
-
 use Classes\B;
 use Classes\C as GlobalC;
 

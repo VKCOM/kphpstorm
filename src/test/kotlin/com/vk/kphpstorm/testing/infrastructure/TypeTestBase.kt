@@ -36,7 +36,7 @@ abstract class TypeTestBase : BasePlatformTestCase() {
         KphpStormConfiguration.saveThatSetupForProjectDone(project)
         myFixture.configureByFiles(*fixtureFiles)
 
-        val exprTypeCalls = findExprTypeCalls()
+        val exprTypeCalls = findExprTypeCalls(fixtureFiles)
 
         exprTypeCalls.forEach { call ->
             checkExprTypeCall(call)
@@ -61,11 +61,15 @@ abstract class TypeTestBase : BasePlatformTestCase() {
         }
     }
 
-    private fun findExprTypeCalls(): List<FunctionReference> {
-        val exprTypeCalls = myFixture.file.findChildren<FunctionReference> {
-            it is FunctionReference && it.name == "expr_type" && it.parameters.size == 2 &&
-                    it.parameters.last() is StringLiteralExpression && it.parameters.first() is PhpTypedElement
-        }
-        return exprTypeCalls
+    private fun findExprTypeCalls(fixtureFiles: Array< out String>): List<FunctionReference> {
+        return fixtureFiles.map {
+            val file = myFixture.findFileInTempDir(it) ?: return@map emptyList<FunctionReference>()
+            myFixture.openFileInEditor(file)
+
+            myFixture.file.findChildren { el ->
+                el is FunctionReference && el.name == "expr_type" && el.parameters.size == 2 &&
+                        el.parameters.last() is StringLiteralExpression && el.parameters.first() is PhpTypedElement
+            }
+        }.flatten()
     }
 }

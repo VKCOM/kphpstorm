@@ -58,7 +58,13 @@ class InlayHintsCollector(
             call.genericNames()
         } else {
             call.function()!!.genericNames()
-        }.joinToString(", ") { it.name + if (it.extendsClass != null) ": " + it.extendsClass else "" }
+        }.joinToString(", ") {
+            val extendsHint = if (it.extendsClass != null)
+                ": " + it.extendsClass.removePrefix("\\")
+            else
+                ""
+            it.name  +extendsHint
+        }
 
         if (genericNames.isEmpty()) {
             return

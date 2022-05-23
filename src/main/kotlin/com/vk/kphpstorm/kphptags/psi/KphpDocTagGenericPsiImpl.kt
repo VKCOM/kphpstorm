@@ -27,7 +27,7 @@ class KphpDocTagGenericPsiImpl : PhpDocTagImpl, KphpDocTagImpl {
                                 val parts = type.split(':')
                                 parts[0] to parts[1]
                             } else {
-                                type to ""
+                                type to null
                             }
                             KphpDocGenericParameterDecl(name, extendsClass)
                         }

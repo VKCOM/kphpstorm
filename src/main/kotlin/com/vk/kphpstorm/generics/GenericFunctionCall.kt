@@ -323,6 +323,9 @@ class ResolvingGenericFunctionCall(project: Project) : ResolvingGenericBase(proj
 
         val remainingPackedData = packedData.substring(firstSeparatorIndex + "@@".length)
         val secondSeparatorIndex = remainingPackedData.indexOf("@@")
+        if (secondSeparatorIndex == -1) {
+            return false
+        }
         val explicitGenericsString = remainingPackedData.substring(0, secondSeparatorIndex)
         val argumentsTypesString = remainingPackedData.substring(secondSeparatorIndex + "@@".length)
 
@@ -678,6 +681,8 @@ abstract class GenericCall(val project: Project) {
         if (countGenericNames == countExplicitSpecs && countExplicitSpecs == countImplicitSpecs) {
             var isEqual = true
             explicitSpecs.forEachIndexed { index, explicitSpec ->
+                // TODO: Здесь должна быть проверка что они не равны
+                // Такой подход не работает для nullable
                 if (!implicitSpecs[index].isAssignableFrom(explicitSpec, project)) {
                     isEqual = false
                 }

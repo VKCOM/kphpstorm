@@ -1,13 +1,12 @@
-package com.vk.kphpstorm.testing.tests
+package com.vk.kphpstorm.testing.tests.generics.inspections
 
 import com.vk.kphpstorm.inspections.GenericNoEnoughInformationInspection
 import com.vk.kphpstorm.testing.infrastructure.InspectionTestBase
 
 class GenericsNoEnoughInformationInspectionsTest : InspectionTestBase(GenericNoEnoughInformationInspection()) {
-    fun testClasses() {
+    fun test() {
         runFixture(
-            "generics/classes/no_enough_information.inspection.fixture.php",
-            "generics/classes/Vector.fixture.php"
+            "generics/inspections/no_enough_information.fixture.php",
         )
     }
 }

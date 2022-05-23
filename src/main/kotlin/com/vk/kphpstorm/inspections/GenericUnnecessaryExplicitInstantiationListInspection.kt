@@ -40,7 +40,7 @@ class GenericUnnecessaryExplicitInstantiationListInspection : PhpInspection() {
                     holder.registerProblem(
                         call.explicitSpecsPsi!!,
                         "Remove unnecessary explicit list of instantiation arguments",
-                        ProblemHighlightType.WEAK_WARNING,
+                        ProblemHighlightType.WARNING,
                         RemoveExplicitGenericSpecsQuickFix()
                     )
                 }
