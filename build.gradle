@@ -7,7 +7,7 @@ plugins {
 
 group 'com.vk'
 // important! update changeNotes (below) on version bump
-version '1.2.3'
+version '1.2.4'
 
 repositories {
     mavenCentral()
@@ -48,7 +48,8 @@ patchPluginXml {
     // <change-notes> is only for LATEST version and should be updated on every version bump
     changeNotes = """
 <ul>
-  <li>adapt code for 2022.1</li>
+  <li>support ffi_scope and ffi_cdata in phpdoc</li>
+  <li>track calls to 'end()' and 'reset()', suggesting replacing them</li>
 </ul>
 """
 }
