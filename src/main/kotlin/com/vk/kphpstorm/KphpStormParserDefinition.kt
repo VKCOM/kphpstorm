@@ -1,13 +1,19 @@
 package com.vk.kphpstorm
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.injection.MultiHostInjector
+import com.intellij.lang.injection.MultiHostRegistrar
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.PsiCommentImpl
+import com.jetbrains.php.lang.PhpLanguage
 import com.jetbrains.php.lang.documentation.phpdoc.parser.tags.PhpDocTagParserRegistry
-import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl
-import com.jetbrains.php.lang.lexer.PhpTokenTypes
 import com.jetbrains.php.lang.parser.PhpParserDefinition
 import com.jetbrains.php.lang.parser.PhpPsiElementCreator
+import com.jetbrains.php.lang.psi.PhpFile
+import com.jetbrains.php.lang.psi.elements.PhpUse
 import com.vk.kphpstorm.exphptype.psi.*
+import com.vk.kphpstorm.generics.psi.GenericInstantiationPsiCommentImpl
 import com.vk.kphpstorm.kphptags.ALL_KPHPDOC_TAGS
 import com.vk.kphpstorm.kphptags.psi.*
 
@@ -36,7 +42,6 @@ class KphpStormParserDefinition() : PhpParserDefinition() {
             KphpDocElementTypes.kphpDocTagTemplateClass    -> KphpDocTagTemplateClassPsiImpl(node)
             KphpDocElementTypes.kphpDocTagGeneric          -> KphpDocTagGenericPsiImpl(node)
             KphpDocGenericParameterDeclPsiImpl.elementType -> KphpDocGenericParameterDeclPsiImpl(node)
-            KphpDocGenericParameterDeclPsiImpl.extendsElementType -> PhpDocTypeImpl(node)
             KphpDocElementTypes.kphpDocTagWarnPerformance  -> KphpDocTagWarnPerformancePsiImpl(node)
             KphpDocWarnPerformanceItemPsiImpl.elementType  -> KphpDocWarnPerformanceItemPsiImpl(node)
 
@@ -53,10 +58,6 @@ class KphpStormParserDefinition() : PhpParserDefinition() {
             ExPhpTypeClassStringPsiImpl.elementType        -> ExPhpTypeClassStringPsiImpl(node)
             ExPhpTypeForcingPsiImpl.elementType            -> ExPhpTypeForcingPsiImpl(node)
 
-            PhpTokenTypes.C_STYLE_COMMENT                  -> {
-                PhpDocTypeImpl(node)
-            }
-
             else                                           -> PhpPsiElementCreator.create(node)
         }
     }
@@ -67,3 +68,20 @@ class KphpStormParserDefinition() : PhpParserDefinition() {
  * This has no sense but correct plugin.xml validity while development
  */
 class FakePhpLanguage : com.intellij.lang.Language("PHP")
+
+class GenericsInstantiationInjector : MultiHostInjector {
+    override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
+        if (context is GenericInstantiationPsiCommentImpl) {
+            val file = context.containingFile as? PhpFile ?: return
+            val usesText = file.topLevelDefs.values().filterIsInstance<PhpUse>().joinToString("\n") { it.parent.text }
+
+            val start = context.startOffset - context.textOffset
+            val range = TextRange(start + 3, start + context.textLength - 3)
+            registrar.startInjecting(PhpLanguage.INSTANCE)
+                .addPlace("<?php\n${usesText}\n/**@var tuple(", ")*/", context, range)
+                .doneInjecting()
+        }
+    }
+
+    override fun elementsToInjectIn() = listOf(PsiCommentImpl::class.java)
+}

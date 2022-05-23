@@ -1,10 +1,13 @@
 <?php
 
 /**
- * @param $a GlobalA
+ * @kphp-generic T
+ * @param T $arg
+ * @return T
  */
-function f() {
-
+function mirror1($arg) {
+    return $arg;
 }
-$a = mirror/*<GlobalA>*/(new GlobalA());
 
+
+$a = mirror1/*<GlobalA>*/(new GlobalA());

@@ -15,7 +15,6 @@ data class KphpDocGenericParameterDecl(val name: String, val extendsClass: Strin
 class KphpDocGenericParameterDeclPsiImpl(node: ASTNode) : PhpDocPsiElementImpl(node), PhpDocRef {
     companion object {
         val elementType = PhpDocElementType("phpdocGenericParameterDecl")
-        val extendsElementType = PhpDocElementType("phpdocGenericExtendsParameterDecl")
     }
 
     private val name = text.substringBefore(':')

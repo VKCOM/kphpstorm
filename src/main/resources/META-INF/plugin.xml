@@ -90,6 +90,11 @@
       <category>PHP</category>
       <descriptionDirectoryName>PrettifyPhpdocBlockIntention</descriptionDirectoryName>
     </intentionAction>
+    <intentionAction>
+      <className>com.vk.kphpstorm.inspections.CollapseGenericsInstantiationIntention</className>
+      <category>PHP</category>
+      <descriptionDirectoryName>CollapseGenericsInstantiationIntention</descriptionDirectoryName>
+    </intentionAction>
 
     <additionalTextAttributes scheme="Default" file="colorSchemes/KphpAddonsDefault.xml"/>
     <additionalTextAttributes scheme="Darcula" file="colorSchemes/KphpAddonsDarcula.xml"/>
@@ -106,7 +111,7 @@
 
     <stubElementTypeHolder class="com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes"/>
     <annotator language="PHP" implementationClass="com.vk.kphpstorm.highlighting.KphpStormAnnotator"/>
-    <annotator language="PHP" implementationClass="com.vk.kphpstorm.highlighting.KphpStormGenericCommentsAnnotator"/>
+<!--    <annotator language="PHP" implementationClass="com.vk.kphpstorm.highlighting.KphpStormGenericCommentsAnnotator"/>-->
 
     <lang.documentationProvider language="PHP" order="first"
                                 implementationClass="com.vk.kphpstorm.highlighting.KphpStormDocumentationProvider"/>
@@ -115,14 +120,15 @@
 
     <postStartupActivity implementation="com.vk.kphpstorm.configuration.KphpStormStartupActivity"/>
 
+    <multiHostInjector implementation="com.vk.kphpstorm.GenericsInstantiationInjector"/>
     <lang.foldingBuilder language="PHP"
                          implementationClass="com.vk.kphpstorm.highlighting.KphpGenericCommentFolderBuilder"/>
     <codeInsight.inlayProvider language="PHP"
                                implementationClass="com.vk.kphpstorm.highlighting.hints.GenericsInlayTypeHintsProvider"/>
-    <psi.referenceContributor
-      order="first"
-      language="PHP"
-      implementation="com.vk.kphpstorm.completion.KphpGenericsReferenceContributor"/>
+<!--    <psi.referenceContributor-->
+<!--      order="first"-->
+<!--      language="PHP"-->
+<!--      implementation="com.vk.kphpstorm.completion.KphpGenericsReferenceContributor"/>-->
 
   </extensions>
 

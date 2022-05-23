@@ -3,6 +3,15 @@
 /** @noinspection PhpUndefinedFunctionInspection */
 /** @noinspection PhpExpressionResultUnusedInspection */
 
+class Foo {
+    public function boo() {}
+}
+
+$vec = new Vector/*<Foo>*/();
+$a = $vec->get(0);
+
+
+
 "Явные типы"; {
     $vec = new Vector/*<GlobalA>*/();
     $vec->add(new GlobalA);

@@ -34,20 +34,31 @@ class Map {
     }
 }
 
+class SerializableItem implements Serializable {
+    public function serialize()
+    {
+        // TODO: Implement serialize() method.
+    }
+
+    /**
+     * @param self $data
+     */
+    public function unserialize($data)
+    {
+        // TODO: Implement unserialize() method.
+    }
+}
+
+
 ""; {
     $map = new Map/*<SerializableItem, GlobalA>*/();
     $map->get(new SerializableItem())->methodGlobalA();
     $map->set(new SerializableItem, 200);
+    
+
 
 //    $map1 = new Map(new Pair/*<SerializableItem, int>*/(new SerializableItem(), 200));
 //    $map1->get(new SerializableItem());
 
 
-
 }
-
-
-
-
-
-

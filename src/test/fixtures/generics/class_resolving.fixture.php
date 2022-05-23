@@ -1,8 +1,4 @@
 <?php
-
-$a = mirror/*<GlobalA>*/(new GlobalA());
-
-
 /** @noinspection FunctionUnnecessaryExplicitGenericInstantiationListInspection */
 /** @noinspection PhpUndefinedFunctionInspection */
 /** @noinspection PhpExpressionResultUnusedInspection */
@@ -46,12 +42,12 @@ function mirror($arg) {
   }
 
   "Импортированный класс из пространства имен с алиасом как у глобально класса"; {
-    $a = mirror/*<GlobalD*/(new GlobalD());
+    $a = mirror/*<GlobalD>*/(new GlobalD());
     expr_type($a, "\Classes\D");
   }
 
   "Глобальный класс с именем как у локального алиаса для другого класса"; {
-    $a = mirror/*<\GlobalD*/(new \GlobalD());
+    $a = mirror/*<\GlobalD>*/(new \GlobalD());
     expr_type($a, "\GlobalD");
   }
 }
@@ -78,12 +74,12 @@ function mirror($arg) {
     }
 
     "Импортированный класс из пространства имен с алиасом как у глобально класса"; {
-        $a = mirror/*<GlobalD[]*/([new GlobalD()]);
+        $a = mirror/*<GlobalD[]>*/([new GlobalD()]);
         expr_type($a, "\Classes\D[]");
     }
 
     "Глобальный класс с именем как у локального алиаса для другого класса"; {
-        $a = mirror/*<\GlobalD[]*/([new \GlobalD()]);
+        $a = mirror/*<\GlobalD[]>*/([new \GlobalD()]);
         expr_type($a, "\GlobalD[]");
     }
 }
@@ -110,12 +106,12 @@ function mirror($arg) {
     }
 
     "Импортированный класс из пространства имен с алиасом как у глобально класса"; {
-        $a = mirror/*<?GlobalD*/(new GlobalD());
+        $a = mirror/*<?GlobalD>*/(new GlobalD());
         expr_type($a, "\Classes\D|null");
     }
 
     "Глобальный класс с именем как у локального алиаса для другого класса"; {
-        $a = mirror/*<?\GlobalD*/(new \GlobalD());
+        $a = mirror/*<?\GlobalD>*/(new \GlobalD());
         expr_type($a, "\GlobalD|null");
     }
 }
@@ -132,7 +128,7 @@ function mirror($arg) {
     }
 
     "Импортированный класс из пространства имен с алиасом как у глобально класса + Глобальный класс с именем как у локального алиаса для другого класса"; {
-        $a = mirror/*<GlobalD|\GlobalD*/(new GlobalD());
+        $a = mirror/*<GlobalD|\GlobalD>*/(new GlobalD());
         expr_type($a, "\Classes\D|\GlobalD");
     }
 }
@@ -149,7 +145,7 @@ function mirror($arg) {
     }
 
     "Импортированный класс из пространства имен с алиасом как у глобально класса + Глобальный класс с именем как у локального алиаса для другого класса"; {
-        $a = mirror/*<tuple(GlobalD, \GlobalD)*/(tuple(new GlobalD(), new \GlobalD()));
+        $a = mirror/*<tuple(GlobalD, \GlobalD)>*/(tuple(new GlobalD(), new \GlobalD()));
         expr_type($a, "tuple(\Classes\D,\GlobalD)");
     }
 }
@@ -166,7 +162,7 @@ function mirror($arg) {
     }
 
     "Импортированный класс из пространства имен с алиасом как у глобально класса + Глобальный класс с именем как у локального алиаса для другого класса"; {
-        $a = mirror/*<shape(key1: GlobalD, key2: \GlobalD)*/(shape(["key1" => new GlobalD(), "key2" => new \GlobalD()]));
+        $a = mirror/*<shape(key1: GlobalD, key2: \GlobalD)>*/(shape(["key1" => new GlobalD(), "key2" => new \GlobalD()]));
         expr_type($a, "shape(key1:\Classes\D,key2:\GlobalD)");
     }
 }
@@ -175,6 +171,6 @@ function mirror($arg) {
     $a = mirror/*<tuple(GlobalA[], \Classes\A|GlobalC)>*/(tuple([new GlobalA()], new \Classes\A()));
     expr_type($a, "tuple(\GlobalA[],\Classes\C|\Classes\A)");
 
-    $a1 = mirror/*<shape(key1: tuple(GlobalA[], \Classes\A|GlobalC), key2: ?\GlobalD[])*/(shape(["key1" => $a, "key2" => [new \GlobalD()]]));
+    $a1 = mirror/*<shape(key1: tuple(GlobalA[], \Classes\A|GlobalC), key2: ?\GlobalD[])>*/(shape(["key1" => $a, "key2" => [new \GlobalD()]]));
     expr_type($a1, "shape(key1:tuple(\GlobalA[],\Classes\C|\Classes\A),key2:?\GlobalD[])");
 }

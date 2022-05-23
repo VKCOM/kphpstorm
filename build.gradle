@@ -30,9 +30,15 @@ idea {
     }
 }
 
+compileKotlin {
+    sourceCompatibility = 11
+    targetCompatibility = 11
+}
+
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += '-Xjvm-default=all'
+        jvmTarget = '11'
     }
 }
 
@@ -40,9 +46,9 @@ intellij {
     type = 'IU'
     // for release versions: https://www.jetbrains.com/intellij-repository/releases (com.jetbrains.intellij.idea)
     // for EAPs: https://www.jetbrains.com/intellij-repository/snapshots
-    version = '2022.1'
+    version = '2022.1.1'
     plugins = [
-        'com.jetbrains.php:221.5080.224', // https://plugins.jetbrains.com/plugin/6610-php/versions
+        'com.jetbrains.php:221.5591.58', // https://plugins.jetbrains.com/plugin/6610-php/versions
     ]
 }
 runIde {
