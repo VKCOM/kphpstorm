@@ -89,6 +89,24 @@ internal object TokensToExPhpTypePsiParsing {
         }
     }
 
+    private fun parseFfiContents(builder: PhpPsiBuilder): Boolean {
+        if (!builder.compareAndEat(PhpDocTokenTypes.DOC_LAB))
+            return !builder.expected("<")
+
+        while (true) {
+            if (builder.compareAndEat(PhpDocTokenTypes.DOC_TEXT) ||
+                builder.compareAndEat(PhpDocTokenTypes.DOC_COMMA) ||
+                builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)
+            )
+                continue
+
+            if (builder.compareAndEat(PhpDocTokenTypes.DOC_RAB))
+                return true
+
+            return builder.expected(">")
+        }
+    }
+
     private fun parseTypedCallableContents(builder: PhpPsiBuilder): Boolean {
         if (!builder.compareAndEat(PhpDocTokenTypes.DOC_LPAREN))
             return !builder.expected("(")
@@ -179,6 +197,17 @@ internal object TokensToExPhpTypePsiParsing {
         if (builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) && builder.tokenText == "any") {
             val marker = builder.mark()
             builder.advanceLexer()
+            marker.done(ExPhpTypeAnyPsiImpl.elementType)
+            return true
+        }
+
+        if (builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) && (builder.tokenText == "ffi_cdata" || builder.tokenText == "ffi_scope")) {
+            val marker = builder.mark()
+            builder.advanceLexer()
+            if (!parseFfiContents(builder)) {
+                marker.drop()
+                return false
+            }
             marker.done(ExPhpTypeAnyPsiImpl.elementType)
             return true
         }

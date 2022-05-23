@@ -22,6 +22,8 @@ class ExPhpTypeCompletionProvider : CompletionProvider<CompletionParameters>() {
         result.addElement(LookupElementBuilder.create("future"))
         result.addElement(LookupElementBuilder.create("future_queue"))
         result.addElement(LookupElementBuilder.create("any"))
+        result.addElement(LookupElementBuilder.create("ffi_cdata"))
+        result.addElement(LookupElementBuilder.create("ffi_scope"))
 
         // "Cassandra\Tuple" messes with our 'tuple', I don't want it to be seen, filter it out
         // same for some others also
