@@ -29,27 +29,41 @@ class GenericsTypesTest : TypeTestBase() {
 
     fun testImplicitClass() {
         runFixture(
-            "generics/types/classes/implicit/standalone.fixture.php",
-            "generics/types/classes/implicit/array.fixture.php",
-            "generics/types/classes/implicit/nullable.fixture.php",
-            "generics/types/classes/implicit/union.fixture.php",
-            "generics/types/classes/implicit/tuple.fixture.php",
-            "generics/types/classes/implicit/shape.fixture.php",
-            "generics/types/classes/implicit/mixed.fixture.php",
-            "generics/.meta/functions.php"
+            "generics/types/classes-as-types/implicit/standalone.fixture.php",
+            "generics/types/classes-as-types/implicit/array.fixture.php",
+            "generics/types/classes-as-types/implicit/nullable.fixture.php",
+            "generics/types/classes-as-types/implicit/union.fixture.php",
+            "generics/types/classes-as-types/implicit/tuple.fixture.php",
+            "generics/types/classes-as-types/implicit/shape.fixture.php",
+            "generics/types/classes-as-types/implicit/mixed.fixture.php",
+            "generics/.meta/functions.php",
         )
     }
 
     fun testExplicitClass() {
         runFixture(
-            "generics/types/classes/explicit/standalone.fixture.php",
-            "generics/types/classes/explicit/array.fixture.php",
-            "generics/types/classes/explicit/nullable.fixture.php",
-            "generics/types/classes/explicit/union.fixture.php",
-            "generics/types/classes/explicit/tuple.fixture.php",
-            "generics/types/classes/explicit/shape.fixture.php",
-            "generics/types/classes/explicit/mixed.fixture.php",
+            "generics/types/classes-as-types/explicit/standalone.fixture.php",
+            "generics/types/classes-as-types/explicit/array.fixture.php",
+            "generics/types/classes-as-types/explicit/nullable.fixture.php",
+            "generics/types/classes-as-types/explicit/union.fixture.php",
+            "generics/types/classes-as-types/explicit/tuple.fixture.php",
+            "generics/types/classes-as-types/explicit/shape.fixture.php",
+            "generics/types/classes-as-types/explicit/mixed.fixture.php",
             "generics/.meta/functions.php"
+        )
+    }
+
+    fun testNexExpr() {
+        runFixture(
+            "generics/types/classes/new_expr.fixture.php",
+        )
+    }
+
+    fun testMethods() {
+        runFixture(
+            "generics/types/methods/chain.fixture.php",
+            "generics/Containers/Vector.php",
+            "generics/Containers/Pair.php",
         )
     }
 

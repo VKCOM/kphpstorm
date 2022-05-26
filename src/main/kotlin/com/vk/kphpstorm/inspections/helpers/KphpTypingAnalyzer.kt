@@ -5,6 +5,7 @@ import com.jetbrains.php.lang.psi.elements.Field
 import com.jetbrains.php.lang.psi.elements.Function
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.*
+import com.vk.kphpstorm.generics.GenericUtil.getGenericPipeType
 
 /**
  * Helps check if something is statically typed
@@ -43,10 +44,18 @@ object KphpTypingAnalyzer {
     fun isScalarTypeHint(s: String) =
             SCALAR_TYPE_HINTS.contains(s)
 
-    fun doesDocTypeMatchTypeHint(docType: ExPhpType, hintType: ExPhpType, project: Project): Boolean =
-            docType !is ExPhpTypePipe
-                    && hintType.isAssignableFrom(docType, project)
-                    && docType.isAssignableFrom(hintType, project)
+    fun doesDocTypeMatchTypeHint(docType: ExPhpType, hintType: ExPhpType, project: Project): Boolean {
+        if (docType is ExPhpTypePipe) {
+            val genericType = docType.getGenericPipeType()
+            if (genericType != null) {
+                return doesDocTypeMatchTypeHint(genericType, hintType, project)
+            }
+        }
+
+        return docType !is ExPhpTypePipe
+                && hintType.isAssignableFrom(docType, project)
+                && docType.isAssignableFrom(hintType, project)
+    }
 
     fun doesDocTypeDuplicateTypeHint(docType: ExPhpType, hintType: ExPhpType): Boolean =
             docType.toString() == hintType.toString()

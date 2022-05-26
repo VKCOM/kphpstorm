@@ -9,7 +9,7 @@ function expr_type($expr, string $string) {
 /**
  * @kphp-generic T
  * @param T $arg
- * @return T
+ * @return ?T
  */
 function nullable_of($arg) {
   if (0) {
@@ -69,7 +69,7 @@ function combine($a1, $a2) {
  * @return T2[]
  */
 function filter_is_instance($array, $class) {
-  return array_filter($array, fn($el) => is_a($el, $class));;
+  return array_filter($array, fn($el) => is_a($el, $class));
 }
 
 /**

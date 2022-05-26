@@ -1,6 +1,8 @@
 package com.vk.kphpstorm.exphptype
 
 import com.intellij.openapi.project.Project
+import com.jetbrains.php.PhpClassHierarchyUtils
+import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.codeInsight.PhpCodeInsightUtil
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
@@ -31,6 +33,20 @@ class ExPhpTypeTplInstantiation(val classFqn: String, val specializationList: Li
         // not finished
         is ExPhpTypePipe             -> rhs.items.any { it.isAssignableFrom(this, project) }
         is ExPhpTypeTplInstantiation -> classFqn == rhs.classFqn && specializationList.size == rhs.specializationList.size
+
+        is ExPhpTypeInstance -> rhs.fqn == classFqn || run {
+            val phpIndex = PhpIndex.getInstance(project)
+            val lhsClass = phpIndex.getAnyByFQN(classFqn).firstOrNull() ?: return false
+            var rhsIsChild = false
+            phpIndex.getAnyByFQN(rhs.fqn).forEach { rhsClass ->
+                PhpClassHierarchyUtils.processSuperWithoutMixins(rhsClass, true, true) { clazz ->
+                    if (PhpClassHierarchyUtils.classesEqual(lhsClass, clazz))
+                        rhsIsChild = true
+                    !rhsIsChild
+                }
+            }
+            rhsIsChild
+        }
         else                         -> false
     }
 }

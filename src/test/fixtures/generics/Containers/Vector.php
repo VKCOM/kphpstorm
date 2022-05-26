@@ -40,7 +40,7 @@ class Vector {
   }
 
   /**
-   * @param callable(T):T $fn
+   * @param callable(T):bool $fn
    * @return SimpleVector<T>
    */
   function filter($fn) {
@@ -50,8 +50,7 @@ class Vector {
   }
 
   /**
-   * @kphp-generic T1
-   * @param callable(T):T1 $fn
+   * @param callable(T): void $fn
    */
   function foreach($fn) {
     foreach ($this->data as $el) {
@@ -60,8 +59,7 @@ class Vector {
   }
 
   /**
-   * @kphp-generic T1
-   * @param callable(string, T):T1 $fn
+   * @param callable(string, T): void $fn
    */
   function foreach_key_value($fn) {
     foreach ($this->data as $key => $el) {
@@ -86,6 +84,6 @@ class Vector {
    */
   function combine_with($other) {
     // TODO: replace Foo with T|T1
-    return new SimpleVector/*<Foo>*/ (array_merge($this->data, $other->raw()));
+    return new SimpleVector/*<T>*/ (...array_merge($this->data, $other->raw()));
   }
 }

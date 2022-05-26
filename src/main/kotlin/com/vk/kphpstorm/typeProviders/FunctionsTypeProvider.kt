@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.impl.ArrayCreationExpressionImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
 import com.vk.kphpstorm.exphptype.*
+import com.vk.kphpstorm.generics.GenericUtil.isGeneric
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.helpers.toStringAsNested
 
@@ -326,7 +327,13 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
 
 
     private fun PhpType.force(): PhpType {
-        return when (this.toExPhpType()) {
+        val type = this.toExPhpType() ?: return this
+
+        if (type.isGeneric()) {
+            return PhpType().add(this)
+        }
+
+        return when(type) {
             is ExPhpTypeForcing  -> this
             is ExPhpTypeInstance -> this
             else                 -> PhpType().add("force($this)")

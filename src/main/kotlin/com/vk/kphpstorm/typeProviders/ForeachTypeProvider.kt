@@ -45,6 +45,14 @@ class ForeachTypeProvider : PhpTypeProvider4 {
     }
 
     override fun complete(incompleteTypeStr: String, project: Project): PhpType? {
+        if (!incompleteTypeStr.startsWith("#Ф")) {
+           return null
+        }
+
+        if (incompleteTypeStr.contains("%Ф")) {
+            return null
+        }
+
         val arrTypeStr = incompleteTypeStr.substring(2)
         val arrType = PhpType().add(arrTypeStr).global(project)
 

@@ -25,7 +25,7 @@ class ClassConstTypeProvider : PhpTypeProvider4 {
         if (p is ClassConstantReference) {
             val classExType = p.classReference?.type?.toExPhpType()
             if (classExType != null) {
-                return PhpType().add("class-string(${classExType})")
+                return PhpType().add("force(class-string(${classExType}))")
             }
         }
         return null

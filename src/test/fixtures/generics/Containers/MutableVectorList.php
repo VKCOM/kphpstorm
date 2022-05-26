@@ -5,7 +5,7 @@
  *
  * @kphp-generic T
  */
-class MutableList extends VectorList {
+class MutableVectorList extends VectorList {
   /**
    * @param T $data
    */

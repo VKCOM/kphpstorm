@@ -64,26 +64,10 @@
                      implementationClass="com.vk.kphpstorm.inspections.RedundantCastInspection"/>
 
     <!-- Generics inspections-->
-    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="GenericInstantiationArgsCountMismatchInspection"
-                     displayName="Generic instantiation args count mismatch"
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="KphpGenericsInspection"
+                     displayName="KPHP generic violation"
                      enabledByDefault="false" level="WARNING"
-                     implementationClass="com.vk.kphpstorm.inspections.GenericInstantiationArgsCountMismatchInspection"/>
-    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="GenericUnnecessaryExplicitInstantiationListInspection"
-                     displayName="Unnecessary explicit instantiation list for generic call"
-                     enabledByDefault="false" level="WARNING"
-                     implementationClass="com.vk.kphpstorm.inspections.GenericUnnecessaryExplicitInstantiationListInspection"/>
-    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="GenericNoEnoughInformationInspection"
-                     displayName="No information to reify generic types"
-                     enabledByDefault="false" level="WARNING"
-                     implementationClass="com.vk.kphpstorm.inspections.GenericNoEnoughInformationInspection"/>
-    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="GenericSeveralGenericTypesInspection"
-                     displayName="Several possibly type for generic type"
-                     enabledByDefault="false" level="WARNING"
-                     implementationClass="com.vk.kphpstorm.inspections.GenericSeveralGenericTypesInspection"/>
-    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="GenericBoundViolationInspection"
-                     displayName="Type argument is not within its bounds"
-                     enabledByDefault="false" level="WARNING"
-                     implementationClass="com.vk.kphpstorm.inspections.GenericBoundViolationInspection"/>
+                     implementationClass="com.vk.kphpstorm.inspections.KphpGenericsInspection"/>
 
     <intentionAction>
       <className>com.vk.kphpstorm.inspections.PrettifyPhpdocBlockIntention</className>
@@ -111,7 +95,6 @@
 
     <stubElementTypeHolder class="com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes"/>
     <annotator language="PHP" implementationClass="com.vk.kphpstorm.highlighting.KphpStormAnnotator"/>
-<!--    <annotator language="PHP" implementationClass="com.vk.kphpstorm.highlighting.KphpStormGenericCommentsAnnotator"/>-->
 
     <lang.documentationProvider language="PHP" order="first"
                                 implementationClass="com.vk.kphpstorm.highlighting.KphpStormDocumentationProvider"/>
@@ -125,10 +108,6 @@
                          implementationClass="com.vk.kphpstorm.highlighting.KphpGenericCommentFolderBuilder"/>
     <codeInsight.inlayProvider language="PHP"
                                implementationClass="com.vk.kphpstorm.highlighting.hints.GenericsInlayTypeHintsProvider"/>
-<!--    <psi.referenceContributor-->
-<!--      order="first"-->
-<!--      language="PHP"-->
-<!--      implementation="com.vk.kphpstorm.completion.KphpGenericsReferenceContributor"/>-->
 
   </extensions>
 
@@ -139,6 +118,8 @@
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.FunctionsTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.ForeachTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.ClassConstTypeProvider"/>
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.CallableTypeProvider"/>
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.GenericMethodsTypeProvider"/>
 
     <docTagParserExtension tagName="return" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />
     <docTagParserExtension tagName="returns" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />

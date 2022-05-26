@@ -14,3 +14,4 @@ function get_children() {
 $base_array = get_children();
 $children2_array = filter_is_instance($base_array, Child2::class);
 expr_type($children2_array, "\Classes\Child2[]");
+

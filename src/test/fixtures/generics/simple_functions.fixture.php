@@ -123,16 +123,16 @@ use Classes\C as GlobalC;
 
       "Nullable"; {
         $a1 = mirror/*<?\GlobalA>*/([new GlobalA()]);
-        expr_type($a1, "\GlobalA|null");
+        expr_type($a1, "?\GlobalA");
 
         $a2 = mirror/*<?\Classes\A>*/([new \Classes\A()]);
-        expr_type($a2, "\Classes\A|null");
+        expr_type($a2, "?\Classes\A");
 
         $a3 = mirror/*<?B>*/([new B()]);
-        expr_type($a3, "\Classes\B|null");
+        expr_type($a3, "?\Classes\B");
 
         $a4 = mirror/*<?GlobalC>*/([new GlobalC]);
-        expr_type($a4, "\Classes\C|null");
+        expr_type($a4, "?\Classes\C");
       }
 
       "Union"; {

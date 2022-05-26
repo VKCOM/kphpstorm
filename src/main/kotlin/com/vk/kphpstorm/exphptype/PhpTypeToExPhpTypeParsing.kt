@@ -302,9 +302,11 @@ object PhpTypeToExPhpTypeParsing {
     private fun parseTypeExpression(builder: ExPhpTypeBuilder): ExPhpType? {
         val lhs = parseTypeArray(builder) ?: return null
         // wrap with ExPhpTypePipe only 'T1|T2', leaving 'T' being as is
-        if (!builder.compare('|') && !builder.compare('/'))
-            return if (lhs is ExPhpTypeForcing) lhs.inner else lhs
-
+        if (!builder.compare('|') && !builder.compare('/')) {
+            // TODO: здесь была строчка, точно ли она не нужна?
+            // return if (lhs is ExPhpTypeForcing) lhs.inner else lhs
+            return lhs
+        }
         val pipeItems = mutableListOf(lhs)
         while (builder.compareAndEat('|') || builder.compareAndEat('/')) {
             val rhs = parseTypeArray(builder) ?: break

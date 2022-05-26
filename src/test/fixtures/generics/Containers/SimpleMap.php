@@ -17,6 +17,7 @@ class SimpleMap {
     }
   }
 
+
   /**
    * @param TKey $key
    * @return TValue

@@ -134,10 +134,6 @@ class ExPhpTypePipe(val items: List<ExPhpType>) : ExPhpType {
                         })
                     ok = true
             }
-
-            if (ExPhpTypeClassString.isNativePipeWithString(this)) {
-                return lhs.isAssignableFrom(ExPhpTypeClassString.getClassFromNativePipeWithString(this), project)
-            }
         }
 
         return ok

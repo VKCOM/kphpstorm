@@ -3,6 +3,7 @@
 // \GlobalA
 // \Classes\A
 use Classes\B;
+use Classes\C as GlobalC;
 use Classes\D as GlobalD;
 
 // \GlobalD

@@ -25,7 +25,7 @@ class KphpDocTagGenericPsiImpl : PhpDocTagImpl, KphpDocTagImpl {
                         it.split(',').map { type ->
                             val (name, extendsClass) = if (type.contains(':')) {
                                 val parts = type.split(':')
-                                parts[0] to parts[1]
+                                parts[0] to parts[1].ifBlank { null }
                             } else {
                                 type to null
                             }

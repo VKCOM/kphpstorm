@@ -20,6 +20,7 @@ object PsiToExPhpType {
         if (type is ExPhpTypePipe) {
             val items = type.items.mapNotNull { dropGenerics(it) }
             if (items.isEmpty()) return null
+            if (items.size == 1) return items.first()
 
             return ExPhpTypePipe(items)
         }

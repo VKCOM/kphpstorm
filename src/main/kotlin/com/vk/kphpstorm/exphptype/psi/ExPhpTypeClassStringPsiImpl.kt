@@ -6,6 +6,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.KphpPrimitiveTypes
 import com.vk.kphpstorm.generics.GenericUtil
+import com.vk.kphpstorm.helpers.toExPhpType
 
 /**
  * class-string<Foo> — psi is class-string(Foo) corresponding type of Foo::class
@@ -38,6 +39,12 @@ class ExPhpTypeClassStringPsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
 
     override fun getType(): PhpType {
         if (className.isEmpty()) return KphpPrimitiveTypes.PHP_TYPE_ANY
-        return PhpType().add("class-string($className)")
+        if (className.startsWith("%")) return PhpType().add("class-string($className)")
+
+        val classPsi = firstChild?.nextSibling?.nextSibling as? ExPhpTypeInstancePsiImpl
+            ?: return KphpPrimitiveTypes.PHP_TYPE_ANY
+
+        val innerType = getType(classPsi, text).toExPhpType()
+        return PhpType().add("class-string($innerType)")
     }
 }

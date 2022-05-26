@@ -34,7 +34,7 @@ class InlayHintsCollector(
         when {
             element is MethodReference && settings.showForFunctions -> {
                 val call = GenericMethodCall(element)
-                showAnnotation(call, element.firstChild.nextSibling.nextSibling)
+                showAnnotation(call, element.firstChild?.nextSibling?.nextSibling)
             }
             element is FunctionReference && settings.showForFunctions -> {
                 val call = GenericFunctionCall(element)
@@ -42,15 +42,21 @@ class InlayHintsCollector(
             }
             element is NewExpression && settings.showForFunctions -> {
                 val call = GenericConstructorCall(element)
-                showAnnotation(call, element.firstChild.nextSibling.nextSibling)
+                showAnnotation(call, element.firstChild?.nextSibling?.nextSibling)
             }
         }
 
         return true
     }
 
-    private fun showAnnotation(call: GenericCall, place: PsiElement) {
-        if (!call.isGeneric() || call.withExplicitSpecs()) {
+    private fun showAnnotation(call: GenericCall, place: PsiElement?) {
+        if (place == null || !call.isGeneric() || call.withExplicitSpecs()) {
+            return
+        }
+
+        // Показываем хинт только если удалось вывести типы.
+        val decl = call.isNotEnoughInformation()
+        if (decl != null) {
             return
         }
 
