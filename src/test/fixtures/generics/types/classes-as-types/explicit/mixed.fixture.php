@@ -1,5 +1,7 @@
 <?php /** @noinspection PhpUnusedAliasInspection */
 
+use Classes\C as GlobalC;
+
 $a = mirror/*<tuple(GlobalA[], \Classes\A|GlobalC)>*/(tuple([new GlobalA()], new \Classes\A()));
 expr_type($a, "tuple(\GlobalA[],\Classes\A|\Classes\C)");
 

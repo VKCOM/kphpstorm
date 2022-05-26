@@ -20,16 +20,27 @@ class KphpDocTagGenericPsiImpl : PhpDocTagImpl, KphpDocTagImpl {
     fun getGenericArgumentsWithExtends(): List<KphpDocGenericParameterDecl> =
             when (val stub = this.greenStub) {
                 null -> getGenericArgumentsFromAst()
-                else -> stub.value.let {    // stub value is 'T1,T2:ExtendsClass'
+                else -> stub.value.let {    // stub value is 'T1,T2:ExtendsClass,T3=default'
                     if (it != null && it.isNotEmpty()) {
-                        it.split(',').map { type ->
-                            val (name, extendsClass) = if (type.contains(':')) {
-                                val parts = type.split(':')
-                                parts[0] to parts[1].ifBlank { null }
+                        it.split(',').mapNotNull { type ->
+                            val colonIndex = type.indexOf(':')
+                            val parts = type.split(':', '=')
+                            if (parts.isEmpty()) return@mapNotNull null
+                            val name = parts[0]
+
+                            if (parts.size == 1) {
+                                KphpDocGenericParameterDecl(name, null, null)
+                            } else if (parts.size == 2) {
+                                if (colonIndex != -1) {
+                                    KphpDocGenericParameterDecl(name, parts[1], null)
+                                } else {
+                                    KphpDocGenericParameterDecl(name, null, parts[1])
+                                }
+                            } else if (parts.size == 3) {
+                                KphpDocGenericParameterDecl(name, parts[1], parts[2])
                             } else {
-                                type to null
+                                null
                             }
-                            KphpDocGenericParameterDecl(name, extendsClass)
                         }
                     }
                     else listOf()

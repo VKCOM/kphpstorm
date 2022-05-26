@@ -21,7 +21,7 @@ class AddExplicitInstantiationCommentQuickFix(field: PsiElement) : LocalQuickFix
         val placeToInsert = when (startElement) {
             is NewExpression -> startElement.classReference
             is MethodReference -> startElement.nextSibling?.nextSibling?.nextSibling
-            is FunctionReference -> startElement.nextSibling
+            is FunctionReference -> startElement
             else -> null
         } ?: return
 

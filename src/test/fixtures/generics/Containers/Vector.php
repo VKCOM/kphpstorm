@@ -29,6 +29,13 @@ class Vector {
   }
 
   /**
+   * @return T[]
+   */
+  public function raw(): array {
+    return $this->data;
+  }
+
+  /**
    * @kphp-generic T1
    * @param callable(T):T1 $fn
    * @return SimpleVector<T1>

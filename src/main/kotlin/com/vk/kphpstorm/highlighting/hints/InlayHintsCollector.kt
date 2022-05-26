@@ -16,6 +16,7 @@ import com.vk.kphpstorm.generics.GenericConstructorCall
 import com.vk.kphpstorm.generics.GenericFunctionCall
 import com.vk.kphpstorm.generics.GenericMethodCall
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
+import com.vk.kphpstorm.kphptags.psi.toHumanReadable
 
 @Suppress("UnstableApiUsage")
 class InlayHintsCollector(
@@ -65,11 +66,7 @@ class InlayHintsCollector(
         } else {
             call.function()!!.genericNames()
         }.joinToString(", ") {
-            val extendsHint = if (it.extendsClass != null)
-                ": " + it.extendsClass.removePrefix("\\")
-            else
-                ""
-            it.name  +extendsHint
+            it.toHumanReadable()
         }
 
         if (genericNames.isEmpty()) {

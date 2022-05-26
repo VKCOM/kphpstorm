@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.php.PhpIndex
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.inspections.PhpInspection
 import com.jetbrains.php.lang.psi.elements.FunctionReference
 import com.jetbrains.php.lang.psi.elements.MethodReference
@@ -19,6 +20,7 @@ import com.vk.kphpstorm.generics.GenericMethodCall
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.inspections.quickfixes.AddExplicitInstantiationCommentQuickFix
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
+import com.vk.kphpstorm.kphptags.psi.KphpDocTagGenericPsiImpl
 
 class KphpGenericsInspection : PhpInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -36,6 +38,31 @@ class KphpGenericsInspection : PhpInspection() {
             override fun visitPhpFunctionCall(reference: FunctionReference) {
                 val call = GenericFunctionCall(reference)
                 checkGenericCall(call, reference, reference.firstChild)
+            }
+
+            override fun visitPhpDocTag(tag: PhpDocTag) {
+                checkGenericsTag(tag)
+            }
+
+            private fun checkGenericsTag(tag: PhpDocTag) {
+                if (tag !is KphpDocTagGenericPsiImpl) {
+                    return
+                }
+
+                var wasNoDefault = false
+                tag.getGenericArgumentsWithExtends().forEach {
+                    if (it.defaultType == null) {
+                        wasNoDefault = true
+                    }
+
+                    if (it.defaultType != null && wasNoDefault) {
+                        holder.registerProblem(
+                            tag,
+                            "Generic parameters with a default type cannot come after parameters without a default type",
+                            ProblemHighlightType.GENERIC_ERROR
+                        )
+                    }
+                }
             }
 
             private fun checkGenericCall(call: GenericCall, element: PsiElement, errorPsi: PsiElement) {

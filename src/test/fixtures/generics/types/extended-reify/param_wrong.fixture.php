@@ -1,11 +1,21 @@
 <?php
 
+namespace Param\Wrong;
+
+interface IGenericClass {}
+
+/**
+ * @kphp-generic T
+ */
+class GenericClass implements IGenericClass {}
+
 /**
  * @param GenericClass $a
  */
 function takeClassOfString($a) {}
 
 takeClassOfString(<error descr="Not enough information to infer generic T">new GenericClass()</error>);
+
 
 class TakeWrongGeneric {
   /**
@@ -14,5 +24,10 @@ class TakeWrongGeneric {
   static function takeStaticGenericFunction($a) {}
 }
 
-TakeWrongGeneric::takeStaticGenericFunction(<error descr="Reified generic type for T is not within its bounds (string not implements \IGenericClass)">genericFunction()</error>);
+/**
+ * @kphp-generic T: IGenericClass
+ * @return GenericClass<T>
+ */
+function genericFunction() { return null; }
 
+TakeWrongGeneric::takeStaticGenericFunction(<error descr="Reified generic type for T is not within its bounds (string not implements \Param\Wrong\IGenericClass)">genericFunction()</error>);

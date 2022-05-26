@@ -13,13 +13,9 @@ class ExPhpTypeGenericsT(val nameT: String) : ExPhpType {
 
     override fun toHumanReadable(expr: PhpPsiElement) = "%$nameT"
 
-    override fun toPhpType(): PhpType {
-        return PhpType.EMPTY
-    }
+    override fun toPhpType(): PhpType = PhpType.EMPTY
 
-    override fun getSubkeyByIndex(indexKey: String): ExPhpType? {
-        return null
-    }
+    override fun getSubkeyByIndex(indexKey: String) = null
 
     override fun instantiateGeneric(nameMap: Map<String, ExPhpType>): ExPhpType {
         return nameMap[nameT] ?: this

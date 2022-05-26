@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.php.lang.psi.elements.Parameter
 import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement
+import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.*
 import com.vk.kphpstorm.generics.GenericUtil.getInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.isGeneric
@@ -63,6 +64,23 @@ class GenericsReifier(val project: Project) {
             }
         }
 
+        genericTs.forEach {
+            if (it.defaultType != null) {
+                // Если тип для параметра уже выведен, то пропускаем его.
+                if (implicitSpecializationNameMap.containsKey(it.name)) {
+                    return@forEach
+                }
+
+                val defaultType = PhpType().add(it.defaultType).toExPhpType()
+                if (defaultType != null) {
+                    implicitSpecializationNameMap[it.name] = defaultType
+                }
+            }
+        }
+
+        implicitSpecializationNameMap.forEach { (_, type) ->
+            implicitSpecs.add(type)
+        }
         implicitSpecializationNameMap.putAll(implicitClassSpecializationNameMap)
     }
 
@@ -88,7 +106,6 @@ class GenericsReifier(val project: Project) {
             }
 
             implicitSpecializationNameMap[paramExType.nameT] = argExType
-            implicitSpecs.add(argExType)
         }
 
         if (paramExType is ExPhpTypeNullable) {

@@ -15,7 +15,14 @@ class KphpGenericsInspectionsTest : InspectionTestBase(KphpGenericsInspection())
     fun testReifyFromReturn() {
         runFixture("generics/types/extended-reify/return.fixture.php",)
         runFixture("generics/types/extended-reify/return_wrong.fixture.php")
+    }
+
+    fun testReifyFromParam() {
         runFixture("generics/types/extended-reify/param.fixture.php")
         runFixture("generics/types/extended-reify/param_wrong.fixture.php")
+    }
+
+    fun testDefaultTypes() {
+        runFixture("generics/types/extended-reify/default_type_wrong.fixture.php")
     }
 }

@@ -63,10 +63,7 @@ class IndexingGenericFunctionCall(
                 it.types.joinToString("→")
             }
         }
-        // В случае когда нет информации, то мы не сможем вывести более точный тип
-        if (explicitSpecsString.isEmpty() && callArgsString.isEmpty() && !fqn.contains(".")) {
-            return null
-        }
+
         return "${fqn}$separator$explicitSpecsString$separator$callArgsString$separator"
     }
 

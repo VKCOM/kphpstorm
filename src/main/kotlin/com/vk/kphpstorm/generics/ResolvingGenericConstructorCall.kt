@@ -18,6 +18,7 @@ class ResolvingGenericConstructorCall(project: Project) : ResolvingGenericBase(p
     override fun klass(): PhpClass? = klass
 
     override fun unpackImpl(packedData: String): Boolean {
+//        val parts = packedData.split(GenericClassesTypeProvider.SEP) ?: return false
         val parts = getAtLeast(packedData, 3, GenericClassesTypeProvider.SEP) ?: return false
         val fqn = parts[0]
         val explicitGenericsString = parts[1]

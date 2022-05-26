@@ -67,6 +67,14 @@ class GenericsTypesTest : TypeTestBase() {
         )
     }
 
+    fun testDefaultTypes() {
+        runFixture(
+            "generics/types/extended-reify/default_type.fixture.php",
+            "generics/Containers/Vector.php",
+            "generics/Containers/Pair.php",
+        )
+    }
+
     // TODO:
 //    fun testSimpleFunctions() {
 //        runFixture("generics/simple_functions.fixture.php")

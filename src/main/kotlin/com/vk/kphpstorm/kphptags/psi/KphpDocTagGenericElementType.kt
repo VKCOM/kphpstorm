@@ -11,7 +11,9 @@ import com.jetbrains.php.lang.parser.PhpParserErrors
 import com.jetbrains.php.lang.parser.PhpPsiBuilder
 import com.jetbrains.php.lang.parser.parsing.Namespace
 import com.jetbrains.php.lang.psi.stubs.PhpStubElementType
+import com.vk.kphpstorm.exphptype.KphpPrimitiveTypes
 import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
+import com.vk.kphpstorm.exphptype.psi.ExPhpTypePrimitivePsiImpl
 
 /**
  * '@kphp-generic T1, T2: ExtendsClass' has a separate elementType,
@@ -26,10 +28,23 @@ object KphpDocTagGenericElementType : PhpStubElementType<PhpDocTagStub, PhpDocTa
     }
 
     override fun createStub(psi: PhpDocTag, parentStub: StubElement<*>?): PhpDocTagStub {
-        // stub value is 'T1,T2:ExtendsClass' — without spaces
+        // stub value is 'T1,T2:ExtendsClass,T2=default' — without spaces
         val stubValue = (psi as KphpDocTagGenericPsiImpl).getGenericArgumentsWithExtends()
             .joinToString(",") {
-                it.name + ":" + (it.extendsClass ?: "")
+                val type = StringBuilder()
+                type.append(it.name)
+
+                if (it.extendsClass != null) {
+                    type.append(":")
+                    type.append(it.extendsClass)
+                }
+
+                if (it.defaultType != null) {
+                    type.append("=")
+                    type.append(it.defaultType)
+                }
+
+                type.toString()
             }
         return KphpDocTagStubImpl(parentStub, this, psi.name, stubValue)
     }
@@ -63,8 +78,10 @@ object KphpDocTagGenericElementType : PhpStubElementType<PhpDocTagStub, PhpDocTa
                 }
 
                 if (builder.compare(PhpDocTokenTypes.DOC_TEXT)) {
-                    val text = builder.tokenText?.trim()
+                    var text = builder.tokenText?.trim()
                     builder.advanceLexer()
+
+                    var withExtends = false
                     if (text == ":") {
                         val extendsMarker = builder.mark()
 
@@ -79,6 +96,35 @@ object KphpDocTagGenericElementType : PhpStubElementType<PhpDocTagStub, PhpDocTa
                         builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)
 
                         extendsMarker.done(ExPhpTypeInstancePsiImpl.elementType)
+                        withExtends = true
+                    }
+
+                    if (withExtends) {
+                        text = builder.tokenText?.trim()
+                    }
+
+                    if (text == "=") {
+                        if (withExtends) {
+                            builder.advanceLexer()
+                        }
+                        val defaultTypeMarker = builder.mark()
+
+                        if (!builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) && !builder.compare(PhpDocTokenTypes.DOC_NAMESPACE)) {
+                            marker.drop()
+                            defaultTypeMarker.drop()
+                            builder.error(PhpParserErrors.expected("Default type name"))
+                            break
+                        }
+
+                        if (KphpPrimitiveTypes.mapPrimitiveToPhpType.containsKey(builder.tokenText!!)) {
+                            builder.advanceLexer()
+                            defaultTypeMarker.done(ExPhpTypePrimitivePsiImpl.elementType)
+                        } else {
+                            Namespace.parseReference(builder)
+                            builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)
+
+                            defaultTypeMarker.done(ExPhpTypeInstancePsiImpl.elementType)
+                        }
                     }
                 }
                 marker.done(KphpDocGenericParameterDeclPsiImpl.elementType)
