@@ -20,7 +20,7 @@ class GenericFunctionCall(private val call: FunctionReference) : GenericCall(cal
     private val function: Function? = call.resolve() as? Function
 
     init {
-        init(call)
+        init()
     }
 
     override fun element() = call
@@ -30,6 +30,8 @@ class GenericFunctionCall(private val call: FunctionReference) : GenericCall(cal
     override fun isResolved() = function != null
 
     override fun genericNames() = function?.genericNames() ?: emptyList()
+
+    override fun ownGenericNames() = genericNames()
 
     override fun isGeneric() = function()?.isGeneric() == true
 

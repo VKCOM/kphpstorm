@@ -30,7 +30,7 @@ class GenericConstructorCall(private val call: NewExpression) : GenericCall(call
         // Если у класса нет конструктора, то создаем его псевдо версию
         method = constructor ?: createPseudoConstructor(project, klass?.name ?: "Foo")
 
-        init(call)
+        init()
     }
 
     override fun element() = call
@@ -46,6 +46,10 @@ class GenericConstructorCall(private val call: NewExpression) : GenericCall(call
             .apply { addAll(methodsNames) }
             .apply { addAll(classesNames) }
             .toList()
+    }
+
+    override fun ownGenericNames(): List<KphpDocGenericParameterDecl> {
+        return klass?.genericNames() ?: emptyList()
     }
 
     override fun isGeneric() = genericNames().isNotEmpty()

@@ -43,7 +43,7 @@ class GenericMethodCall(private val call: MethodReference) : GenericCall(call.pr
             }
         }
 
-        init(call)
+        init()
     }
 
     override fun element() = call
@@ -60,6 +60,10 @@ class GenericMethodCall(private val call: MethodReference) : GenericCall(call.pr
             .apply { addAll(methodsNames) }
             .apply { addAll(classesNames) }
             .toList()
+    }
+
+    override fun ownGenericNames(): List<KphpDocGenericParameterDecl> {
+        return method?.genericNames() ?: emptyList()
     }
 
     override fun isGeneric() = genericNames().isNotEmpty()

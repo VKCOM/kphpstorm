@@ -53,10 +53,23 @@ abstract class GenericCall(val project: Project) {
     abstract val argumentsTypes: List<ExPhpType?>
     protected var contextType: ExPhpType? = null
 
-    abstract fun element(): PsiElement?
+    abstract fun element(): PsiElement
     abstract fun function(): Function?
     abstract fun isResolved(): Boolean
+
+    /**
+     * Returns template parameters belonging to the current element,
+     * and also, if it is part of a class, then the class parameter as well.
+     */
     abstract fun genericNames(): List<KphpDocGenericParameterDecl>
+
+    /**
+     * Returns template parameters belonging only to the current element.
+     * If it is a method, then only the method parameters are returned
+     * without the class parameters.
+     */
+    abstract fun ownGenericNames(): List<KphpDocGenericParameterDecl>
+
     abstract fun isGeneric(): Boolean
 
     val genericTs = mutableListOf<KphpDocGenericParameterDecl>()
@@ -72,7 +85,7 @@ abstract class GenericCall(val project: Project) {
     val implicitClassSpecializationNameMap get() = reifier.implicitClassSpecializationNameMap
     val implicitSpecializationErrors get() = reifier.implicitSpecializationErrors
 
-    protected fun init(element: PsiElement) {
+    protected fun init() {
         val function = function() ?: return
         if (!isGeneric()) return
 
@@ -83,7 +96,7 @@ abstract class GenericCall(val project: Project) {
 
         // Если текущий вызов находится в return или является аргументом
         // функции, то мы можем извлечь дополнительные подсказки по типам.
-        calcContextType(element)
+        calcContextType(element())
 
         // Несмотря на то, что явный список является превалирующим над
         // типами выведенными из аргументов функций, нам все равно
