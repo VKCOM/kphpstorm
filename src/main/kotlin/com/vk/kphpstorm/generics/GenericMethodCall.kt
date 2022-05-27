@@ -46,6 +46,8 @@ class GenericMethodCall(private val call: MethodReference) : GenericCall(call.pr
         init()
     }
 
+    fun isStatic() = method?.isStatic ?: false
+
     override fun element() = call
 
     override fun function() = method

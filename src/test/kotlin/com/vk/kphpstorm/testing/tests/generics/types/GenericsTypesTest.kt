@@ -61,6 +61,7 @@ class GenericsTypesTest : TypeTestBase() {
 
     fun testMethods() {
         runFixture(
+            "generics/types/methods/static_and_non_generic.fixture.php",
             "generics/types/methods/chain.fixture.php",
             "generics/Containers/Vector.php",
             "generics/Containers/Pair.php",

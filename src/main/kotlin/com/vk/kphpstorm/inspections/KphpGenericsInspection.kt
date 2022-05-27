@@ -70,7 +70,7 @@ class KphpGenericsInspection : PhpInspection() {
                 val genericNames = call.genericNames()
 
                 checkGenericTypesBounds(call, genericNames)
-                checkInstantiationArgsCount(call, genericNames)
+                checkInstantiationArgsCount(call)
                 checkReifiedGenericTypes(call, element, errorPsi)
                 checkReifiedSeveralGenericTypes(call, element)
             }
@@ -117,11 +117,13 @@ class KphpGenericsInspection : PhpInspection() {
                 }
             }
 
-            private fun checkInstantiationArgsCount(
-                call: GenericCall,
-                genericNames: List<KphpDocGenericParameterDecl>,
-            ) {
-                val countGenericNames = genericNames.size - call.implicitClassSpecializationNameMap.size
+            private fun checkInstantiationArgsCount(call: GenericCall) {
+                val countGenericNames = if (call is GenericMethodCall && call.isStatic()) {
+                    call.ownGenericNames().size
+                } else {
+                    call.genericNames().size - call.implicitClassSpecializationNameMap.size
+                }
+
                 val countExplicitSpecs = call.explicitSpecs.size
                 val explicitSpecsPsi = call.explicitSpecsPsi
 

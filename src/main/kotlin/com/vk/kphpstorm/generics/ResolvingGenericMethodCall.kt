@@ -50,6 +50,7 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
 
             return unpackRecursive(newPackedData)
         } else {
+            // Не обрабатываем строки, которые содержат типы от PhpStorm
             if (data.contains("#M") || data.contains("#C")) {
                 return false
             }
@@ -57,29 +58,25 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
             if (parts == null) {
                 return false
             }
-//            if (parts.size != 3) {
-//                if (parts.size > 4 || parts.getOrNull(3) != "") {
-//                    return false
-//                }
-//            }
 
             val fqn = parts[0]
 
             val dotIndex = fqn.lastIndexOf('.')
-            val className = fqn.substring(0, dotIndex)
+            val classRawName = fqn.substring(0, dotIndex)
             val methodName = fqn.substring(dotIndex + 1)
 
-            val classType = PhpType().add(className).global(project)
+            val classType = PhpType().add(classRawName).global(project)
             val parsed = classType.toExPhpType()
-            val instantiation = parsed?.getInstantiation() ?: return false
+            val instantiation = parsed?.getInstantiation()
 
-            if (instantiation.specializationList.first() is ExPhpTypeGenericsT) {
-                return false
+            val className = if (instantiation != null && instantiation.specializationList.first() !is ExPhpTypeGenericsT) {
+                classGenericType = instantiation
+                instantiation.classFqn
+            } else {
+                classRawName
             }
 
-            classGenericType = instantiation
-
-            klass = PhpIndex.getInstance(project).getClassesByFQN(instantiation.classFqn).firstOrNull() ?: return false
+            klass = PhpIndex.getInstance(project).getClassesByFQN(className).firstOrNull() ?: return false
             method = klass!!.findMethodByName(methodName)
             if (method == null) {
                 return false
@@ -87,15 +84,17 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
 
             parameters = method!!.parameters
             genericTs = method!!.genericNames()
-            classGenericTs = klass!!.genericNames()
+
+            // Не устанавливаем параметры класса, так как это статический вызов
+            if (!method!!.isStatic) {
+                classGenericTs = klass!!.genericNames()
+            }
 
             explicitGenericsT = unpackTypeArray(parts[1])
             argumentsTypes = unpackTypeArray(parts[2])
 
             return true
         }
-
-        return false
     }
 
     override fun unpackImpl(packedData: String): Boolean {

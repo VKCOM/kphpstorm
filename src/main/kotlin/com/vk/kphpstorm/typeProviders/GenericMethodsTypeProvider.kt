@@ -26,8 +26,8 @@ class GenericMethodsTypeProvider : PhpTypeProvider4 {
     override fun getKey() = KEY.key
 
     override fun getType(p: PsiElement?): PhpType? {
-        // $v->f()
-        if (p is MethodReference && !p.isStatic) {
+        // $v->f() or ClassName::f()
+        if (p is MethodReference) {
             val methodName = p.name ?: return null
             val lhs = p.classReference ?: return null
             val lhsTypes = lhs.type.types.filter { type ->
