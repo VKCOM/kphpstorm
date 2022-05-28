@@ -71,6 +71,17 @@ object GenericUtil {
         }
     }
 
+    fun ExPhpType.getGenericTypeOrSelf(): ExPhpType? {
+        if (this is ExPhpTypePipe) {
+            if (this.items.size != 2) return null
+            return this.items.firstOrNull {
+                it is ExPhpTypeGenericsT
+            } as? ExPhpTypeGenericsT ?: return this
+        }
+
+        return this
+    }
+
     fun generateUniqueGenericName(names: List<KphpDocGenericParameterDecl>?): String {
         if (names == null || names.isEmpty()) return "T"
 

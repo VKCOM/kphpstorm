@@ -87,6 +87,7 @@ class GenericsTypesTest : TypeTestBase() {
     fun testReifier() {
         runFixture(
             "generics/types/reify/main.fixture.php",
+            "generics/types/reify/params.fixture.php",
         )
     }
 

@@ -6,6 +6,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.*
+import com.vk.kphpstorm.generics.GenericUtil.getGenericTypeOrSelf
 import com.vk.kphpstorm.generics.GenericUtil.getInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.isGeneric
 import com.vk.kphpstorm.helpers.toExPhpType
@@ -35,7 +36,9 @@ class GenericsReifier(val project: Project) {
         for (i in 0 until min(argumentsTypes.size, parameters.size)) {
             val param = parameters[i] as? PhpTypedElement ?: continue
             val paramType = param.type.global(project)
-            val paramExType = paramType.toExPhpType() ?: continue
+            // Когда мы примешиваем extends или default тип, то появляется pipe тип,
+            // поэтому нам необходимо достать из него generic тип для разрешения.
+            val paramExType = paramType.toExPhpType()?.getGenericTypeOrSelf() ?: continue
 
             // Если параметр не является шаблонным, то мы его пропускаем
             if (!paramType.isGeneric(genericTs)) {

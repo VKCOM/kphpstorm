@@ -8,11 +8,11 @@ class C { function f() { echo "C f\n"; } }
 
 /**
  * @kphp-generic T: SomeI
- * @param T $o
+ * @param T $a
  */
-function take_some_i($o) {
-  if ($o !== null)
-    $o->f();
+function take_some_i($a) {
+  if ($a !== null)
+    $a->f();
 }
 
 take_some_i(new A);

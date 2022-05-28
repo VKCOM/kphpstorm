@@ -5,6 +5,7 @@ import com.jetbrains.php.lang.inspections.PhpUndefinedFieldInspection
 import com.jetbrains.php.lang.inspections.PhpUndefinedMethodInspection
 import com.vk.kphpstorm.configuration.KphpStormConfiguration
 import com.vk.kphpstorm.inspections.KphpGenericsInspection
+import com.vk.kphpstorm.inspections.KphpParameterTypeMismatchInspection
 import java.io.File
 
 abstract class AllOkTestBase : BasePlatformTestCase() {
@@ -17,6 +18,7 @@ abstract class AllOkTestBase : BasePlatformTestCase() {
         myFixture.enableInspections(PhpUndefinedMethodInspection())
         myFixture.enableInspections(PhpUndefinedFieldInspection())
         myFixture.enableInspections(KphpGenericsInspection())
+        myFixture.enableInspections(KphpParameterTypeMismatchInspection())
     }
 
     /**
