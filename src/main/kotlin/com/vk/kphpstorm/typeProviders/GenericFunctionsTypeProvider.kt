@@ -43,7 +43,7 @@ class GenericFunctionsTypeProvider : PhpTypeProvider4 {
 
         // Если возвращаемый тип функции не зависит от шаблонного типа,
         // то нет смысла как-то уточнять ее тип.
-        if (!call.function.isReturnGeneric()) {
+        if (!call.function!!.isReturnGeneric()) {
             return null
         }
 
@@ -55,7 +55,7 @@ class GenericFunctionsTypeProvider : PhpTypeProvider4 {
             specializationNameMap[call.genericTs[i].name] = specialization[i]
         }
 
-        val methodReturnTag = call.function.docComment?.returnTag ?: return null
+        val methodReturnTag = call.function!!.docComment?.returnTag ?: return null
         val methodTypeParsed = methodReturnTag.type.toExPhpType() ?: return null
         val methodTypeSpecialized = methodTypeParsed.instantiateGeneric(specializationNameMap)
 

@@ -21,6 +21,7 @@ templateFu(Foo::class)->fooMethod();
 $a = returnVector()->get(0);
 expr_type($a, "\Vector|\Vector(\Vector|\Vector(string))");
 
+
 $b = $a->get(0)->get(0);
 expr_type($b, "string");
 
@@ -46,4 +47,3 @@ function returnVectorPair() {
 
 $a = returnVectorPair()->get(0)->second();
 expr_type($a, "\Goo");
-

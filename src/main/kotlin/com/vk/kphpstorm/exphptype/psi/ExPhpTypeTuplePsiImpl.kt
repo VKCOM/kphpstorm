@@ -29,7 +29,7 @@ class ExPhpTypeTuplePsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
                 if (itemsStr.length > 1)
                     itemsStr += ','
                 // TODO: подумать
-                itemsStr += child.type.global(project).toStringAsNested()
+                itemsStr += child.type.toStringAsNested()
             }
             child = child.nextSibling
         }

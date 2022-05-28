@@ -45,7 +45,7 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
             return null
         }
 
-        if (!call.klass.isGeneric()) {
+        if (!call.klass!!.isGeneric()) {
             return null
         }
 
@@ -58,7 +58,7 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
         }
 
         val genericsTypes = call.genericTs.map { ExPhpTypeGenericsT(it.name) }
-        val type = ExPhpTypeTplInstantiation(call.klass.fqn, genericsTypes)
+        val type = ExPhpTypeTplInstantiation(call.klass!!.fqn, genericsTypes)
 
         val methodTypeSpecialized = type.instantiateGeneric(specializationNameMap)
         return ExPhpTypeForcing(methodTypeSpecialized).toPhpType()

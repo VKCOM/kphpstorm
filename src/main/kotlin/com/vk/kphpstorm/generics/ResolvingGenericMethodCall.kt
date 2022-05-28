@@ -10,6 +10,7 @@ import com.vk.kphpstorm.exphptype.ExPhpTypeGenericsT
 import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.generics.GenericUtil.getInstantiation
+import com.vk.kphpstorm.generics.GenericUtil.isReturnGeneric
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import com.vk.kphpstorm.typeProviders.GenericMethodsTypeProvider
@@ -22,9 +23,27 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
     override lateinit var genericTs: List<KphpDocGenericParameterDecl>
     lateinit var classGenericTs: List<KphpDocGenericParameterDecl>
 
-    override fun klass(): PhpClass? = klass
+    override fun klass(): PhpClass = klass!!
 
+    // ⋙\Methods\Main\GenericClass.genericMethod⁓\Methods\Main\Foo⁓⋘
+    /**
+     * См. комментарий в [ResolvingGenericFunctionCall.unpackImpl]
+     */
     override fun unpackImpl(packedData: String): Boolean {
+        // If className and methodName are resolved
+        // $START_TYPE\SomeName.method...
+        if (packedData.startsWith(IndexingGenericFunctionCall.START_TYPE + "\\")) {
+            val firstSeparator = packedData.indexOf(GenericMethodsTypeProvider.SEP)
+            val fqn = packedData.substring(1, firstSeparator)
+            val (className, methodName) = fqn.split('.')
+            if (!className.contains("(") && !className.contains("|")) {
+                klass = PhpIndex.getInstance(project).getClassesByFQN(className).firstOrNull()
+                method = klass?.findMethodByName(methodName) ?: return false
+                if (method?.isReturnGeneric() == false)
+                    return false
+            }
+        }
+
         val data = resolveSubTypes(packedData)
         val parts = getAtLeast(data, 3, GenericMethodsTypeProvider.SEP)
         if (parts == null) {
@@ -48,8 +67,12 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
             classRawName
         }
 
-        klass = PhpIndex.getInstance(project).getClassesByFQN(className).firstOrNull() ?: return false
-        method = klass!!.findMethodByName(methodName)
+        if (klass == null) {
+            klass = PhpIndex.getInstance(project).getClassesByFQN(className).firstOrNull() ?: return false
+        }
+        if (method == null) {
+            method = klass!!.findMethodByName(methodName)
+        }
         if (method == null) {
             return false
         }
