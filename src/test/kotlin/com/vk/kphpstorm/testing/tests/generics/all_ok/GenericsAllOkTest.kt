@@ -11,4 +11,8 @@ class GenericsAllOkTest : AllOkTestBase() {
         runFixture("generics/Containers/Vector.php")
         runFixture("generics/all_ok/vector_use.fixture.php")
     }
+
+    fun testReify() {
+        runFixture("generics/all_ok/reify.fixture.php")
+    }
 }

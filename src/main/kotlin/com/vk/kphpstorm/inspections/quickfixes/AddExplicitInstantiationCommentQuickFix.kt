@@ -15,7 +15,7 @@ import com.vk.kphpstorm.generics.GenericMethodCall
 import com.vk.kphpstorm.generics.psi.GenericInstantiationPsiCommentImpl
 import com.vk.kphpstorm.helpers.setSelectionInEditor
 
-class AddExplicitInstantiationCommentQuickFix(field: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(field) {
+class AddExplicitInstantiationCommentQuickFix(element: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(element) {
     override fun getFamilyName() = "Add explicit generic instantiation tag"
     override fun getText() = "Add explicit generic instantiation tag"
 

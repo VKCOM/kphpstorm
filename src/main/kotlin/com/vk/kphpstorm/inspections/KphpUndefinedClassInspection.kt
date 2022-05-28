@@ -4,18 +4,15 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.fileEditor.UniqueVFilePathBuilder
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.util.parentOfType
 import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType
 import com.jetbrains.php.lang.inspections.PhpInspection
 import com.jetbrains.php.lang.inspections.quickfix.PhpImportClassQuickFix
 import com.jetbrains.php.lang.psi.elements.*
-import com.jetbrains.php.lang.psi.elements.Function
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.vk.kphpstorm.exphptype.ExPhpTypeInstance
 import com.vk.kphpstorm.exphptype.PhpTypeToExPhpTypeParsing
 import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
-import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.inspections.helpers.KphpTypingAnalyzer
 
 /**
@@ -78,17 +75,8 @@ class KphpUndefinedClassInspection : PhpInspection() {
                 }
 
                 val resolved = classReference.multiResolve(false)
-                if (resolved.isEmpty()) {
-                    val containingFunction = classReference.parentOfType<Function>()
-                    if (containingFunction != null) {
-                        val names = containingFunction.genericNames()
-                        val name = classReference.name
-                        if (names.find { it.name == name } != null) {
-                            return
-                        }
-                    }
+                if (resolved.isEmpty())
                     reportUndefinedClassUsage(classReference)
-                }
             }
 
             /**
@@ -101,6 +89,22 @@ class KphpUndefinedClassInspection : PhpInspection() {
 
                 val resolvedType = PhpTypeToExPhpTypeParsing.parse(type.type)
                 if (resolvedType is ExPhpTypeInstance) {
+                    // TODO: так как комментарий встраивается мы не можем получить контекст
+//                    val containingFunction = type.parentOfType<Function>()
+//                    if (containingFunction != null) {
+//                        val names = containingFunction.genericNames()
+//                        if (names.find { "\\${it.name}" == resolvedType.fqn } != null) {
+//                            return
+//                        }
+//                    }
+//                    val containingClass = type.parentOfType<PhpClass>()
+//                    if (containingClass != null) {
+//                        val names = containingClass.genericNames()
+//                        if (names.find { "\\${it.name}" == resolvedType.fqn } != null) {
+//                            return
+//                        }
+//                    }
+
                     if (PhpIndex.getInstance(type.project).getAnyByFQN(resolvedType.fqn).isEmpty())
                         reportUndefinedClassUsage(type)
                 }

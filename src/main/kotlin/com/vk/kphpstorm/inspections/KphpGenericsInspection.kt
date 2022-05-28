@@ -83,7 +83,7 @@ class KphpGenericsInspection : PhpInspection() {
                 val error = call.implicitSpecializationErrors.first()
                 val (type1, type2) = error.value
 
-                val genericsTString = call.genericTs.joinToString(", ")
+                val genericsTString = call.genericTs.joinToString(", ") { it.name }
                 val callString = element.text
 
                 val firstBracketIndex = callString.indexOf('(')
@@ -97,7 +97,8 @@ class KphpGenericsInspection : PhpInspection() {
                 holder.registerProblem(
                     element,
                     "Couldn't reify generic <${error.key}> for call: it's both $type1 and $type2\n$explanation",
-                    ProblemHighlightType.GENERIC_ERROR
+                    ProblemHighlightType.GENERIC_ERROR,
+                    AddExplicitInstantiationCommentQuickFix(element),
                 )
             }
 

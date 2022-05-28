@@ -180,7 +180,13 @@ abstract class GenericCall(val project: Project) {
     fun isNotEnoughInformation(): KphpDocGenericParameterDecl? {
         if (explicitSpecsPsi != null) return null
 
-        genericNames().forEach { decl ->
+        val genericNames = if (this is GenericMethodCall && isStatic()) {
+            ownGenericNames()
+        } else {
+            genericNames()
+        }
+
+        genericNames.forEach { decl ->
             val resolved = implicitSpecializationNameMap.contains(decl.name)
 
             if (!resolved) {

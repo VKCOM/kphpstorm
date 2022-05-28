@@ -3,6 +3,7 @@
 namespace Reify;
 
 class Foo {}
+class Boo {}
 
 /**
  * @kphp-generic T

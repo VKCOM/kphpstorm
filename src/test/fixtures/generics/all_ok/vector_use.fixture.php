@@ -1,7 +1,7 @@
 <?php
 
 class Boo {
-  function foo(): Foo {
+  function booMethod(): Foo {
     return new Foo;
   }
 }
@@ -27,7 +27,7 @@ $a = map/*<Goo, Boo>*/([new Goo], function(Goo $a): Boo {
 });
 
 $b = $a[0];
-$b->foo();
+$b->booMethod();
 
 $vec = new Vector/*<?Goo>*/ ();
 
@@ -55,7 +55,7 @@ $a = $vec->map/*<?Goo>*/(function(Goo $a): Boo {
 
 $b = $a->get(0);
 
-$c = $b->gooMethod()->foo()->fooMethod();
+$c = $b->gooMethod()->booMethod()->fooMethod();
 
 /**
  * @return Vector<Vector<Foo>>
@@ -77,3 +77,10 @@ function returnPair(): Pair {
 
 $x = returnPair()->second();
 $x->gooMethod();
+
+$vecGoo = new Vector/*<Goo>*/ ();
+$vecBoo = new Vector/*<Boo>*/ ();
+
+$combinedVec = $vecGoo->combine_with($vecBoo);
+$combinedVec->get(0)->booMethod();
+$combinedVec->get(0)->gooMethod();

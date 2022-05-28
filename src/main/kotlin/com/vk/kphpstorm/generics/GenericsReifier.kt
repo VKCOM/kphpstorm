@@ -99,7 +99,7 @@ class GenericsReifier(val project: Project) {
     private fun reifyArgumentGenericsT(argExType: ExPhpType, paramExType: ExPhpType) {
         if (paramExType is ExPhpTypeGenericsT) {
             val prevReifiedType = implicitSpecializationNameMap[paramExType.nameT]
-            if (prevReifiedType != null) {
+            if (prevReifiedType != null && prevReifiedType.toString() != argExType.toString()) {
                 // В таком случае мы получаем ситуацию когда один шаблонный тип
                 // имеет несколько возможных вариантов типа, что является ошибкой.
                 implicitSpecializationErrors[paramExType.nameT] = Pair(argExType, prevReifiedType)
