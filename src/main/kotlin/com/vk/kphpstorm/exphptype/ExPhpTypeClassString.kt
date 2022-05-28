@@ -28,7 +28,12 @@ class ExPhpTypeClassString(val inner: ExPhpType) : ExPhpType {
             else -> ""
         }
 
-        return nameMap[fqn]?.let { ExPhpTypeClassString(ExPhpTypeInstance(it.toString())) } ?: this
+        val name = nameMap[fqn] ?: return this
+        if (name is ExPhpTypeGenericsT) {
+            return ExPhpTypeClassString(ExPhpTypeGenericsT(name.toString()))
+        }
+
+        return ExPhpTypeClassString(ExPhpTypeInstance(name.toString()))
     }
 
     override fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean = when (rhs) {

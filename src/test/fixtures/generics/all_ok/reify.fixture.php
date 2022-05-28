@@ -59,3 +59,27 @@ function maxBy($gt, ...$arr) {
 
 echo maxBy/*<int>*/(fn ($a, $b) => $a > $b, 1, 2, 9, 3), "\n";
 echo maxBy/*<string>*/(fn ($a, $b) => ord($a) > ord($b), 'a', 'z', 'd'), "\n";
+
+
+/**
+ * @kphp-generic T, DstClass
+ * @param T $obj
+ * @param class-string<DstClass> $to_classname
+ * @return DstClass
+ */
+function my_cast($obj, $to_classname) {
+    return instance_cast($obj, $to_classname);
+}
+
+/**
+ * @kphp-generic T, DstClass
+ * @param T $obj
+ * @param class-string<DstClass> $if_classname
+ */
+function callDMethodIfNotNull($obj, $if_classname) {
+    $casted = my_cast($obj, $if_classname);
+    if ($casted)
+        $casted->dMethod();
+    else
+        echo "cast to $if_classname is null: obj is ", get_class($obj), "\n";
+}
