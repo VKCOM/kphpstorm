@@ -71,6 +71,19 @@ object GenericUtil {
         }
     }
 
+    fun generateUniqueGenericName(names: List<KphpDocGenericParameterDecl>?): String {
+        if (names == null || names.isEmpty()) return "T"
+
+        for (i in 1..100) {
+            val name = "T$i"
+            if (names.none { it.name == name }) {
+                return name
+            }
+        }
+
+        return "T"
+    }
+
     /**
      * for IDE, we return PhpType "A"|"A<T>", that's why
      * A<A<T>> is resolved as "A"|"A<A/A<T>>", so if pipe — search for instantiation
