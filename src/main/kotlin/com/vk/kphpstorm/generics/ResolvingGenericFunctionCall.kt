@@ -16,7 +16,8 @@ class ResolvingGenericFunctionCall(project: Project) : ResolvingGenericBase(proj
     override fun klass(): PhpClass? = null
 
     override fun unpackImpl(packedData: String): Boolean {
-        val parts = getAtLeast(packedData, 3, "@@")
+        val data = resolveSubTypes(packedData)
+        val parts = getAtLeast(data, 3, "@@")
         if (parts == null) {
             return false
         }

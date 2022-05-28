@@ -334,9 +334,14 @@ object PhpTypeToExPhpTypeParsing {
             return createNullableOrSimplified(pipeItems[0])
 
         // T1|T2|...|force(T) will be just T
-        for (item in pipeItems)
-            if (item is ExPhpTypeForcing)
+        for (item in pipeItems) {
+            if (item is ExPhpTypeForcing) {
                 return item.inner
+            } else if (item is ExPhpTypeArray && item.inner is ExPhpTypeForcing) {
+                // TODO: подумать тут
+                return ExPhpTypeArray(item.inner.inner)
+            }
+        }
 
         return ExPhpTypePipe(pipeItems)
     }

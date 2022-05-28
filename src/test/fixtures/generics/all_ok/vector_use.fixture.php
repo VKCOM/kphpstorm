@@ -7,57 +7,66 @@ class Boo {
 }
 
 class Goo {
-  function boo(): Boo {
+  function gooMethod(): Boo {
     return new Boo;
   }
 }
 
-///**
-// * @kphp-generic T, T2
-// * @param T[]            $a
-// * @param callable(T):T2 $fn
-// * @return T2[]
-// */
-//function map(array $a, callable $fn) {
-//  return []; // ...
-//}
-//
-//$a = map/*<Goo, Boo>*/([new Goo], function(Goo $a): Boo {
-//  return $a->boo();
-//});
-//
-//$b = $a[0];
-//$b->foo();
+/**
+ * @kphp-generic T, T2
+ * @param T[]            $a
+ * @param callable(T):T2 $fn
+ * @return T2[]
+ */
+function map(array $a, callable $fn) {
+  return []; // ...
+}
+
+$a = map/*<Goo, Boo>*/([new Goo], function(Goo $a): Boo {
+  return $a->gooMethod();
+});
+
+$b = $a[0];
+$b->foo();
 
 $vec = new Vector/*<?Goo>*/ ();
 
-//$vec->add(new Goo);
-//$vec->add(null);
-//
-//$vec->filter(function(?Goo $el): bool {
-//  return $el != null;
-//});
+$vec->add(new Goo);
+$vec->add(null);
 
-//$a = $vec->map/*<?Goo>*/(function(Goo $a): Boo {
-//  return $a->boo();
-//});
+$vec->filter(function(?Goo $el): bool {
+  return $el != null;
+});
 
-//
-//$b = $a->get(0);
-//
-//$c = $b->boo()->foo()->boo();
+$vec->foreach(function(Goo $el) {
+    var_dump($el);
+});
+
+$vec->foreach(fn(Goo $el) => var_dump($el));
+
+$vec->foreach_key_value(function(string $key, Goo $el) {
+    var_dump($key);
+    var_dump($el);
+});
+
+$a = $vec->map/*<?Goo>*/(function(Goo $a): Boo {
+  return $a->gooMethod();
+});
+
+$b = $a->get(0);
+
+$c = $b->gooMethod()->foo()->fooMethod();
 
 /**
- * @return Vector<Vector<string>>
+ * @return Vector<Vector<Foo>>
  */
 function returnVector() {
   return new Vector;
 }
 
-
 $a = returnVector()->get(0);
 
-$b = $a->get(0)->get(0);
+$a->get(0)->fooMethod();
 
 /**
  * @return Pair<Boo, Goo>
@@ -67,17 +76,4 @@ function returnPair(): Pair {
 }
 
 $x = returnPair()->second();
-
-
-
-
-//$vec->foreach(function(Goo $el) {
-//  var_dump($el);
-//});
-//
-//$vec->foreach(fn(Goo $el) => var_dump($el));
-//
-//$vec->foreach_key_value(function(string $key, Goo $el) {
-//  var_dump($key);
-//  var_dump($el);
-//});
+$x->gooMethod();

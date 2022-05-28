@@ -59,10 +59,18 @@ class GenericsTypesTest : TypeTestBase() {
         )
     }
 
+    fun testFunctions() {
+        runFixture(
+            "generics/types/functions/chain.fixture.php",
+            "generics/Containers/Vector.php",
+        )
+    }
+
     fun testMethods() {
         runFixture(
             "generics/types/methods/static_and_non_generic.fixture.php",
             "generics/types/methods/chain.fixture.php",
+            "generics/types/methods/complex.fixture.php",
             "generics/Containers/Vector.php",
             "generics/Containers/Pair.php",
         )
@@ -73,6 +81,12 @@ class GenericsTypesTest : TypeTestBase() {
             "generics/types/extended-reify/default_type.fixture.php",
             "generics/Containers/Vector.php",
             "generics/Containers/Pair.php",
+        )
+    }
+
+    fun testReifier() {
+        runFixture(
+            "generics/types/reify/main.fixture.php",
         )
     }
 

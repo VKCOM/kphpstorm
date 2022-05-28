@@ -16,14 +16,13 @@ function templateFu($class) {
   return new $class();
 }
 
-templateFu(Foo::class)->boo();
+templateFu(Foo::class)->fooMethod();
 
 $a = returnVector()->get(0);
 expr_type($a, "\Vector|\Vector(\Vector|\Vector(string))");
 
 $b = $a->get(0)->get(0);
-// TODO: должно быть string, а не null
-//expr_type($b, "string");
+expr_type($b, "string");
 
 
 /**

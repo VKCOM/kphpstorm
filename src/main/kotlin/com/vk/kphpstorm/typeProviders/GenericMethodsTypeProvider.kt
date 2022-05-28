@@ -3,7 +3,6 @@ package com.vk.kphpstorm.typeProviders
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.psi.elements.MethodReference
-import com.jetbrains.php.lang.psi.elements.PhpNamedElement
 import com.jetbrains.php.lang.psi.resolve.types.PhpCharBasedTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
@@ -17,9 +16,7 @@ class GenericMethodsTypeProvider : PhpTypeProvider4 {
     companion object {
         val SEP = "⁓"
         val KEY = object : PhpCharBasedTypeKey() {
-            override fun getKey(): Char {
-                return 'ω'
-            }
+            override fun getKey() = 'ω'
         }
     }
 
@@ -31,13 +28,16 @@ class GenericMethodsTypeProvider : PhpTypeProvider4 {
             val methodName = p.name ?: return null
             val lhs = p.classReference ?: return null
             val lhsTypes = lhs.type.types.filter { type ->
-                GenericClassesTypeProvider.KEY.signed(type) || KEY.signed(type) || !type.startsWith("#")
+                GenericClassesTypeProvider.KEY.signed(type) ||
+                        GenericFunctionsTypeProvider.KEY.signed(type) ||
+                        KEY.signed(type) ||
+                        !type.startsWith("#")
             }
 
             val resultType = PhpType()
             lhsTypes.forEach { type ->
                 val fqn = "$type.$methodName"
-                val data = IndexingGenericFunctionCall(fqn, p.parameters, p, SEP).pack() ?: return@forEach
+                val data = IndexingGenericFunctionCall(fqn, p.parameters, p, SEP).pack()
 
                 resultType.add(KEY.sign(data))
             }
@@ -49,10 +49,6 @@ class GenericMethodsTypeProvider : PhpTypeProvider4 {
     }
 
     override fun complete(incompleteTypeStr: String, project: Project): PhpType? {
-        if (!KEY.signed(incompleteTypeStr)) {
-            return null
-        }
-
         val packedData = incompleteTypeStr.substring(2)
 
         val call = ResolvingGenericMethodCall(project)
@@ -81,13 +77,10 @@ class GenericMethodsTypeProvider : PhpTypeProvider4 {
         return methodTypeSpecialized.toPhpType()
     }
 
-
     override fun getBySignature(
         typeStr: String,
         visited: MutableSet<String>?,
         depth: Int,
         project: Project?
-    ): MutableCollection<PhpNamedElement>? {
-        return null
-    }
+    ) = null
 }

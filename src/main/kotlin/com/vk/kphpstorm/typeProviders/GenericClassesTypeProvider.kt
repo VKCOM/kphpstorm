@@ -3,7 +3,6 @@ package com.vk.kphpstorm.typeProviders
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.psi.elements.NewExpression
-import com.jetbrains.php.lang.psi.elements.PhpNamedElement
 import com.jetbrains.php.lang.psi.resolve.types.PhpCharBasedTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
@@ -20,9 +19,7 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
     companion object {
         val SEP = "―"
         val KEY = object : PhpCharBasedTypeKey() {
-            override fun getKey(): Char {
-                return '±'
-            }
+            override fun getKey() = '±'
         }
     }
 
@@ -33,7 +30,7 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
         if (p is NewExpression) {
             val classRef = p.classReference ?: return null
             val fqn = classRef.fqn + ".__construct"
-            val data = IndexingGenericFunctionCall(fqn, p.parameters, p, SEP).pack() ?: return null
+            val data = IndexingGenericFunctionCall(fqn, p.parameters, p, SEP).pack()
             return PhpType().add(KEY.sign(data))
         }
 
@@ -41,10 +38,6 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
     }
 
     override fun complete(incompleteTypeStr: String, project: Project): PhpType? {
-        if (!KEY.signed(incompleteTypeStr)) {
-            return null
-        }
-
         val packedData = incompleteTypeStr.substring(2)
 
         val call = ResolvingGenericConstructorCall(project)
@@ -52,7 +45,7 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
             return null
         }
 
-        if (!call.klass!!.isGeneric()) {
+        if (!call.klass.isGeneric()) {
             return null
         }
 
@@ -65,7 +58,7 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
         }
 
         val genericsTypes = call.genericTs.map { ExPhpTypeGenericsT(it.name) }
-        val type = ExPhpTypeTplInstantiation(call.klass!!.fqn, genericsTypes)
+        val type = ExPhpTypeTplInstantiation(call.klass.fqn, genericsTypes)
 
         val methodTypeSpecialized = type.instantiateGeneric(specializationNameMap)
         return ExPhpTypeForcing(methodTypeSpecialized).toPhpType()
@@ -76,7 +69,5 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
         visited: MutableSet<String>?,
         depth: Int,
         project: Project?
-    ): MutableCollection<PhpNamedElement>? {
-        return null
-    }
+    ) = null
 }

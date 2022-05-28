@@ -4,7 +4,7 @@
 /** @noinspection PhpExpressionResultUnusedInspection */
 
 class Foo {
-    public function boo() {}
+    public function fooMethod() {}
 }
 
 $vec = new Vector/*<Foo>*/();

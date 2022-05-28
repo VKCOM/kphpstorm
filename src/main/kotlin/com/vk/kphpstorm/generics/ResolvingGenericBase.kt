@@ -7,6 +7,8 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.ExPhpType
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
+import org.apache.commons.lang3.tuple.MutablePair
+import java.util.*
 
 /**
  * Данный класс инкапсулирует логику обработки данных полученных на этапе
@@ -70,6 +72,82 @@ abstract class ResolvingGenericBase(val project: Project) {
         return if (parts.count() >= count) parts else null
     }
 
+    protected fun resolveSubTypes(packedData: String): String {
+        var data = packedData
+            .removePrefix(IndexingGenericFunctionCall.START_TYPE.toString())
+            .removeSuffix(IndexingGenericFunctionCall.END_TYPE.toString())
+
+        val pairsParts = mutableListOf<MutableList<MutablePair<Int, Int>>>()
+
+        val pairStack = Stack<MutablePair<Int, Int>>()
+        for (i in data.indices) {
+
+            if (data[i] == IndexingGenericFunctionCall.START_TYPE) {
+                if (pairsParts.isEmpty()) {
+                    pairsParts.add(mutableListOf())
+                }
+
+                val pair = MutablePair(i - 2, -1)
+                pairsParts.last().add(pair)
+
+                pairStack.add(pair)
+            }
+
+            if (data[i] == IndexingGenericFunctionCall.END_TYPE) {
+                if (pairStack.isNotEmpty()) {
+                    val pair = pairStack.pop()
+                    pair.right = i + 1
+                } else {
+                    print("")
+                }
+
+                if (pairStack.isEmpty()) {
+                    pairsParts.add(mutableListOf())
+                }
+            }
+        }
+
+        pairsParts.reverse()
+        pairsParts.forEach { pairs ->
+            pairs.reverse()
+            var rightShift = 0
+
+            var prevPair: MutablePair<Int, Int>? = null
+            for (pair in pairs) {
+                val startIndex = pair.left
+                val endIndex = pair.right - if (prevPair != null) {
+                    if (pair.right < prevPair.left) {
+                        0
+                    } else {
+                        rightShift
+                    }
+                } else {
+                    0
+                }
+
+                val subType = try {
+                    data.substring(startIndex, endIndex)
+                } catch (e: IndexOutOfBoundsException) {
+                    ""
+                }
+
+                val resolvedSubType = PhpType().add(subType).global(project).toExPhpType()?.toString() ?: ""
+
+                rightShift += subType.length - resolvedSubType.length
+
+                try {
+                    data = data.replaceRange(startIndex until endIndex, resolvedSubType)
+                } catch (e: Exception) {
+                    print("")
+                }
+
+                prevPair = pair
+            }
+        }
+
+        return data
+    }
+
     protected abstract fun unpackImpl(packedData: String): Boolean
 
     protected fun unpackTypeArray(text: String) = if (text.isNotEmpty())
@@ -79,7 +157,11 @@ abstract class ResolvingGenericBase(val project: Project) {
             types.forEach { singleType ->
                 type.add(singleType)
             }
-            type.global(project).toExPhpType()
+            try {
+                type.global(project).toExPhpType()
+            } catch (e: Exception) {
+                null
+            }
         }
     else
         emptyList()

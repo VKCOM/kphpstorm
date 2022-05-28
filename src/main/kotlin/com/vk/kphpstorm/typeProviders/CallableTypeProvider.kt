@@ -3,7 +3,6 @@ package com.vk.kphpstorm.typeProviders
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.psi.elements.Function
-import com.jetbrains.php.lang.psi.elements.PhpNamedElement
 import com.jetbrains.php.lang.psi.resolve.types.PhpCharBasedTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
@@ -30,10 +29,6 @@ class CallableTypeProvider : PhpTypeProvider4 {
     }
 
     override fun complete(incompleteTypeStr: String, project: Project): PhpType? {
-        if (!KEY.signed(incompleteTypeStr)) {
-            return null
-        }
-
         val incompleteType = incompleteTypeStr.substring(2)
 
         val (paramsRawTypeString, returnRawTypeString) = incompleteType.split(",")
@@ -64,7 +59,5 @@ class CallableTypeProvider : PhpTypeProvider4 {
         visited: MutableSet<String>?,
         depth: Int,
         project: Project?
-    ): MutableCollection<PhpNamedElement>? {
-        return null
-    }
+    ) = null
 }

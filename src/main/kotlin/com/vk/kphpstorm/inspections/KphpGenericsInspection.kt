@@ -158,7 +158,6 @@ class KphpGenericsInspection : PhpInspection() {
                         call.explicitSpecsPsi
                             ?: call.callArgs.firstOrNull()
                             ?: call.element()
-                            ?: return@forEach
 
                     if (!upperBoundClassType.isAssignableFrom(resolvedType, call.project)) {
                         val extendsOrImplements = if (upperBoundClass.isInterface) "implements" else "extends"

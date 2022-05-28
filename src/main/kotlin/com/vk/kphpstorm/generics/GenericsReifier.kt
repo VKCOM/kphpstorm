@@ -120,19 +120,15 @@ class GenericsReifier(val project: Project) {
             // если случай paramExType это Vector|Vector<%T> и argExType это Vector|Vector<A>
             val instantiationParamType =
                 paramExType.items.find { it is ExPhpTypeTplInstantiation } as ExPhpTypeTplInstantiation?
-            if (instantiationParamType != null && argExType is ExPhpTypePipe) {
-                val instantiationArgType =
-                    argExType.items.find { it is ExPhpTypeTplInstantiation } as ExPhpTypeTplInstantiation?
-                if (instantiationArgType != null) {
-                    for (i in 0 until min(
-                        instantiationArgType.specializationList.size,
-                        instantiationParamType.specializationList.size
-                    )) {
-                        reifyArgumentGenericsT(
-                            instantiationArgType.specializationList[i],
-                            instantiationParamType.specializationList[i]
-                        )
-                    }
+            if (instantiationParamType != null && argExType is ExPhpTypeTplInstantiation) {
+                for (i in 0 until min(
+                    argExType.specializationList.size,
+                    instantiationParamType.specializationList.size
+                )) {
+                    reifyArgumentGenericsT(
+                        argExType.specializationList[i],
+                        instantiationParamType.specializationList[i]
+                    )
                 }
             }
 

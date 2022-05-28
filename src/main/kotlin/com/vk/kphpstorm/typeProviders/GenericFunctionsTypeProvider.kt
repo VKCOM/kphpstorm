@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.psi.elements.FunctionReference
 import com.jetbrains.php.lang.psi.elements.MethodReference
-import com.jetbrains.php.lang.psi.elements.PhpNamedElement
 import com.jetbrains.php.lang.psi.resolve.types.PhpCharBasedTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
@@ -18,10 +17,8 @@ import kotlin.math.min
 
 class GenericFunctionsTypeProvider : PhpTypeProvider4 {
     companion object {
-        private val KEY = object : PhpCharBasedTypeKey() {
-            override fun getKey(): Char {
-                return 'П'
-            }
+        val KEY = object : PhpCharBasedTypeKey() {
+            override fun getKey() = 'П'
         }
     }
 
@@ -32,15 +29,11 @@ class GenericFunctionsTypeProvider : PhpTypeProvider4 {
             return null
         }
 
-        val data = IndexingGenericFunctionCall(p.fqn!!, p.parameters, p).pack() ?: return null
-        return PhpType().add("#П$data")
+        val data = IndexingGenericFunctionCall(p.fqn!!, p.parameters, p).pack()
+        return PhpType().add(KEY.sign(data))
     }
 
     override fun complete(incompleteTypeStr: String, project: Project): PhpType? {
-        if (!KEY.signed(incompleteTypeStr)) {
-            return null
-        }
-
         val packedData = incompleteTypeStr.substring(2)
 
         val call = ResolvingGenericFunctionCall(project)
@@ -74,7 +67,5 @@ class GenericFunctionsTypeProvider : PhpTypeProvider4 {
         visited: MutableSet<String>?,
         depth: Int,
         project: Project?
-    ): MutableCollection<PhpNamedElement>? {
-        return null
-    }
+    ) = null
 }
