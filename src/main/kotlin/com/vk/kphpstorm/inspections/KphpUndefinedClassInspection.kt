@@ -2,17 +2,21 @@ package com.vk.kphpstorm.inspections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.fileEditor.UniqueVFilePathBuilder
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.util.parentOfType
 import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType
 import com.jetbrains.php.lang.inspections.PhpInspection
 import com.jetbrains.php.lang.inspections.quickfix.PhpImportClassQuickFix
 import com.jetbrains.php.lang.psi.elements.*
+import com.jetbrains.php.lang.psi.elements.Function
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.vk.kphpstorm.exphptype.ExPhpTypeInstance
 import com.vk.kphpstorm.exphptype.PhpTypeToExPhpTypeParsing
 import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
+import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.inspections.helpers.KphpTypingAnalyzer
 
 /**
@@ -41,8 +45,13 @@ class KphpUndefinedClassInspection : PhpInspection() {
                     it != clazz && it.containingFile != clazz.containingFile
                 } ?: return
 
-                val relativePath = UniqueVFilePathBuilder.getInstance().getUniqueVirtualFilePath(clazz.project, another.containingFile.virtualFile)
-                holder.registerProblem(identifier, "Another declaration of class '#ref' exists in $relativePath", ProblemHighlightType.WEAK_WARNING)
+                val relativePath = UniqueVFilePathBuilder.getInstance()
+                    .getUniqueVirtualFilePath(clazz.project, another.containingFile.virtualFile)
+                holder.registerProblem(
+                    identifier,
+                    "Another declaration of class '#ref' exists in $relativePath",
+                    ProblemHighlightType.WEAK_WARNING
+                )
             }
 
             /**
@@ -59,7 +68,11 @@ class KphpUndefinedClassInspection : PhpInspection() {
 
                 if (isPrimitive) {
                     if (classReference.parent !is PhpTypeDeclaration)
-                        holder.registerProblem(nameNode.psi, "Incorrect primitive type usage", ProblemHighlightType.ERROR)
+                        holder.registerProblem(
+                            nameNode.psi,
+                            "Incorrect primitive type usage",
+                            ProblemHighlightType.ERROR
+                        )
                     return
                 }
 
@@ -89,25 +102,39 @@ class KphpUndefinedClassInspection : PhpInspection() {
 
                 val resolvedType = PhpTypeToExPhpTypeParsing.parse(type.type)
                 if (resolvedType is ExPhpTypeInstance) {
-                    // TODO: так как комментарий встраивается мы не можем получить контекст
-//                    val containingFunction = type.parentOfType<Function>()
-//                    if (containingFunction != null) {
-//                        val names = containingFunction.genericNames()
-//                        if (names.find { "\\${it.name}" == resolvedType.fqn } != null) {
-//                            return
-//                        }
-//                    }
-//                    val containingClass = type.parentOfType<PhpClass>()
-//                    if (containingClass != null) {
-//                        val names = containingClass.genericNames()
-//                        if (names.find { "\\${it.name}" == resolvedType.fqn } != null) {
-//                            return
-//                        }
-//                    }
+                    if (isGenericType(type, resolvedType))
+                        return
 
                     if (PhpIndex.getInstance(type.project).getAnyByFQN(resolvedType.fqn).isEmpty())
                         reportUndefinedClassUsage(type)
                 }
+            }
+
+            private fun isGenericType(
+                type: ExPhpTypeInstancePsiImpl,
+                resolvedType: ExPhpTypeInstance
+            ): Boolean {
+                val placeWithInjection =
+                    InjectedLanguageManager.getInstance(type.project).getInjectionHost(type) ?: return false
+
+                val name = resolvedType.fqn.substring(resolvedType.fqn.lastIndexOf('\\') + 1)
+
+                val containingFunction = placeWithInjection.parentOfType<Function>()
+                if (containingFunction != null) {
+                    val names = containingFunction.genericNames()
+                    if (names.find { it.name == name } != null) {
+                        return true
+                    }
+                }
+                val containingClass = placeWithInjection.parentOfType<PhpClass>()
+                if (containingClass != null) {
+                    val names = containingClass.genericNames()
+                    if (names.find { it.name == name } != null) {
+                        return true
+                    }
+                }
+
+                return false
             }
 
             /**
@@ -124,7 +151,12 @@ class KphpUndefinedClassInspection : PhpInspection() {
                 val importAvailable = candidates.isNotEmpty() && (isOnTheFly || candidates.size == 1)
 
                 if (importAvailable)
-                    holder.registerProblem(psi, "Undefined class '#ref'", ProblemHighlightType.ERROR, PhpImportClassQuickFix.INSTANCE)
+                    holder.registerProblem(
+                        psi,
+                        "Undefined class '#ref'",
+                        ProblemHighlightType.ERROR,
+                        PhpImportClassQuickFix.INSTANCE
+                    )
                 else
                     holder.registerProblem(psi, "Undefined class '#ref'", ProblemHighlightType.ERROR)
             }

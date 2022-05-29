@@ -14,6 +14,7 @@ import com.vk.kphpstorm.exphptype.PsiToExPhpType
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.inspections.KphpGenericsInspection
 import com.vk.kphpstorm.inspections.KphpParameterTypeMismatchInspection
+import com.vk.kphpstorm.inspections.KphpUndefinedClassInspection
 import java.io.File
 
 abstract class GenericTestBase : BasePlatformTestCase() {
@@ -25,6 +26,7 @@ abstract class GenericTestBase : BasePlatformTestCase() {
 
         myFixture.enableInspections(PhpUndefinedMethodInspection())
         myFixture.enableInspections(PhpUndefinedFieldInspection())
+        myFixture.enableInspections(KphpUndefinedClassInspection())
         myFixture.enableInspections(KphpGenericsInspection())
         myFixture.enableInspections(KphpParameterTypeMismatchInspection())
     }

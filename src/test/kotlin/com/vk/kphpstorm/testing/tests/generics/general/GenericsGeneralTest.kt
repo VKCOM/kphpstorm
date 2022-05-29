@@ -37,4 +37,8 @@ class GenericsGeneralTest : GenericTestBase() {
         runFixture("generics/general/reifier/context/param.fixture.php")
         runFixture("generics/general/reifier/context/param_wrong.fixture.php")
     }
+
+    fun testGenericInGeneric() {
+        runFixture("generics/general/generic_in_generic.fixture.php")
+    }
 }
