@@ -1,8 +1,8 @@
 plugins {
     id 'java'
     id 'idea'
-    id 'org.jetbrains.intellij' version '1.5.2'     // https://github.com/JetBrains/gradle-intellij-plugin
-    id 'org.jetbrains.kotlin.jvm' version '1.6.10'   // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm
+    id 'org.jetbrains.intellij' version '1.6.0'     // https://github.com/JetBrains/gradle-intellij-plugin
+    id 'org.jetbrains.kotlin.jvm' version "1.7.0-RC"   // https://plugins.gradle.org/plugin/org.jetbrains.kotlin.jvm
 }
 
 group 'com.vk'
@@ -15,8 +15,12 @@ repositories {
         url 'https://www.jetbrains.com/intellij-repository/snapshots'
     }
 }
+
 dependencies {
-    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.8.2'
+    testCompileOnly 'junit:junit:4.13.2'
 }
 
 idea {
@@ -31,25 +35,29 @@ idea {
 }
 
 compileKotlin {
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    sourceCompatibility = 17
+    targetCompatibility = 17
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += '-Xjvm-default=all'
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
+}
+
+wrapper {
+    gradleVersion = "7.4"
 }
 
 intellij {
     type = 'IU'
     // for release versions: https://www.jetbrains.com/intellij-repository/releases (com.jetbrains.intellij.idea)
     // for EAPs: https://www.jetbrains.com/intellij-repository/snapshots
-    version = '2022.1.1'
+    version = '222.2680-EAP-CANDIDATE-SNAPSHOT'
 //    version = '2021.3.1'
     plugins = [
-        'com.jetbrains.php:221.5591.58', // https://plugins.jetbrains.com/plugin/6610-php/versions
+        'com.jetbrains.php:222.2680.8', // https://plugins.jetbrains.com/plugin/6610-php/versions
 //        'com.jetbrains.php:213.5744.223',
     ]
 }
@@ -78,6 +86,8 @@ sourceSets {
     }
 }
 test {
+    useJUnitPlatform()
+
     exclude 'com/vk/kphpstorm/testing/infrastructure/**'
     include "**/*Test.class"
     scanForTestClasses false

@@ -53,6 +53,7 @@ class Vector {
     return new Vector(...$new_data);
   }
 
+
   /**
    * @param callable(T):bool $fn
    * @return Vector<T>

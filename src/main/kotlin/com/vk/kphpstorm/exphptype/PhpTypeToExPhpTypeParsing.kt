@@ -18,86 +18,86 @@ object PhpTypeToExPhpTypeParsing {
      * 2) optimization for widely used types and primitive arrays, not to invoke regexp and objects allocation
      */
     private val FQN_PREPARSED = sortedMapOf(
-            // synonyms are also listed here, like in mapStringToPhpType
-            "int" to ExPhpType.INT,
-            "float" to ExPhpType.FLOAT,
-            "double" to ExPhpType.FLOAT,
-            "string" to ExPhpType.STRING,
-            "bool" to ExPhpType.BOOL,
-            "boolean" to ExPhpType.BOOL,
-            "true" to ExPhpType.BOOL,
-            "false" to ExPhpType.FALSE,
-            "null" to ExPhpType.NULL,
-            "object" to ExPhpType.OBJECT,
-            "callable" to ExPhpType.CALLABLE,
-            "Closure" to ExPhpType.CALLABLE,
-            "void" to ExPhpType.VOID,
-            "resource" to ExPhpType.INT,
-            "kmixed" to ExPhpType.KMIXED,
+        // synonyms are also listed here, like in mapStringToPhpType
+        "int" to ExPhpType.INT,
+        "float" to ExPhpType.FLOAT,
+        "double" to ExPhpType.FLOAT,
+        "string" to ExPhpType.STRING,
+        "bool" to ExPhpType.BOOL,
+        "boolean" to ExPhpType.BOOL,
+        "true" to ExPhpType.BOOL,
+        "false" to ExPhpType.FALSE,
+        "null" to ExPhpType.NULL,
+        "object" to ExPhpType.OBJECT,
+        "callable" to ExPhpType.CALLABLE,
+        "Closure" to ExPhpType.CALLABLE,
+        "void" to ExPhpType.VOID,
+        "resource" to ExPhpType.INT,
+        "kmixed" to ExPhpType.KMIXED,
 
-            // PhpType().add("int") — types[0] is "\int", so we need everything with leading slash
-            "\\int" to ExPhpType.INT,
-            "\\float" to ExPhpType.FLOAT,
-            "\\double" to ExPhpType.FLOAT,
-            "\\string" to ExPhpType.STRING,
-            "\\bool" to ExPhpType.BOOL,
-            "\\boolean" to ExPhpType.BOOL,
-            "\\true" to ExPhpType.BOOL,
-            "\\false" to ExPhpType.FALSE,
-            "\\null" to ExPhpType.NULL,
-            "\\object" to ExPhpType.OBJECT,
-            "\\callable" to ExPhpType.CALLABLE,
-            "\\Closure" to ExPhpType.CALLABLE,
-            "\\void" to ExPhpType.VOID,
-            "\\resource" to ExPhpType.INT,
-            "\\kmixed" to ExPhpType.KMIXED,
+        // PhpType().add("int") — types[0] is "\int", so we need everything with leading slash
+        "\\int" to ExPhpType.INT,
+        "\\float" to ExPhpType.FLOAT,
+        "\\double" to ExPhpType.FLOAT,
+        "\\string" to ExPhpType.STRING,
+        "\\bool" to ExPhpType.BOOL,
+        "\\boolean" to ExPhpType.BOOL,
+        "\\true" to ExPhpType.BOOL,
+        "\\false" to ExPhpType.FALSE,
+        "\\null" to ExPhpType.NULL,
+        "\\object" to ExPhpType.OBJECT,
+        "\\callable" to ExPhpType.CALLABLE,
+//            "\\Closure" to ExPhpType.CALLABLE,
+        "\\void" to ExPhpType.VOID,
+        "\\resource" to ExPhpType.INT,
+        "\\kmixed" to ExPhpType.KMIXED,
 
-            // arrays of primitives also meet quite often, make them preparsed
-            "int[]" to ExPhpTypeArray(ExPhpType.INT),
-            "float[]" to ExPhpTypeArray(ExPhpType.FLOAT),
-            "string[]" to ExPhpTypeArray(ExPhpType.STRING),
-            "bool[]" to ExPhpTypeArray(ExPhpType.BOOL),
-            "false[]" to ExPhpTypeArray(ExPhpType.FALSE),
-            "null[]" to ExPhpTypeArray(ExPhpType.NULL),
-            "object[]" to ExPhpTypeArray(ExPhpType.OBJECT),
-            "callable[]" to ExPhpTypeArray(ExPhpType.CALLABLE),
-            "kmixed[]" to ExPhpTypeArray(ExPhpType.KMIXED),
+        // arrays of primitives also meet quite often, make them preparsed
+        "int[]" to ExPhpTypeArray(ExPhpType.INT),
+        "float[]" to ExPhpTypeArray(ExPhpType.FLOAT),
+        "string[]" to ExPhpTypeArray(ExPhpType.STRING),
+        "bool[]" to ExPhpTypeArray(ExPhpType.BOOL),
+        "false[]" to ExPhpTypeArray(ExPhpType.FALSE),
+        "null[]" to ExPhpTypeArray(ExPhpType.NULL),
+        "object[]" to ExPhpTypeArray(ExPhpType.OBJECT),
+        "callable[]" to ExPhpTypeArray(ExPhpType.CALLABLE),
+        "kmixed[]" to ExPhpTypeArray(ExPhpType.KMIXED),
 
-            // same arrays of primitives with leading slash
-            "\\int[]" to ExPhpTypeArray(ExPhpType.INT),
-            "\\float[]" to ExPhpTypeArray(ExPhpType.FLOAT),
-            "\\string[]" to ExPhpTypeArray(ExPhpType.STRING),
-            "\\bool[]" to ExPhpTypeArray(ExPhpType.BOOL),
-            "\\false[]" to ExPhpTypeArray(ExPhpType.FALSE),
-            "\\null[]" to ExPhpTypeArray(ExPhpType.NULL),
-            "\\object[]" to ExPhpTypeArray(ExPhpType.OBJECT),
-            "\\callable[]" to ExPhpTypeArray(ExPhpType.CALLABLE),
-            "\\kmixed[]" to ExPhpTypeArray(ExPhpType.KMIXED),
+        // same arrays of primitives with leading slash
+        "\\int[]" to ExPhpTypeArray(ExPhpType.INT),
+        "\\float[]" to ExPhpTypeArray(ExPhpType.FLOAT),
+        "\\string[]" to ExPhpTypeArray(ExPhpType.STRING),
+        "\\bool[]" to ExPhpTypeArray(ExPhpType.BOOL),
+        "\\false[]" to ExPhpTypeArray(ExPhpType.FALSE),
+        "\\null[]" to ExPhpTypeArray(ExPhpType.NULL),
+        "\\object[]" to ExPhpTypeArray(ExPhpType.OBJECT),
+        "\\callable[]" to ExPhpTypeArray(ExPhpType.CALLABLE),
+        "\\kmixed[]" to ExPhpTypeArray(ExPhpType.KMIXED),
 
-            // 'any' from phpdoc has a special instantiation
-            "any" to ExPhpType.ANY,
-            "\\any" to ExPhpType.ANY,
+        // 'any' from phpdoc has a special instantiation
+        "any" to ExPhpType.ANY,
+        "\\any" to ExPhpType.ANY,
 
-            // "array" from phpdoc and "array" emerged by PhpStorm internals is "any[]"
-            "array" to ExPhpType.ARRAY_OF_ANY,
-            "\\array" to ExPhpType.ARRAY_OF_ANY,
-            "any[]" to ExPhpType.ARRAY_OF_ANY,
-            "\\any[]" to ExPhpType.ARRAY_OF_ANY,
+        // "array" from phpdoc and "array" emerged by PhpStorm internals is "any[]"
+        "array" to ExPhpType.ARRAY_OF_ANY,
+        "\\array" to ExPhpType.ARRAY_OF_ANY,
+        "any[]" to ExPhpType.ARRAY_OF_ANY,
+        "\\any[]" to ExPhpType.ARRAY_OF_ANY,
 
-            // Important!
-            // 'mixed' in phpdoc is treated as 'kmixed', that's why
-            // 'mixed' can emerge only by PhpStorm internal inferring, when it couldn't detect the type or types are really mixed
-            // (for example, [1,'2'] is mixed[] and [new A, new ADevired] is mixed[] in native PhpStorm inferring)
-            // so, if PhpStorm couldn't detect, it can be really anything,
-            // and we don't have any reason to produce errors and assume whether it is compatible with mixed or not
-            "mixed" to ExPhpType.ANY,
-            "\\mixed" to ExPhpType.ANY,
+        // Important!
+        // 'mixed' in phpdoc is treated as 'kmixed', that's why
+        // 'mixed' can emerge only by PhpStorm internal inferring, when it couldn't detect the type or types are really mixed
+        // (for example, [1,'2'] is mixed[] and [new A, new ADevired] is mixed[] in native PhpStorm inferring)
+        // so, if PhpStorm couldn't detect, it can be really anything,
+        // and we don't have any reason to produce errors and assume whether it is compatible with mixed or not
+        "mixed" to ExPhpType.ANY,
+        "\\mixed" to ExPhpType.ANY,
 
-            // some "forced" that can occur often, @see [ForcingTypeProvider], \\ not needed
-            "force(string)" to ExPhpTypeForcing(ExPhpType.STRING),
-            "force(int)" to ExPhpTypeForcing(ExPhpType.INT),
-            "force(kmixed)" to ExPhpTypeForcing(ExPhpType.KMIXED),
-            "force(any)" to ExPhpTypeForcing(ExPhpType.ANY)
+        // some "forced" that can occur often, @see [ForcingTypeProvider], \\ not needed
+        "force(string)" to ExPhpTypeForcing(ExPhpType.STRING),
+        "force(int)" to ExPhpTypeForcing(ExPhpType.INT),
+        "force(kmixed)" to ExPhpTypeForcing(ExPhpType.KMIXED),
+        "force(any)" to ExPhpTypeForcing(ExPhpType.ANY)
     )
 
     private class ExPhpTypeBuilder(private val type: String) {
@@ -212,10 +212,62 @@ object PhpTypeToExPhpTypeParsing {
         }
 
         val returnType: ExPhpType? =
-                if (builder.compareAndEat(':')) parseTypeExpression(builder) ?: return null
-                else null
+            if (builder.compareAndEat(':')) parseTypeExpression(builder) ?: return null
+            else null
 
         return Pair(argTypes, returnType)
+    }
+
+    private fun parseClosureTypesListContents(builder: ExPhpTypeBuilder): List<ExPhpType>? {
+        val argTypes = mutableListOf<ExPhpType>()
+
+        if (builder.compare(','))
+            return argTypes
+
+        while (true) {
+            argTypes.add(parseTypeExpression(builder) ?: return null)
+
+            if (builder.compareAndEat('ᤓ'))
+                continue
+
+            if (builder.compare(','))
+                return argTypes
+            if (builder.compare('>'))
+                return argTypes
+        }
+    }
+
+    // \Closure<\Gooᤓ\null,\Foo,,\bool>
+    private fun parseClosureContents(builder: ExPhpTypeBuilder): Pair<List<ExPhpType>, ExPhpType?>? {
+        if (!builder.compareAndEat('<'))
+            return null
+
+        val argTypes = mutableListOf<ExPhpType>()
+        while (true) {
+            if (builder.compareAndEat('>'))
+                break
+
+            val types = parseClosureTypesListContents(builder) ?: return null
+            val type = if (types.isEmpty())
+                null
+            else if (types.size == 1)
+                types[0]
+            else
+                ExPhpTypePipe(types)
+
+            if (type != null) {
+                argTypes.add(type)
+            }
+
+            if (builder.compareAndEat(','))
+                continue
+            if (!builder.compare('>'))
+                return null
+        }
+
+        val returnType = argTypes.lastOrNull()
+
+        return Pair( argTypes.dropLast(1), returnType)
     }
 
     private fun parseForcingTypeContents(builder: ExPhpTypeBuilder): ExPhpType? {
@@ -261,6 +313,11 @@ object PhpTypeToExPhpTypeParsing {
 
         if (fqn == "callable" && builder.compare('(')) {
             val (argTypes, returnType) = parseTypedCallableContents(builder) ?: return null
+            return ExPhpTypeCallable(argTypes, returnType)
+        }
+
+        if (fqn == "\\Closure" && builder.compare('<')) {
+            val (argTypes, returnType) = parseClosureContents(builder) ?: return null
             return ExPhpTypeCallable(argTypes, returnType)
         }
 
@@ -348,16 +405,16 @@ object PhpTypeToExPhpTypeParsing {
 
     private fun createNullableOrSimplified(nullableType: ExPhpType): ExPhpType = when {
         nullableType === ExPhpType.KMIXED -> ExPhpType.KMIXED
-        nullableType === ExPhpType.ANY    -> ExPhpType.ANY
+        nullableType === ExPhpType.ANY -> ExPhpType.ANY
         nullableType is ExPhpTypeForcing -> nullableType
-        else                             -> ExPhpTypeNullable(nullableType)
+        else -> ExPhpTypeNullable(nullableType)
     }
 
     fun parse(phpType: PhpType): ExPhpType? {
         return when (phpType.types.size) {
-            0    -> null
-            1    ->
-                phpType.types.first().let { str ->
+            0 -> null
+            1 ->
+                phpType.typesWithParametrisedParts.first().let { str ->
                     FQN_PREPARSED[str] ?: parseTypeExpression(ExPhpTypeBuilder(str))
                 }
             else -> {   // optimization: not phpType.toString(), not to concatenate strings

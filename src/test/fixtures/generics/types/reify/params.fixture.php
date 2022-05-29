@@ -14,7 +14,6 @@ interface FuncI {
 function f1($a, $b, $c) {
     expr_type($a, "\FuncI");
     expr_type($b, "\FuncI");
-    expr_type($c, "null");
 
     $a = 100;
     $b = 100;
@@ -29,8 +28,18 @@ function f1($a, $b, $c) {
  * @kphp-generic T1 = string, T2: callable
  * @param T1 $a
  * @param T2 $b
+ * @return T1|T2
  */
-function f2($a, $b) {
+function f1112($a, $b) {
     expr_type($a, "string");
     expr_type($b, "callable");
 }
+
+$a = function(int $a): Foo {
+    return new Foo;
+};
+
+$a = f1112(new Foo, 100);
+
+
+

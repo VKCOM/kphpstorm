@@ -41,7 +41,7 @@ class GenericsReifier(val project: Project) {
             val paramExType = paramType.toExPhpType()?.getGenericTypeOrSelf() ?: continue
 
             // Если параметр не является шаблонным, то мы его пропускаем
-            if (!paramType.isGeneric(genericTs)) {
+            if (!paramType.isGeneric(genericTs) && paramType.toString() != KphpPrimitiveTypes.CALLABLE) {
                 continue
             }
 

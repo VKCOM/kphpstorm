@@ -37,6 +37,18 @@ class IndexingGenericFunctionCall(
             // и если мы сохраним его как #_\int|\Boo, то в дальнейшем тип будет "#_\int|\Boo", и
             // этот тип не разрешится верно, поэтому сохраняем типы через стрелочку, таким образом
             // внутри PhpType типы будут также разделены, как были на момент сохранения здесь
+
+            if (it.typesWithParametrisedParts.firstOrNull()?.startsWith("\\Closure") == true) {
+                val rawType = it.typesWithParametrisedParts.first().replace("ᤓ", "/")
+                val paramsPart = rawType.substring(rawType.indexOf('<') + 1, rawType.lastIndexOf('>'))
+                val paramsWithReturnType = paramsPart.split(',')
+
+                val returnType = paramsWithReturnType.last()
+                val paramTypes = paramsWithReturnType.dropLast(1).map { type -> type.ifEmpty { "mixed" } }
+
+                return@joinToString "callable(${paramTypes.joinToString(",")}):$returnType"
+            }
+
             if (it.types.size == 1) {
                 it.toString()
             } else {

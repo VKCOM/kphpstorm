@@ -7,6 +7,8 @@ class Boo {
 }
 
 class Goo {
+  function getName(): string {}
+
   function gooMethod(): Boo {
     return new Boo;
   }

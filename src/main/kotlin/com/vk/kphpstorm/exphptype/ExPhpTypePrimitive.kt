@@ -37,6 +37,7 @@ class ExPhpTypePrimitive(val typeStr: String) : ExPhpType {
         is ExPhpTypeInstance    -> this === ExPhpType.OBJECT
         is ExPhpTypeForcing     -> isAssignableFrom(rhs.inner, project)
         is ExPhpTypeClassString -> this === ExPhpType.STRING
+        is ExPhpTypeCallable    -> this === ExPhpType.CALLABLE
         else                    -> false
     }
 
