@@ -27,6 +27,7 @@ class ExPhpTypeCallable(val argTypes: List<ExPhpType>, val returnType: ExPhpType
 
     override fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean = when (rhs) {
         is ExPhpTypeAny      -> true
+        // TODO: добавить полноценную проверку?
         is ExPhpTypeCallable -> true
         is ExPhpTypeNullable -> isAssignableFrom(rhs.inner, project)
         else                 -> false

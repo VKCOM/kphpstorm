@@ -10,7 +10,6 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.parser.PhpParserErrors
 import com.jetbrains.php.lang.parser.PhpPsiBuilder
 import com.jetbrains.php.lang.psi.stubs.PhpStubElementType
-import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
 import com.vk.kphpstorm.exphptype.psi.TokensToExPhpTypePsiParsing
 
 /**
@@ -19,8 +18,9 @@ import com.vk.kphpstorm.exphptype.psi.TokensToExPhpTypePsiParsing
  *
  * @see KphpDocElementTypes.kphpDocTagGeneric
  */
-object KphpDocTagGenericElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>("@kphp-generic"),
-    KphpDocTagElementType {
+object KphpDocTagGenericElementType :
+    PhpStubElementType<PhpDocTagStub, PhpDocTag>("@kphp-generic"), KphpDocTagElementType {
+
     override fun createPsi(stub: PhpDocTagStub): PhpDocTag {
         return KphpDocTagGenericPsiImpl(stub, stub.stubType)
     }
@@ -32,14 +32,14 @@ object KphpDocTagGenericElementType : PhpStubElementType<PhpDocTagStub, PhpDocTa
                 val type = StringBuilder()
                 type.append(it.name)
 
-                if (it.extendsClass != null) {
+                if (it.extendsType != null) {
                     type.append(":")
-                    type.append(it.extendsClass)
+                    type.append(it.extendsType.toString())
                 }
 
                 if (it.defaultType != null) {
                     type.append("=")
-                    type.append(it.defaultType)
+                    type.append(it.defaultType.toString())
                 }
 
                 type.toString()
@@ -81,26 +81,12 @@ object KphpDocTagGenericElementType : PhpStubElementType<PhpDocTagStub, PhpDocTa
 
                     var withExtends = false
                     if (text == ":") {
-                        val extendsMarker = builder.mark()
-
                         if (!TokensToExPhpTypePsiParsing.parseTypeExpression(builder)) {
                             marker.drop()
-                            extendsMarker.drop()
                             builder.error(PhpParserErrors.expected("Extends class name"))
                             break
                         }
 
-//                        if (!builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) && !builder.compare(PhpDocTokenTypes.DOC_NAMESPACE)) {
-//                            marker.drop()
-//                            extendsMarker.drop()
-//                            builder.error(PhpParserErrors.expected("Extends class name"))
-//                            break
-//                        }
-//
-//                        Namespace.parseReference(builder)
-//                        builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)
-//
-                        extendsMarker.done(ExPhpTypeInstancePsiImpl.elementType)
                         withExtends = true
                     }
 
@@ -112,33 +98,11 @@ object KphpDocTagGenericElementType : PhpStubElementType<PhpDocTagStub, PhpDocTa
                         if (withExtends) {
                             builder.advanceLexer()
                         }
-                        val defaultTypeMarker = builder.mark()
-
                         if (!TokensToExPhpTypePsiParsing.parseTypeExpression(builder)) {
                             marker.drop()
-                            defaultTypeMarker.drop()
                             builder.error(PhpParserErrors.expected("Default type name"))
                             break
                         }
-
-                        defaultTypeMarker.done(ExPhpTypeInstancePsiImpl.elementType)
-
-//                        if (!builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) && !builder.compare(PhpDocTokenTypes.DOC_NAMESPACE)) {
-//                            marker.drop()
-//                            defaultTypeMarker.drop()
-//                            builder.error(PhpParserErrors.expected("Default type name"))
-//                            break
-//                        }
-//
-//                        if (KphpPrimitiveTypes.mapPrimitiveToPhpType.containsKey(builder.tokenText!!)) {
-//                            builder.advanceLexer()
-//                            defaultTypeMarker.done(ExPhpTypePrimitivePsiImpl.elementType)
-//                        } else {
-//                            Namespace.parseReference(builder)
-//                            builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)
-//
-//                            defaultTypeMarker.done(ExPhpTypeInstancePsiImpl.elementType)
-//                        }
                     }
                 }
                 marker.done(KphpDocGenericParameterDeclPsiImpl.elementType)

@@ -1,5 +1,14 @@
 <?php
 
+namespace Methods\Chain;
+
+use Pair;
+use Vector;
+
+class Foo {}
+class Boo {}
+class Goo {}
+
 /**
  * @return Vector<Vector<Vector<string>>>
  */
@@ -16,14 +25,14 @@ function templateFu($class) {
   return new $class();
 }
 
-templateFu(Foo::class)->fooMethod();
+$a = templateFu(Foo::class);
+expr_type($a, "\Methods\Chain\Foo");
 
-$a = returnVector()->get(0);
-expr_type($a, "\Vector|\Vector(\Vector|\Vector(string))");
+$b = returnVector()->get(0);
+expr_type($b, "\Vector|\Vector(\Vector|\Vector(string))");
 
-
-$b = $a->get(0)->get(0);
-expr_type($b, "string");
+$c = $b->get(0)->get(0);
+expr_type($c, "string");
 
 
 /**
@@ -35,8 +44,9 @@ function returnPair(): Pair {
 
 $x = returnPair()->first();
 $y = returnPair()->second();
-expr_type($x, "\Boo");
-expr_type($y, "\Goo");
+expr_type($x, "\Methods\Chain\Boo");
+expr_type($y, "\Methods\Chain\Goo");
+
 
 /**
  * @return Vector<Pair<Boo, Goo>>
@@ -45,5 +55,8 @@ function returnVectorPair() {
   return new Vector;
 }
 
-$a = returnVectorPair()->get(0)->second();
-expr_type($a, "\Goo");
+$d = returnVectorPair()->get(0)->second();
+expr_type($d, "\Methods\Chain\Goo");
+
+$e = returnVectorPair()->get(0)->first();
+expr_type($e, "\Methods\Chain\Boo");

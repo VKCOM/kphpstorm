@@ -30,4 +30,4 @@ class TakeWrongGeneric {
  */
 function genericFunction() { return null; }
 
-TakeWrongGeneric::takeStaticGenericFunction(<error descr="Reified generic type for T is not within its bounds (string not implements \Param\Wrong\IGenericClass)">genericFunction()</error>);
+TakeWrongGeneric::takeStaticGenericFunction(<error descr="Reified generic type for T is not within its bounds (string is not implement \Param\Wrong\IGenericClass)">genericFunction()</error>);

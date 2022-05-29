@@ -21,13 +21,13 @@ function someGenericFunc($a) { return $a; }
 function someOtherGenericFunc($a) { return $a; }
 
 $a = someGenericFunc(
+  someOtherGenericFunc(
     someOtherGenericFunc(
-        someOtherGenericFunc(
-            someGenericFunc(
-                someGenericFunc(new Foo())
-            )
-        )
+      someGenericFunc(
+        someGenericFunc(new Foo())
+      )
     )
+  )
 );
 
 expr_type($a, "\Function\Chain\Foo");
@@ -38,9 +38,9 @@ expr_type($a, "\Function\Chain\Foo");
  * @return Vector<T>
  */
 function takeVector($a) {
-    return $a;
+  return $a;
 }
 
 $vec = new Vector/*<Foo>*/ ();
-$vec2 = takeVector($vec)->get(0);
-expr_type($vec2, "\Foo");
+$vec2 = takeVector/*<Foo>*/($vec)->get(0);
+expr_type($vec2, "\Function\Chain\Foo");

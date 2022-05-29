@@ -17,12 +17,13 @@ class ExPhpTypeClassStringPsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
         val elementType = PhpDocElementType("exPhpTypeClassString")
     }
 
-    private val className: String
+    override fun getNameNode(): ASTNode? = null
 
-    init {
+    override fun getType(): PhpType {
+        val text = text
         val brace = if (text.contains('(')) listOf('(', ')') else listOf('<', '>')
         // Во время написания типа если он уже завершен.
-        className = if (text.contains(brace[0]) && text.contains(brace[1])) {
+        val className = if (text.contains(brace[0]) && text.contains(brace[1])) {
             val genericType = text.substring(text.indexOf(brace[0]) + 1 until text.indexOf(brace[1]))
 
             // В случае когда класс на самом деле является шаблонным типом нам нужно мимикрировать тип
@@ -33,11 +34,7 @@ class ExPhpTypeClassStringPsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
         } else {
             ""
         }
-    }
 
-    override fun getNameNode(): ASTNode? = null
-
-    override fun getType(): PhpType {
         if (className.isEmpty()) return KphpPrimitiveTypes.PHP_TYPE_ANY
         if (className.startsWith("%")) return PhpType().add("class-string($className)")
 

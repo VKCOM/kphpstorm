@@ -14,6 +14,8 @@ function returnClassOfString() {
   return new GenericClass();
 }
 
+$a = returnClassOfString();
+expr_type($a, "\GenericClass|\GenericClass(string)");
 
 /**
  * @kphp-generic T1, T2

@@ -58,7 +58,7 @@ class KphpStormParserDefinition() : PhpParserDefinition() {
             ExPhpTypeClassStringPsiImpl.elementType        -> ExPhpTypeClassStringPsiImpl(node)
             ExPhpTypeForcingPsiImpl.elementType            -> ExPhpTypeForcingPsiImpl(node)
 
-            else                                           -> PhpPsiElementCreator.create(node)
+            else -> PhpPsiElementCreator.create(node)
         }
     }
 }
@@ -74,13 +74,20 @@ class GenericsInstantiationInjector : MultiHostInjector {
         if (context is GenericInstantiationPsiCommentImpl) {
             val file = context.containingFile as? PhpFile ?: return
 
-            val namespaces = file.mainNamespaceName
+            val namespace = file.mainNamespaceName?.trim('\\') ?: ""
             val usesText = file.topLevelDefs.values().filterIsInstance<PhpUse>().joinToString("\n") { it.parent.text }
 
             val start = context.startOffset - context.textOffset
             val range = TextRange(start + 3, start + context.textLength - 3)
             registrar.startInjecting(PhpLanguage.INSTANCE)
-                .addPlace("<?php\nnamespace $namespaces;\n$usesText\n/**@var tuple(", ")*/", context, range)
+                .addPlace(
+                    """<?php
+namespace $namespace;
+
+$usesText
+
+/**@var tuple(""", ")*/", context, range
+                )
                 .doneInjecting()
         }
     }

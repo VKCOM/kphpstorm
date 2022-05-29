@@ -17,8 +17,8 @@ function take_some_i($a) {
 
 take_some_i(new A);
 take_some_i(new B);
-take_some_i(<error descr="Reified generic type for T is not within its bounds (\C not implements \SomeI)">new C</error>);
+take_some_i(<error descr="Reified generic type for T is not within its bounds (\C is not implement \SomeI)">new C</error>);
 take_some_i/*<A>*/(new A);
 take_some_i/*<B>*/(new B);
-take_some_i<error descr="Explicit generic type for T is not within its bounds (\C not implements \SomeI)">/*<C>*/</error>(new C);
+take_some_i<error descr="Explicit generic type for T is not within its bounds (\C is not implement \SomeI)">/*<C>*/</error>(new C);
 take_some_i/*<?B>*/(null);

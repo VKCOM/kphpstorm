@@ -11,7 +11,7 @@ class OtherGenericClass {}
  * @return GenericClass<string>
  */
 function returnClassOfString() {
-  return <error descr="Reified generic type for T is not within its bounds (string not implements \InterfaceForGenericClass)">new OtherGenericClass()</error>;
+  return <error descr="Reified generic type for T is not within its bounds (string is not implement \InterfaceForGenericClass)">new OtherGenericClass()</error>;
 }
 
 

@@ -2,6 +2,7 @@ package com.vk.kphpstorm.inspections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.jetbrains.php.PhpIndex
@@ -10,14 +11,17 @@ import com.jetbrains.php.lang.inspections.PhpInspection
 import com.jetbrains.php.lang.psi.elements.FunctionReference
 import com.jetbrains.php.lang.psi.elements.MethodReference
 import com.jetbrains.php.lang.psi.elements.NewExpression
-import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.jetbrains.rd.util.first
+import com.vk.kphpstorm.exphptype.ExPhpType
+import com.vk.kphpstorm.exphptype.ExPhpTypeInstance
+import com.vk.kphpstorm.exphptype.ExPhpTypePipe
+import com.vk.kphpstorm.exphptype.ExPhpTypePrimitive
 import com.vk.kphpstorm.generics.GenericCall
 import com.vk.kphpstorm.generics.GenericConstructorCall
 import com.vk.kphpstorm.generics.GenericFunctionCall
 import com.vk.kphpstorm.generics.GenericMethodCall
-import com.vk.kphpstorm.helpers.toExPhpType
+import com.vk.kphpstorm.generics.GenericUtil.isStringableStringUnion
 import com.vk.kphpstorm.inspections.quickfixes.AddExplicitInstantiationCommentQuickFix
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagGenericPsiImpl
@@ -83,20 +87,9 @@ class KphpGenericsInspection : PhpInspection() {
                 val error = call.implicitSpecializationErrors.first()
                 val (type1, type2) = error.value
 
-                val genericsTString = call.genericTs.joinToString(", ") { it.name }
-                val callString = element.text
-
-                val firstBracketIndex = callString.indexOf('(')
-                val beforeBracket = callString.substring(0, firstBracketIndex)
-                val afterBracket = callString.substring(firstBracketIndex + 1)
-                val callStingWithGenerics = "$beforeBracket/*<$genericsTString>*/($afterBracket"
-
-                val explanation =
-                    "Please, provide all generics types using following syntax: $callStingWithGenerics;"
-
                 holder.registerProblem(
                     element,
-                    "Couldn't reify generic <${error.key}> for call: it's both $type1 and $type2\n$explanation",
+                    "Couldn't reify generic <${error.key}> for call: it's both $type1 and $type2",
                     ProblemHighlightType.GENERIC_ERROR,
                     AddExplicitInstantiationCommentQuickFix(element),
                 )
@@ -150,27 +143,59 @@ class KphpGenericsInspection : PhpInspection() {
 
                     if (resolvedType == null) return@forEach
 
-                    val upperBoundClass =
-                        PhpIndex.getInstance(call.project).getAnyByFQN(decl.extendsClass).firstOrNull()
-                            ?: return@forEach
-                    val upperBoundClassType = PhpType().add(upperBoundClass.fqn).toExPhpType() ?: return@forEach
+                    val upperBoundType = decl.extendsType ?: return@forEach
 
                     val errorPsi =
                         call.explicitSpecsPsi
                             ?: call.callArgs.firstOrNull()
                             ?: call.element()
 
-                    if (!upperBoundClassType.isAssignableFrom(resolvedType, call.project)) {
-                        val extendsOrImplements = if (upperBoundClass.isInterface) "implements" else "extends"
-
+                    if (!upperBoundType.isAssignableFrom(resolvedType, call.project)) {
+                        val violationMessage = generateViolationMessage(call.project, upperBoundType, resolvedType)
                         val message =
-                            "${if (isExplicit) "Explicit" else "Reified"} generic type for ${decl.name} is not within its bounds (${resolvedType} not $extendsOrImplements ${upperBoundClass.fqn})"
+                            "${if (isExplicit) "Explicit" else "Reified"} generic type for ${decl.name} is not within its bounds ($violationMessage)"
 
                         holder.registerProblem(
                             errorPsi,
                             message,
                             ProblemHighlightType.GENERIC_ERROR
                         )
+                    }
+                }
+            }
+
+            private fun generateViolationMessage(
+                project: Project,
+                upperBoundType: ExPhpType,
+                resolvedType: ExPhpType
+            ): String {
+                return when (upperBoundType) {
+                    is ExPhpTypeInstance -> {
+                        val klass = PhpIndex.getInstance(project).getAnyByFQN(upperBoundType.fqn).firstOrNull()
+                        val extendsOrImplements = if (klass != null && klass.isInterface) "implement" else "extend"
+                        "$resolvedType is not $extendsOrImplements ${upperBoundType.fqn}"
+                    }
+                    is ExPhpTypePrimitive -> {
+                        "$resolvedType is not ${upperBoundType.typeStr})"
+                    }
+                    is ExPhpTypePipe -> {
+                        val allInstance = upperBoundType.items.all { it is ExPhpTypeInstance }
+                        val allPrimitives = upperBoundType.items.all { it is ExPhpTypePrimitive }
+
+                        if (allInstance) {
+                            val itemsString = upperBoundType.items.joinToString(" or ") { it.toString() }
+                            "$resolvedType is none extend/implement any of $itemsString"
+                        } else if (allPrimitives) {
+                            val itemsString = upperBoundType.items.joinToString(" nor ") { it.toString() }
+                            "$resolvedType is neither $itemsString"
+                        } else if (upperBoundType.isStringableStringUnion()) {
+                            "$resolvedType is not implement a \\Stringable and not a string"
+                        } else {
+                            ""
+                        }
+                    }
+                    else -> {
+                        ""
                     }
                 }
             }

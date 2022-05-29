@@ -47,7 +47,8 @@ object PhpTypeToExPhpTypeParsing {
         "\\null" to ExPhpType.NULL,
         "\\object" to ExPhpType.OBJECT,
         "\\callable" to ExPhpType.CALLABLE,
-//            "\\Closure" to ExPhpType.CALLABLE,
+        // TODO: убрать в 2022.2
+        "\\Closure" to ExPhpType.CALLABLE,
         "\\void" to ExPhpType.VOID,
         "\\resource" to ExPhpType.INT,
         "\\kmixed" to ExPhpType.KMIXED,
@@ -414,7 +415,8 @@ object PhpTypeToExPhpTypeParsing {
         return when (phpType.types.size) {
             0 -> null
             1 ->
-                phpType.typesWithParametrisedParts.first().let { str ->
+//              TODO: after 2022.2 should be typesWithParametrisedParts
+                phpType.types.first().let { str ->
                     FQN_PREPARSED[str] ?: parseTypeExpression(ExPhpTypeBuilder(str))
                 }
             else -> {   // optimization: not phpType.toString(), not to concatenate strings

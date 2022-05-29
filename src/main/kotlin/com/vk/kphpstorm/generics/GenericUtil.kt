@@ -73,13 +73,21 @@ object GenericUtil {
 
     fun ExPhpType.getGenericTypeOrSelf(): ExPhpType? {
         if (this is ExPhpTypePipe) {
-            if (this.items.size != 2) return null
             return this.items.firstOrNull {
                 it is ExPhpTypeGenericsT
             } as? ExPhpTypeGenericsT ?: return this
         }
 
         return this
+    }
+
+    fun ExPhpTypePipe.isStringableStringUnion(): Boolean {
+        if (items.size == 2) {
+            return items.find { it is ExPhpTypeInstance && it.fqn.endsWith("\\Stringable") } != null &&
+                    items.find { it is ExPhpTypePrimitive && it.typeStr == "string" } != null
+        }
+
+        return false
     }
 
     fun generateUniqueGenericName(names: List<KphpDocGenericParameterDecl>?): String {
@@ -132,7 +140,7 @@ object GenericUtil {
             if (parent is PhpDocComment) {
                 val doc = parent
                 for (child in doc.children) {
-                    if (child is KphpDocTagGenericPsiImpl && child.getGenericArguments().contains(text)) {
+                    if (child is KphpDocTagGenericPsiImpl && child.getOnlyNameGenericArguments().contains(text)) {
                         return true
                     }
                 }
@@ -142,7 +150,7 @@ object GenericUtil {
                 val doc = PsiTreeUtil.skipWhitespacesBackward(parent) as? PhpDocComment
                 if (doc != null) {
                     for (child in doc.children) {
-                        if (child is KphpDocTagGenericPsiImpl && child.getGenericArguments().contains(text)) {
+                        if (child is KphpDocTagGenericPsiImpl && child.getOnlyNameGenericArguments().contains(text)) {
                             return true
                         }
                     }
@@ -153,7 +161,7 @@ object GenericUtil {
                 val doc = PsiTreeUtil.skipWhitespacesBackward(parent) as? PhpDocComment
                 if (doc != null) {
                     for (child in doc.children) {
-                        if (child is KphpDocTagGenericPsiImpl && child.getGenericArguments().contains(text)) {
+                        if (child is KphpDocTagGenericPsiImpl && child.getOnlyNameGenericArguments().contains(text)) {
                             return true
                         }
                     }

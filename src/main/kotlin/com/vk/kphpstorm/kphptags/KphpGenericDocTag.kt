@@ -7,8 +7,10 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.psi.elements.Function
 import com.jetbrains.php.lang.psi.elements.PhpClass
+import com.vk.kphpstorm.exphptype.*
 import com.vk.kphpstorm.generics.GenericUtil
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
+import com.vk.kphpstorm.generics.GenericUtil.isStringableStringUnion
 import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagElementType
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagGenericPsiImpl
@@ -44,12 +46,15 @@ object KphpGenericDocTag : KphpDocTag("@kphp-generic") {
         }
 
         if (docTag is KphpDocTagGenericPsiImpl) {
+            val genericArguments = docTag.getGenericArgumentsWithExtends()
             val names = mutableSetOf<String>()
-            docTag.getGenericArguments().forEach { name ->
-                if (names.contains(name)) {
-                    holder.errTag(docTag, "Duplicate generic type $name in declaration")
+            genericArguments.forEach { decl ->
+                checkExtendsType(decl.extendsType, holder, docTag)
+
+                if (names.contains(decl.name)) {
+                    holder.errTag(docTag, "Duplicate generic type ${decl.name} in declaration")
                 }
-                names.add(name)
+                names.add(decl.name)
             }
 
             val parentClass = docTag.parentOfType<PhpClass>()
@@ -59,5 +64,40 @@ object KphpGenericDocTag : KphpDocTag("@kphp-generic") {
                 }
             }
         }
+    }
+
+    private fun checkExtendsType(
+        extendsType: ExPhpType?,
+        holder: AnnotationHolder,
+        docTag: PhpDocTag
+    ) {
+        if (extendsType == null) {
+            return
+        }
+
+        if (extendsType is ExPhpTypePrimitive || extendsType is ExPhpTypeCallable || extendsType is ExPhpTypeInstance) {
+            return
+        }
+
+        if (extendsType is ExPhpTypePipe) {
+            if (extendsType.isStringableStringUnion()) {
+                return
+            }
+
+            val allInstance = extendsType.items.all { it is ExPhpTypeInstance }
+            val allPrimitives = extendsType.items.all { it is ExPhpTypePrimitive }
+
+            if (!allInstance && !allPrimitives) {
+                holder.errTag(
+                    docTag,
+                    "Union type can contain either only instances or only primitives (except '\\Stringable|string')"
+                )
+                return
+            }
+
+            return
+        }
+
+        holder.errTag(docTag, "Type '$extendsType' is not allowed here")
     }
 }

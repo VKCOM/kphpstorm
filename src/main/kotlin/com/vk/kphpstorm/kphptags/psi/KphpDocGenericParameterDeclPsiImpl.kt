@@ -1,36 +1,72 @@
 package com.vk.kphpstorm.kphptags.psi
 
 import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.jetbrains.php.codeInsight.PhpCodeInsightUtil
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocElementType
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocPsiElementImpl
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl
+import com.vk.kphpstorm.exphptype.ExPhpTypeInstance
+import com.vk.kphpstorm.exphptype.ExPhpTypePipe
+import com.vk.kphpstorm.exphptype.PhpTypeToExPhpTypeParsing
 import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
 import com.vk.kphpstorm.exphptype.psi.ExPhpTypePrimitivePsiImpl
+import com.vk.kphpstorm.helpers.toExPhpType
 
 data class KphpDocGenericParameterDecl(
     val name: String,
-    val extendsClass: String? = null,
-    val defaultType: String? = null
-)
+    private val extendsTypeString: String?,
+    private val defaultTypeString: String?,
+) {
+    val extendsType = extendsTypeString?.let { PhpTypeToExPhpTypeParsing.parseFromString(it) }
+    val defaultType = defaultTypeString?.let { PhpTypeToExPhpTypeParsing.parseFromString(it) }
 
-fun KphpDocGenericParameterDecl.toHumanReadable(): String {
-    val type = StringBuilder()
-    type.append(name)
+    fun toHumanReadable(context: PsiElement): String {
+        val type = StringBuilder()
+        type.append(name)
 
-    if (extendsClass != null) {
-        type.append(": ")
-        type.append(extendsClass.removePrefix("\\"))
+        if (extendsTypeString != null) {
+            type.append(": ")
+
+            when (extendsType) {
+                is ExPhpTypeInstance -> {
+                    type.append(instanceToString(context, extendsType))
+                }
+                is ExPhpTypePipe -> {
+                    val pipe = extendsType.items.joinToString(" | ") {
+                        if (it is ExPhpTypeInstance) {
+                            instanceToString(context, it)
+                        } else {
+                            it.toString()
+                        }
+                    }
+                    type.append(pipe)
+                }
+                else -> {
+                    type.append(extendsTypeString.removePrefix("\\"))
+                }
+            }
+        }
+
+        return type.toString()
     }
 
-    if (defaultType != null) {
-        type.append(" = ")
-        type.append(defaultType.removePrefix("\\"))
+    private fun instanceToString(
+        context: PsiElement,
+        extendsType: ExPhpTypeInstance
+    ): String {
+        val part =
+            PhpCodeInsightUtil.findScopeForUseOperator(context)?.let {
+                PhpCodeInsightUtil.createQualifiedName(
+                    it,
+                    extendsType.fqn
+                )
+            }
+        return part ?: extendsType.fqn
     }
-
-    return type.toString()
 }
 
 /**
@@ -44,7 +80,7 @@ class KphpDocGenericParameterDeclPsiImpl(node: ASTNode) : PhpDocPsiElementImpl(n
         val elementType = PhpDocElementType("phpdocGenericParameterDecl")
     }
 
-    private var extendsClass: ExPhpTypeInstancePsiImpl? = null
+    private var extendsType: PhpDocTypeImpl? = null
 
     /**
      * Can be [ExPhpTypeInstancePsiImpl] or [ExPhpTypePrimitivePsiImpl].
@@ -52,26 +88,21 @@ class KphpDocGenericParameterDeclPsiImpl(node: ASTNode) : PhpDocPsiElementImpl(n
     private var defaultType: PhpDocTypeImpl? = null
 
     init {
-        val classes = findChildrenByClass(ExPhpTypeInstancePsiImpl::class.java)
-        val primitives = findChildrenByClass(ExPhpTypePrimitivePsiImpl::class.java)
+        val types = findChildrenByClass(PhpDocTypeImpl::class.java)
 
-        classes.forEach {
+        types.forEach {
             val textBefore = PsiTreeUtil.findSiblingBackward(it, PhpDocTokenTypes.DOC_TEXT, null)
             if (textBefore?.text == ":") {
-                extendsClass = it
+                extendsType = it
             } else if (textBefore?.text == "=") {
                 defaultType = it
             }
-        }
-
-        if (primitives.isNotEmpty()) {
-            defaultType = primitives.first()
         }
     }
 
     override fun getName(): String {
         // TODO: сделать через элементы?
-        if (extendsClass != null) {
+        if (extendsType != null) {
             return text.substringBefore(':').trim()
         }
 
@@ -79,14 +110,10 @@ class KphpDocGenericParameterDeclPsiImpl(node: ASTNode) : PhpDocPsiElementImpl(n
     }
 
     fun decl(): KphpDocGenericParameterDecl {
-        val extendsClassRef = extendsClass?.resolveLocal()?.firstOrNull()
-        val fqn = extendsClassRef?.fqn ?: extendsClass?.fqn
-
-        val defaultTypeName = if (defaultType is ExPhpTypeInstancePsiImpl)
-            defaultType?.resolveLocal()?.firstOrNull()?.fqn ?: defaultType?.fqn
-        else
-            defaultType?.name
-
-        return KphpDocGenericParameterDecl(name, fqn, defaultTypeName)
+        return KphpDocGenericParameterDecl(
+            name,
+            extendsType?.type?.toExPhpType()?.toString(),
+            defaultType?.type?.toExPhpType()?.toString()
+        )
     }
 }

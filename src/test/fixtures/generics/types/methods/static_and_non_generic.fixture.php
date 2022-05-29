@@ -29,14 +29,14 @@ class NonGenericClass {
   static function staticGenericMethod() {}
 }
 
-$a = GenericClass::genericMethod/*<Methods\Main\Foo>*/();
+$a = GenericClass::genericMethod/*<Foo>*/();
 expr_type($a, "\Methods\Main\Foo");
 
 
 $c = new NonGenericClass();
-$d = $c->genericMethod/*<Methods\Main\Foo>*/ ();
+$d = $c->genericMethod/*<Foo>*/ ();
 expr_type($d, "\Methods\Main\Foo");
 
 
-$e = NonGenericClass::staticGenericMethod/*<Methods\Main\Foo>*/ ();
+$e = NonGenericClass::staticGenericMethod/*<Foo>*/ ();
 expr_type($e, "\Methods\Main\Foo");

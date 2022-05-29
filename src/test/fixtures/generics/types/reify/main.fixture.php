@@ -11,12 +11,12 @@ class Boo {}
  * @return T
  */
 function takeNullable($a) {
-    return $a;
+  return $a;
 }
 
 $a = new Foo();
 if (0) {
-    $a = null;
+  $a = null;
 }
 
 $b = takeNullable($a);
@@ -29,7 +29,7 @@ expr_type($b, "\Reify\Foo");
  * @return T
  */
 function takeClassString($a) {
-    return new $a;
+  return new $a;
 }
 
 $c = takeClassString(Foo::class);
@@ -42,7 +42,7 @@ expr_type($c, "\Reify\Foo");
  * @return T
  */
 function takeArray($a) {
-    return new $a;
+  return new $a;
 }
 
 $c = takeArray([Foo::class]);
@@ -55,7 +55,7 @@ expr_type($c, "\Reify\Foo");
  * @return T1|T2|T3
  */
 function takeTuple($a) {
-    return new $a;
+  return new $a;
 }
 
 // TODO: разобраться с таплами

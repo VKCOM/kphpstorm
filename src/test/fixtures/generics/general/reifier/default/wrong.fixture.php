@@ -7,4 +7,4 @@
  */
 function firstNotDefaultAndSecondDefault($a) { return null; }
 
-$_ = firstNotDefaultAndSecondDefault/*<int, string>*/(100);
+$_ = firstNotDefaultAndSecondDefault/*<int, string>*/("100");

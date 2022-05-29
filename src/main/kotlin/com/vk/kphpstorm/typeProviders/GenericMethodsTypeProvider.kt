@@ -36,9 +36,9 @@ class GenericMethodsTypeProvider : PhpTypeProvider4 {
             val docType = paramTag.type.toExPhpType() ?: return null
             if (docType is ExPhpTypeGenericsT) {
                 val decl = parentFunction.genericNames().find { it.name == docType.nameT } ?: return null
-                val type = decl.extendsClass ?: decl.defaultType ?: return null
+                val type = decl.extendsType ?: decl.defaultType ?: return null
 
-                return PhpType().add(type).add(docType.toPhpType())
+                return PhpType().add(type.toPhpType()).add(docType.toPhpType())
             }
         }
 
