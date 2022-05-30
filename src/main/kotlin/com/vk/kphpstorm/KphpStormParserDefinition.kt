@@ -85,7 +85,7 @@ namespace $namespace;
 
 $usesText
 
-/**@var tuple(""", ")*/", context, range
+/**@var tuple(""", ") \$_*/\$_;", context, range
                 )
                 .doneInjecting()
         }

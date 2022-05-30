@@ -12,6 +12,11 @@ class GenericsGeneralTest : GenericTestBase() {
         runFixture("generics/general/fields/static.fixture.php")
     }
 
+    fun testCallback() {
+        runFixture("generics/general/callback/return.fixture.php")
+        runFixture("generics/general/callback/param.fixture.php")
+    }
+
     fun testVectorUse() {
         runFixture(
             "generics/general/vector_use.fixture.php",
