@@ -6,6 +6,7 @@ import com.jetbrains.php.lang.psi.elements.Field
 import com.jetbrains.php.lang.psi.elements.Parameter
 import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
+import com.vk.kphpstorm.exphptype.ExPhpTypeForcing
 import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.generics.GenericUtil.getInstantiation
@@ -29,11 +30,11 @@ class ResolvingGenericFieldFetch(project: Project) : ResolvingGenericBase(projec
     override fun instantiate(): PhpType? {
         val specializationNameMap = specialization()
 
-        val varTag = field?.docComment?.getTagElementsByName("@var")?.firstOrNull() ?: return null
+        val varTag = field?.docComment?.varTag ?: return null
         val exType = varTag.type.toExPhpType() ?: return null
         val specializedType = exType.instantiateGeneric(specializationNameMap)
 
-        return specializedType.toPhpType()
+        return PhpType().add(specializedType.toPhpType()).add(ExPhpTypeForcing(specializedType).toPhpType())
     }
 
     /**

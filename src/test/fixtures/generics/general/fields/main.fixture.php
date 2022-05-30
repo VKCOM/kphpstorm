@@ -41,23 +41,21 @@ $a->nullable_field->fooMethod();
 expr_type($a->nullable_field, "?\Fields\Foo");
 
 $a->array_field[0]->fooMethod();
-// TODO: здесь не должно быть any[]
-expr_type($a->array_field, "\Fields\Foo[]|any[]");
+expr_type($a->array_field, "\Fields\Foo[]");
 
 $a->union_field->fooMethod();
 expr_type($a->union_field, "\Fields\Foo|string");
 
 $a->tuple_field[0]->fooMethod();
-// TODO: здесь не должно быть any[] и any
-expr_type($a->tuple_field, "any[]|tuple(\Fields\Foo,int,string,\Fields\Foo)");
+expr_type($a->tuple_field, "tuple(\Fields\Foo,int,string,\Fields\Foo)");
+// TODO: здесь не должно быть any
 expr_type($a->tuple_field[0], "\Fields\Foo|any");
 expr_type($a->tuple_field[1], "any|int");
 expr_type($a->tuple_field[2], "any|string");
 expr_type($a->tuple_field[3], "\Fields\Foo|any");
 
 $a->shape_field["key1"]->fooMethod();
-// TODO: здесь не должно быть any[] и any
-expr_type($a->shape_field, "any[]|shape(key1:\Fields\Foo)");
+expr_type($a->shape_field, "shape(key1:\Fields\Foo)");
 
 $a->class_string_field->fooMethod();
 expr_type($a->class_string_field, "class-string(\Fields\Foo)");

@@ -30,10 +30,9 @@ object GenericUtil {
 
     fun Field.isGeneric(): Boolean {
         if (docComment == null) return false
-
-        return docComment!!.getTagElementsByName("@var").any { tag ->
-            containingClass?.let { klass -> tag.type.isGeneric(klass) } ?: false
-        }
+        val varTag = docComment?.varTag ?: return false
+        val klass = containingClass ?: return false
+        return varTag.type.isGeneric(klass)
     }
 
     fun Function.isReturnGeneric(): Boolean {
