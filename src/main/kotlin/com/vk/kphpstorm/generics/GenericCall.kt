@@ -58,13 +58,13 @@ abstract class GenericCall(val project: Project) {
     abstract fun isResolved(): Boolean
 
     /**
-     * Returns template parameters belonging to the current element,
+     * Returns generic parameters belonging to the current element,
      * and also, if it is part of a class, then the class parameter as well.
      */
     abstract fun genericNames(): List<KphpDocGenericParameterDecl>
 
     /**
-     * Returns template parameters belonging only to the current element.
+     * Returns generic parameters belonging only to the current element.
      * If it is a method, then only the method parameters are returned
      * without the class parameters.
      */

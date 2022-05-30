@@ -25,7 +25,6 @@ val ALL_KPHPDOC_TAGS: List<KphpDocTag> = listOf(
 
         KphpSerializableDocTag,
         KphpReservedFieldsDocTag,
-        KphpTemplateClassDocTag,
         KphpGenericDocTag,
         KphpMemcacheClassDocTag,
         KphpImmutableClassDocTag,

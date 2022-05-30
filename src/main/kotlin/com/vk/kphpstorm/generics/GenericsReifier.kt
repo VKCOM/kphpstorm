@@ -22,7 +22,7 @@ class GenericsReifier(val project: Project) {
     val implicitSpecializationErrors = mutableMapOf<String, Pair<ExPhpType, ExPhpType>>()
 
     /**
-     * Having a call `f(...)` of a template function `f<T1, T2>(...)`, deduce T1 and T2
+     * Having a call `f(...)` of a generic function `f<T1, T2>(...)`, deduce T1 and T2
      * "auto deducing" for generics arguments is typically called "reification".
      */
     fun reifyAllGenericsT(
@@ -91,9 +91,7 @@ class GenericsReifier(val project: Project) {
      * 2. if `@param class-string<T>` and `$arg` is `class-string<A>`, then T is A
      * 3. if `@param shape(key: T)` and `$arg` is `shape(key: A)`, then T is A
      *
-     * This function is called for every template argument of `f()` invocation.
-     *
-     * TODO: add callable support
+     * This function is called for every generic argument of `f()` invocation.
      */
     private fun reifyArgumentGenericsT(argExType: ExPhpType, paramExType: ExPhpType) {
         if (paramExType is ExPhpTypeGenericsT) {

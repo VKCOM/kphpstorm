@@ -39,7 +39,6 @@ class KphpStormParserDefinition() : PhpParserDefinition() {
     override fun createElement(node: ASTNode): PsiElement {
         return when (node.elementType) {
             KphpDocElementTypes.kphpDocTagSimple           -> KphpDocTagSimplePsiImpl(node)
-            KphpDocElementTypes.kphpDocTagTemplateClass    -> KphpDocTagTemplateClassPsiImpl(node)
             KphpDocElementTypes.kphpDocTagGeneric          -> KphpDocTagGenericPsiImpl(node)
             KphpDocGenericParameterDeclPsiImpl.elementType -> KphpDocGenericParameterDeclPsiImpl(node)
             KphpDocElementTypes.kphpDocTagWarnPerformance  -> KphpDocTagWarnPerformancePsiImpl(node)

@@ -15,7 +15,7 @@ import com.vk.kphpstorm.exphptype.PhpTypeToExPhpTypeParsing
  * Comment like `/*<T[, T2, ...]>*/` between function name and the
  * argument list for a function call.
  *
- * This comment stores a comma-separated list of explicit template types.
+ * This comment stores a comma-separated list of explicit generic types.
  * Comment can have any types that can be represented in phpdoc.
  *
  * The comment has no internal structure, since [PsiComment] cannot

@@ -325,7 +325,6 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
         return null
     }
 
-
     private fun PhpType.force(): PhpType {
         val type = this.toExPhpType() ?: return this
 
@@ -345,7 +344,6 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
         val argType = (arg as? PhpTypedElement)?.type ?: return null
         return if (argType.isEmpty) KphpPrimitiveTypes.PHP_TYPE_ANY else argType
     }
-
 
     private fun inferTypeSameAs(argType: PhpType): PhpType {
         return argType.force()
