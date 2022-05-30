@@ -6,9 +6,8 @@ namespace Fields\Static;
  * @kphp-generic T
  */
 class GenericClass {
-  /** @var T */
+  /** @var <error descr="Undefined class 'T'">T</error> */
   public static $static_field = null;
 }
 
-// Static fields not supported.
-expr_type(GenericClass::$static_field, "null");
+expr_type(GenericClass::$static_field, "?\Fields\Static\T");
