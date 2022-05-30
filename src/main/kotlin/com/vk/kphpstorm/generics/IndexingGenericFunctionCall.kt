@@ -2,6 +2,7 @@ package com.vk.kphpstorm.generics
 
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement
+import com.jetbrains.php.lang.psi.resolve.types.PhpType
 
 /**
  * Ввиду того, что мы не можем резолвить функции во время вывода типов,
@@ -36,14 +37,13 @@ class IndexingGenericFunctionCall(
             // этот тип не разрешится верно, поэтому сохраняем типы через стрелочку, таким образом
             // внутри PhpType типы будут также разделены, как были на момент сохранения здесь
 
-            // TODO: After 2022.2 should be typesWithParametrisedParts
-            if (it.types.firstOrNull()?.startsWith("\\Closure<") == true) {
-                val rawType = it.types.first().replace("ᤓ", "/")
-                val paramsPart = rawType.substring(rawType.indexOf('<') + 1, rawType.lastIndexOf('>'))
-                val paramsWithReturnType = paramsPart.split(',')
+            // TODO: Добавить поддержку Incomplete типов? Чтобы работало даже без тайпхинтов.
+            if (it.typesWithParametrisedParts.firstOrNull()?.startsWith("\\Closure<") == true) {
+                val rawType = it.typesWithParametrisedParts.first()
+                val parts = PhpType.getParametrizedParts(rawType).map { type -> type.replace("ᤓ", "/") }
 
-                val returnType = paramsWithReturnType.last()
-                val paramTypes = paramsWithReturnType.dropLast(1).map { type -> type.ifEmpty { "mixed" } }
+                val returnType = parts.last()
+                val paramTypes = parts.dropLast(1).map { type -> type.ifEmpty { "mixed" } }
 
                 return@joinToString "callable(${paramTypes.joinToString(",")}):$returnType"
             }

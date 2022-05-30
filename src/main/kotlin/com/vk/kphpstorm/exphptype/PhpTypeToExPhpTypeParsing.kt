@@ -47,8 +47,6 @@ object PhpTypeToExPhpTypeParsing {
         "\\null" to ExPhpType.NULL,
         "\\object" to ExPhpType.OBJECT,
         "\\callable" to ExPhpType.CALLABLE,
-        // TODO: убрать в 2022.2
-        "\\Closure" to ExPhpType.CALLABLE,
         "\\void" to ExPhpType.VOID,
         "\\resource" to ExPhpType.INT,
         "\\kmixed" to ExPhpType.KMIXED,
@@ -302,6 +300,13 @@ object PhpTypeToExPhpTypeParsing {
 
         val fqn = builder.parseFQN() ?: return null
 
+        // TODO: Так как в 2022.2 добилась поддержка типа int<0, 100>, нам нужно
+        // вернуть для него всегда просто \int, а не \int<0, 100>
+        // Если использовать не typesWithParametrisedParts, а types
+        // то это не нужно, но тогда не будет работать вывод типов callable.
+        if (fqn == "\\int")
+            return FQN_PREPARSED[fqn]
+
         if (fqn == "tuple" && builder.compare('(')) {
             val items = parseTupleContents(builder) ?: return null
             return ExPhpTypeTuple(items)
@@ -415,8 +420,8 @@ object PhpTypeToExPhpTypeParsing {
         return when (phpType.types.size) {
             0 -> null
             1 ->
-//              TODO: after 2022.2 should be typesWithParametrisedParts
-                phpType.types.first().let { str ->
+//              TODO: здесь не все так просто
+                phpType.typesWithParametrisedParts.first().let { str ->
                     FQN_PREPARSED[str] ?: parseTypeExpression(ExPhpTypeBuilder(str))
                 }
             else -> {   // optimization: not phpType.toString(), not to concatenate strings

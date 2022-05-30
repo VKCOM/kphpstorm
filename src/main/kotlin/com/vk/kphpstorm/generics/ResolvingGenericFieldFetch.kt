@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.psi.elements.Parameter
 import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
+import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.generics.GenericUtil.getInstantiation
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
@@ -28,7 +29,7 @@ class ResolvingGenericFieldFetch(project: Project) : ResolvingGenericBase(projec
     override fun instantiate(): PhpType? {
         val specializationNameMap = specialization()
 
-        val varTag = field?.docComment?.varTag ?: return null
+        val varTag = field?.docComment?.getTagElementsByName("@var")?.firstOrNull() ?: return null
         val exType = varTag.type.toExPhpType() ?: return null
         val specializedType = exType.instantiateGeneric(specializationNameMap)
 
@@ -69,16 +70,15 @@ class ResolvingGenericFieldFetch(project: Project) : ResolvingGenericBase(projec
             // тип поля мы не сможем, поэтому заканчиваем распаковку.
             return false
 
+        classGenericType = instantiation
+
         if (klass == null) {
             klass = PhpIndex.getInstance(project).getClassesByFQN(instantiation.classFqn).firstOrNull() ?: return false
         }
 
         field = klass?.findFieldByName(methodName, false) ?: return false
 
-        // Так как это поле статическое, мы не сможем вывести для него тип.
-        if (!field!!.modifier.isStatic) {
-            return true
-        }
+        classGenericTs = klass!!.genericNames()
 
         argumentsTypes = emptyList()
         explicitGenericsT = emptyList()

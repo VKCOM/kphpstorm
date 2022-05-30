@@ -11,7 +11,7 @@ import com.vk.kphpstorm.generics.ResolvingGenericFieldFetch
 
 class GenericFieldsTypeProvider : PhpTypeProvider4 {
     companion object {
-        const val SEP = "≠"
+        const val SEP = "∃"
         val KEY = object : PhpCharBasedTypeKey() {
             override fun getKey() = 'μ'
         }
@@ -20,8 +20,8 @@ class GenericFieldsTypeProvider : PhpTypeProvider4 {
     override fun getKey() = KEY.key
 
     override fun getType(p: PsiElement?): PhpType? {
-        // $v->a or ClassName::$a
-        if (p is FieldReference) {
+        // $v->a
+        if (p is FieldReference && !p.isStatic) {
             val fieldName = p.name ?: return null
             val lhs = p.classReference ?: return null
             val lhsTypes = lhs.type.types.filter { type ->
