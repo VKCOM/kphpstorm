@@ -118,7 +118,6 @@
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.FunctionsTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.ForeachTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.ClassConstTypeProvider"/>
-    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.CallableTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.GenericMethodsTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.GenericFieldsTypeProvider"/>
 

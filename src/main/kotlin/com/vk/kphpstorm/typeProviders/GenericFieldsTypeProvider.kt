@@ -3,7 +3,7 @@ package com.vk.kphpstorm.typeProviders
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.psi.elements.FieldReference
-import com.jetbrains.php.lang.psi.resolve.types.PhpCharBasedTypeKey
+import com.jetbrains.php.lang.psi.resolve.types.PhpCharTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
 import com.vk.kphpstorm.generics.IndexingGenericFunctionCall
@@ -11,10 +11,8 @@ import com.vk.kphpstorm.generics.ResolvingGenericFieldFetch
 
 class GenericFieldsTypeProvider : PhpTypeProvider4 {
     companion object {
-        const val SEP = "∃"
-        val KEY = object : PhpCharBasedTypeKey() {
-            override fun getKey() = 'μ'
-        }
+        const val SEP = "≠"
+        val KEY = PhpCharTypeKey('μ')
     }
 
     override fun getKey() = KEY.key

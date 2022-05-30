@@ -6,7 +6,7 @@ import com.intellij.psi.util.parentOfType
 import com.jetbrains.php.lang.psi.elements.Function
 import com.jetbrains.php.lang.psi.elements.MethodReference
 import com.jetbrains.php.lang.psi.elements.Parameter
-import com.jetbrains.php.lang.psi.resolve.types.PhpCharBasedTypeKey
+import com.jetbrains.php.lang.psi.resolve.types.PhpCharTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
 import com.vk.kphpstorm.exphptype.ExPhpTypeGenericsT
@@ -18,9 +18,7 @@ import com.vk.kphpstorm.helpers.toExPhpType
 class GenericMethodsTypeProvider : PhpTypeProvider4 {
     companion object {
         const val SEP = "⁓"
-        val KEY = object : PhpCharBasedTypeKey() {
-            override fun getKey() = 'ω'
-        }
+        val KEY = PhpCharTypeKey('ω')
     }
 
     override fun getKey() = KEY.key

@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.psi.elements.FunctionReference
 import com.jetbrains.php.lang.psi.elements.MethodReference
-import com.jetbrains.php.lang.psi.resolve.types.PhpCharBasedTypeKey
+import com.jetbrains.php.lang.psi.resolve.types.PhpCharTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
 import com.vk.kphpstorm.generics.IndexingGenericFunctionCall
@@ -12,10 +12,8 @@ import com.vk.kphpstorm.generics.ResolvingGenericFunctionCall
 
 class GenericFunctionsTypeProvider : PhpTypeProvider4 {
     companion object {
-        const val SEP = "@@"
-        val KEY = object : PhpCharBasedTypeKey() {
-            override fun getKey() = 'П'
-        }
+        const val SEP = "∃"
+        val KEY = PhpCharTypeKey('П')
     }
 
     override fun getKey() = KEY.key
