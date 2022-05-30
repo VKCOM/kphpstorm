@@ -7,6 +7,11 @@ class GenericsGeneralTest : GenericTestBase() {
         runFixture("generics/general/new_expr.fixture.php")
     }
 
+    fun testFields() {
+        runFixture("generics/general/fields/main.fixture.php")
+        runFixture("generics/general/fields/static.fixture.php")
+    }
+
     fun testVectorUse() {
         runFixture(
             "generics/general/vector_use.fixture.php",

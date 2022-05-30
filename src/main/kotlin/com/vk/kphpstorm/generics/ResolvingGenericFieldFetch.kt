@@ -72,10 +72,7 @@ class ResolvingGenericFieldFetch(project: Project) : ResolvingGenericBase(projec
 
         classGenericType = instantiation
 
-        if (klass == null) {
-            klass = PhpIndex.getInstance(project).getClassesByFQN(instantiation.classFqn).firstOrNull() ?: return false
-        }
-
+        klass = PhpIndex.getInstance(project).getClassesByFQN(instantiation.classFqn).firstOrNull() ?: return false
         field = klass?.findFieldByName(methodName, false) ?: return false
 
         classGenericTs = klass!!.genericNames()

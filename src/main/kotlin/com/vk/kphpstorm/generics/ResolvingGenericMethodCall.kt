@@ -46,7 +46,7 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
             val (className, methodName) = fqn.split('.')
             if (!className.contains("(") && !className.contains("|")) {
                 klass = PhpIndex.getInstance(project).getClassesByFQN(className).firstOrNull()
-                method = klass?.findMethodByName(methodName) ?: return false
+                method = klass?.findMethodByName(methodName)
                 if (method?.isReturnGeneric() == false)
                     return false
             }
