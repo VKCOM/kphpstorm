@@ -9,17 +9,15 @@ import com.jetbrains.php.lang.psi.elements.Parameter
 import com.jetbrains.php.lang.psi.resolve.types.PhpCharBasedTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
-import com.vk.kphpstorm.exphptype.ExPhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeGenericsT
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.generics.IndexingGenericFunctionCall
 import com.vk.kphpstorm.generics.ResolvingGenericMethodCall
 import com.vk.kphpstorm.helpers.toExPhpType
-import kotlin.math.min
 
 class GenericMethodsTypeProvider : PhpTypeProvider4 {
     companion object {
-        val SEP = "⁓"
+        const val SEP = "⁓"
         val KEY = object : PhpCharBasedTypeKey() {
             override fun getKey() = 'ω'
         }
@@ -49,6 +47,7 @@ class GenericMethodsTypeProvider : PhpTypeProvider4 {
             val lhsTypes = lhs.type.types.filter { type ->
                 GenericClassesTypeProvider.KEY.signed(type) ||
                         GenericFunctionsTypeProvider.KEY.signed(type) ||
+                        GenericFieldsTypeProvider.KEY.signed(type) ||
                         KEY.signed(type) ||
                         !type.startsWith("#")
             }
@@ -67,39 +66,8 @@ class GenericMethodsTypeProvider : PhpTypeProvider4 {
         return null
     }
 
-    override fun complete(incompleteTypeStr: String, project: Project): PhpType? {
-        val packedData = incompleteTypeStr.substring(2)
+    override fun complete(incompleteType: String, project: Project) =
+        ResolvingGenericMethodCall(project).resolve(incompleteType)
 
-        val call = ResolvingGenericMethodCall(project)
-        if (!call.unpack(packedData)) {
-            return null
-        }
-
-        val specialization = call.specialization()
-
-        val specializationNameMap = mutableMapOf<String, ExPhpType>()
-
-        for (i in 0 until min(call.genericTs.size, specialization.size)) {
-            specializationNameMap[call.genericTs[i].name] = specialization[i]
-        }
-
-        if (call.classGenericType != null) {
-            for (i in 0 until min(call.classGenericTs.size, call.classGenericType!!.specializationList.size)) {
-                specializationNameMap[call.classGenericTs[i].name] = call.classGenericType!!.specializationList[i]
-            }
-        }
-
-        val methodReturnTag = call.method?.docComment?.returnTag ?: return null
-        val methodTypeParsed = methodReturnTag.type.toExPhpType() ?: return null
-        val methodTypeSpecialized = methodTypeParsed.instantiateGeneric(specializationNameMap)
-
-        return methodTypeSpecialized.toPhpType()
-    }
-
-    override fun getBySignature(
-        typeStr: String,
-        visited: MutableSet<String>?,
-        depth: Int,
-        project: Project?
-    ) = null
+    override fun getBySignature(t: String, v: MutableSet<String>, d: Int, p: Project) = null
 }

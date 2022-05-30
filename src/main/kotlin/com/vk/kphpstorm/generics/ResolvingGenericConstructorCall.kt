@@ -4,20 +4,36 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.psi.elements.Parameter
 import com.jetbrains.php.lang.psi.elements.PhpClass
+import com.jetbrains.php.lang.psi.resolve.types.PhpType
+import com.vk.kphpstorm.exphptype.ExPhpTypeForcing
+import com.vk.kphpstorm.exphptype.ExPhpTypeGenericsT
+import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.generics.GenericUtil.isGeneric
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import com.vk.kphpstorm.typeProviders.GenericClassesTypeProvider
 
 class ResolvingGenericConstructorCall(project: Project) : ResolvingGenericBase(project) {
-    var klass: PhpClass? = null
+    override var klass: PhpClass? = null
+
+    override var classGenericType: ExPhpTypeTplInstantiation? = null
+    override var classGenericTs: List<KphpDocGenericParameterDecl> = emptyList()
+
     override lateinit var parameters: Array<Parameter>
     override lateinit var genericTs: List<KphpDocGenericParameterDecl>
 
-    override fun klass(): PhpClass? = klass
+    override fun instantiate(): PhpType {
+        val specializationNameMap = specialization()
 
+        val genericsTypes = genericTs.map { ExPhpTypeGenericsT(it.name) }
+        val instantiationType = ExPhpTypeTplInstantiation(klass!!.fqn, genericsTypes)
+        val specializedType = instantiationType.instantiateGeneric(specializationNameMap)
+
+        return ExPhpTypeForcing(specializedType).toPhpType()
+    }
+    
     override fun unpackImpl(packedData: String): Boolean {
-        if (packedData.startsWith(IndexingGenericFunctionCall.START_TYPE + "\\")) {
+        if (beginCompleted(packedData)) {
             val firstSeparator = packedData.indexOf(".__construct")
             if (firstSeparator != -1) {
                 val className = packedData.substring(1, firstSeparator)
@@ -28,7 +44,8 @@ class ResolvingGenericConstructorCall(project: Project) : ResolvingGenericBase(p
         }
 
         val data = resolveSubTypes(packedData)
-        val parts = getAtLeast(data, 3, GenericClassesTypeProvider.SEP) ?: return false
+        val parts = safeSplit(data, 3, GenericClassesTypeProvider.SEP) ?: return false
+
         val fqn = parts[0]
         val explicitGenericsString = parts[1]
         val argumentsTypesString = parts[2]

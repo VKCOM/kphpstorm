@@ -2,8 +2,6 @@ package com.vk.kphpstorm.generics
 
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement
-import com.jetbrains.php.lang.psi.resolve.types.PhpType
-import com.vk.kphpstorm.exphptype.ExPhpType
 
 /**
  * Ввиду того, что мы не можем резолвить функции во время вывода типов,
@@ -14,14 +12,14 @@ import com.vk.kphpstorm.exphptype.ExPhpType
  * и выводит типы аргументов для вызова. Полученные данные пакуются в
  * строку.
  *
- * Полученная строка может быть передана далее в [ResolvingGenericFunctionCall.unpack],
+ * Полученная строка может быть передана далее в [ResolvingGenericBase.resolve],
  * для дальнейшей обработки.
  */
 class IndexingGenericFunctionCall(
     private val fqn: String,
     private val callArgs: Array<PsiElement>,
     reference: PsiElement,
-    private val separator: String = "@@",
+    private val separator: String,
 ) {
     companion object {
         const val START_TYPE = '⋙'
@@ -60,12 +58,6 @@ class IndexingGenericFunctionCall(
         return "$START_TYPE$fqn$separator$explicitSpecsString$separator$callArgsString$END_TYPE"
     }
 
-    private fun argumentsTypes(): List<PhpType> {
-        return callArgs.filterIsInstance<PhpTypedElement>().map { it.type }
-    }
-
-    private fun extractExplicitGenericsT(): List<ExPhpType> {
-        if (explicitSpecsPsi == null) return emptyList()
-        return explicitSpecsPsi.instantiationTypes()
-    }
+    private fun argumentsTypes() = callArgs.filterIsInstance<PhpTypedElement>().map { it.type }
+    private fun extractExplicitGenericsT() = explicitSpecsPsi?.instantiationTypes() ?: emptyList()
 }

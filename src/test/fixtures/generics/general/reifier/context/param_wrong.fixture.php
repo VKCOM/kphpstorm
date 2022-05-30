@@ -1,13 +1,9 @@
 <?php
 
-namespace Param\Wrong;
+namespace Context\Param\Wrong;
 
-interface IGenericClass {}
-
-/**
- * @kphp-generic T
- */
-class GenericClass implements IGenericClass {}
+use Context\GenericClass;
+use Context\IGenericClass;
 
 /**
  * @param GenericClass $a
@@ -30,4 +26,4 @@ class TakeWrongGeneric {
  */
 function genericFunction() { return null; }
 
-TakeWrongGeneric::takeStaticGenericFunction(<error descr="Reified generic type for T is not within its bounds (string is not implement \Param\Wrong\IGenericClass)">genericFunction()</error>);
+TakeWrongGeneric::takeStaticGenericFunction(<error descr="Reified generic type for T is not within its bounds (string is not implement \Context\IGenericClass)">genericFunction()</error>);

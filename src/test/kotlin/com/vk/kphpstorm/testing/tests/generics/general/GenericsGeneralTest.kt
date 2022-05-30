@@ -8,8 +8,11 @@ class GenericsGeneralTest : GenericTestBase() {
     }
 
     fun testVectorUse() {
-        runFixture("generics/Containers/Vector.php")
-        runFixture("generics/general/vector_use.fixture.php")
+        runFixture(
+            "generics/general/vector_use.fixture.php",
+            "generics/Containers/Vector.php",
+            "generics/Containers/Pair.php",
+        )
     }
 
     fun testReifier() {
@@ -25,17 +28,32 @@ class GenericsGeneralTest : GenericTestBase() {
 
     fun testDefaultTypeReifier() {
         runFixture("generics/general/reifier/default/main.fixture.php")
-        runFixture("generics/general/reifier/default/wrong.fixture.php")
+        runFixture(
+            "generics/general/reifier/default/wrong.fixture.php",
+            "generics/Containers/Pair.php",
+        )
     }
 
     fun testReifyFromReturn() {
-        runFixture("generics/general/reifier/context/return.fixture.php",)
-        runFixture("generics/general/reifier/context/return_wrong.fixture.php")
+        runFixture(
+            "generics/general/reifier/context/return.fixture.php",
+            "generics/general/reifier/context/classes.php",
+        )
+        runFixture(
+            "generics/general/reifier/context/return_wrong.fixture.php",
+            "generics/general/reifier/context/classes.php",
+        )
     }
 
     fun testReifyFromParam() {
-        runFixture("generics/general/reifier/context/param.fixture.php")
-        runFixture("generics/general/reifier/context/param_wrong.fixture.php")
+        runFixture(
+            "generics/general/reifier/context/param.fixture.php",
+            "generics/general/reifier/context/classes.php"
+        )
+        runFixture(
+            "generics/general/reifier/context/param_wrong.fixture.php",
+            "generics/general/reifier/context/classes.php"
+        )
     }
 
     fun testGenericInGeneric() {

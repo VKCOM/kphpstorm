@@ -11,6 +11,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection
 import com.jetbrains.php.lang.psi.elements.FunctionReference
 import com.jetbrains.php.lang.psi.elements.MethodReference
 import com.jetbrains.php.lang.psi.elements.NewExpression
+import com.jetbrains.php.lang.psi.elements.PhpUse
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.jetbrains.rd.util.first
 import com.vk.kphpstorm.exphptype.ExPhpType
@@ -40,6 +41,9 @@ class KphpGenericsInspection : PhpInspection() {
             }
 
             override fun visitPhpFunctionCall(reference: FunctionReference) {
+                if (reference.parent is PhpUse) {
+                    return
+                }
                 val call = GenericFunctionCall(reference)
                 checkGenericCall(call, reference, reference.firstChild)
             }

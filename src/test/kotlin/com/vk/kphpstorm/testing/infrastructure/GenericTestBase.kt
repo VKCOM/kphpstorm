@@ -38,13 +38,12 @@ abstract class GenericTestBase : BasePlatformTestCase() {
     protected fun runFixture(vararg fixtureFiles: String) {
         // Highlighting test
         KphpStormConfiguration.saveThatSetupForProjectDone(project)
-        myFixture.configureByFiles(*fixtureFiles)
-        myFixture.testHighlighting(true, false, true)
+        myFixture.testHighlighting(true, false, true, *fixtureFiles)
 
         // Quick-fix test
         fixtureFiles.forEach { fixtureFile ->
             val qfFile = fixtureFile.replace(".fixture.php", ".qf.php")
-            if (File(myFixture.testDataPath + "/" + qfFile).exists()) {
+            if (qfFile != fixtureFile && File(myFixture.testDataPath + "/" + qfFile).exists()) {
                 myFixture.getAllQuickFixes().forEach { myFixture.launchAction(it) }
                 myFixture.checkResultByFile(qfFile)
             }

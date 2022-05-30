@@ -16,23 +16,31 @@ import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import com.vk.kphpstorm.typeProviders.GenericMethodsTypeProvider
 
 class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(project) {
-    var klass: PhpClass? = null
-    var method: Method? = null
-    var classGenericType: ExPhpTypeTplInstantiation? = null
+    override var klass: PhpClass? = null
+    private var method: Method? = null
+
     override lateinit var parameters: Array<Parameter>
     override lateinit var genericTs: List<KphpDocGenericParameterDecl>
-    lateinit var classGenericTs: List<KphpDocGenericParameterDecl>
+    override lateinit var classGenericTs: List<KphpDocGenericParameterDecl>
+    override var classGenericType: ExPhpTypeTplInstantiation? = null
 
-    override fun klass(): PhpClass = klass!!
+    override fun instantiate(): PhpType? {
+        val specializationNameMap = specialization()
 
-    // ⋙\Methods\Main\GenericClass.genericMethod⁓\Methods\Main\Foo⁓⋘
+        val returnTag = method?.docComment?.returnTag ?: return null
+        val exType = returnTag.type.toExPhpType() ?: return null
+        val specializedType = exType.instantiateGeneric(specializationNameMap)
+
+        return specializedType.toPhpType()
+    }
+    
     /**
      * См. комментарий в [ResolvingGenericFunctionCall.unpackImpl]
      */
     override fun unpackImpl(packedData: String): Boolean {
         // If className and methodName are resolved
         // $START_TYPE\SomeName.method...
-        if (packedData.startsWith(IndexingGenericFunctionCall.START_TYPE + "\\")) {
+        if (beginCompleted(packedData)) {
             val firstSeparator = packedData.indexOf(GenericMethodsTypeProvider.SEP)
             val fqn = packedData.substring(1, firstSeparator)
             val (className, methodName) = fqn.split('.')
@@ -45,10 +53,7 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
         }
 
         val data = resolveSubTypes(packedData)
-        val parts = getAtLeast(data, 3, GenericMethodsTypeProvider.SEP)
-        if (parts == null) {
-            return false
-        }
+        val parts = safeSplit(data, 3, GenericMethodsTypeProvider.SEP) ?: return false
 
         val fqn = parts[0]
 

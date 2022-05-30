@@ -1,11 +1,11 @@
 <?php
 
-interface IGenericClass {}
+namespace Context\Return;
 
-/**
- * @kphp-generic T
- */
-class GenericClass implements IGenericClass {}
+use Context\ClassWithGenericMethod;
+use Context\GenericClass;
+use Context\GenericClassWithSeveralTypes;
+use Context\IGenericClass;
 
 /**
  * @return GenericClass<string>
@@ -15,18 +15,13 @@ function returnClassOfString() {
 }
 
 $a = returnClassOfString();
-expr_type($a, "\GenericClass|\GenericClass(string)");
+expr_type($a, "\Context\GenericClass|\Context\GenericClass(string)");
 
 /**
- * @kphp-generic T1, T2
- */
-class GenericWithSeveralTypesClass implements IGenericClass {}
-
-/**
- * @return GenericWithSeveralTypesClass<string, int>
+ * @return GenericClassWithSeveralTypes<string, int>
  */
 function returnClassWithSeveralTypesOfStringInt() {
-  return new GenericWithSeveralTypesClass();
+  return new GenericClassWithSeveralTypes();
 }
 
 
@@ -41,15 +36,6 @@ function genericFunction() { return null; }
  */
 function returnClassOfStringViaFunction() {
   return genericFunction();
-}
-
-
-class ClassWithGenericMethod {
-  /**
-   * @kphp-generic T
-   * @return GenericClass<T>
-   */
-  function genericMethod() { return null; }
 }
 
 /**

@@ -1,5 +1,16 @@
 <?php
 
+namespace VectorUse;
+
+use Vector;
+use Pair;
+
+class Foo {
+  function fooMethod(): Boo {
+    return new Boo;
+  }
+}
+
 class Boo {
   function booMethod(): Foo {
     return new Foo;
@@ -7,7 +18,9 @@ class Boo {
 }
 
 class Goo {
-  function getName(): string {}
+  function getName(): string {
+    return "";
+  }
 
   function gooMethod(): Boo {
     return new Boo;
@@ -41,14 +54,14 @@ $vec->filter(function(?Goo $el): bool {
 });
 
 $vec->foreach(function(Goo $el) {
-    var_dump($el);
+  var_dump($el);
 });
 
 $vec->foreach(fn(Goo $el) => var_dump($el));
 
 $vec->foreach_key_value(function(string $key, Goo $el) {
-    var_dump($key);
-    var_dump($el);
+  var_dump($key);
+  var_dump($el);
 });
 
 $a = $vec->map/*<?Goo>*/(function(Goo $a): Boo {

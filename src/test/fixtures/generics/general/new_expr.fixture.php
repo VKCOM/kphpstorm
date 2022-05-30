@@ -1,7 +1,11 @@
 <?php
 
+namespace NewExpr;
+
+class TestA {}
+
 /** @kphp-generic T */
 class SimpleClass {}
 
-$_ = new SimpleClass/*<?TestA>*/();
-
+$a = new SimpleClass/*<?TestA>*/();
+expr_type($a, "\NewExpr\SimpleClass(?\NewExpr\TestA)");

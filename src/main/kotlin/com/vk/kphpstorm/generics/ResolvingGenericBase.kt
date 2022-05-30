@@ -5,71 +5,81 @@ import com.jetbrains.php.lang.psi.elements.Parameter
 import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.ExPhpType
+import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import org.apache.commons.lang3.tuple.MutablePair
 import java.util.*
+import kotlin.math.min
 
 /**
  * Данный класс инкапсулирует логику обработки данных полученных на этапе
  * индексации и вывода типов ([IndexingGenericFunctionCall]).
  *
  * Результатом для данного класса являются данные возвращаемые методом
- * [specialization], данный метод возвращает список шаблонных типов
+ * [specializationList], данный метод возвращает список шаблонных типов
  * для данного вызова.
  */
 abstract class ResolvingGenericBase(val project: Project) {
-    abstract var parameters: Array<Parameter>
-    abstract var genericTs: List<KphpDocGenericParameterDecl>
+    protected abstract var parameters: Array<Parameter>
+    protected abstract var genericTs: List<KphpDocGenericParameterDecl>
+    protected abstract var klass: PhpClass?
+
+    protected abstract var classGenericType: ExPhpTypeTplInstantiation?
+    protected abstract var classGenericTs: List<KphpDocGenericParameterDecl>
 
     protected lateinit var argumentsTypes: List<ExPhpType>
     protected lateinit var explicitGenericsT: List<ExPhpType>
 
     private val reifier = GenericsReifier(project)
 
-    fun specialization(): List<ExPhpType> {
-        return explicitGenericsT.ifEmpty { reifier.implicitSpecs }
+    protected abstract fun instantiate(): PhpType?
+    protected abstract fun unpackImpl(packedData: String): Boolean
+
+    fun resolve(incompleteType: String): PhpType? {
+        if (!unpack(incompleteType)) return null
+        return instantiate()
     }
 
-    fun unpack(packedData: String): Boolean {
+    protected fun specialization(): Map<String, ExPhpType> {
+        val specialization = specializationList()
+
+        val specializationNameMap = mutableMapOf<String, ExPhpType>()
+
+        for (i in 0 until min(genericTs.size, specialization.size)) {
+            specializationNameMap[genericTs[i].name] = specialization[i]
+        }
+
+        if (classGenericType != null) {
+            for (i in 0 until min(classGenericTs.size, classGenericType!!.specializationList.size)) {
+                specializationNameMap[classGenericTs[i].name] = classGenericType!!.specializationList[i]
+            }
+        }
+
+        return specializationNameMap
+    }
+
+    private fun specializationList() = explicitGenericsT.ifEmpty { reifier.implicitSpecs }
+
+    private fun unpack(incompleteType: String): Boolean {
+        val packedData = incompleteType.substring(2)
+
         if (unpackImpl(packedData)) {
-            reifier.reifyAllGenericsT(klass(), parameters, genericTs, argumentsTypes, null)
+            reifier.reifyAllGenericsT(klass, parameters, genericTs, argumentsTypes, null)
             return true
         }
 
         return false
     }
 
-    abstract fun klass(): PhpClass?
+    protected fun beginCompleted(packedData: String): Boolean {
+        return packedData.startsWith(IndexingGenericFunctionCall.START_TYPE + "\\")
+    }
 
-    protected fun getAtLeast(data: String, count: Int, separator: String): List<String>? {
-        var remainingData = data
-        var countTaken = 0
-        val parts = mutableListOf<String>()
-
-        while (true) {
-            val sepIndex = remainingData.indexOf(separator)
-            if (sepIndex == -1) {
-                parts.add(remainingData)
-                countTaken++
-                if (countTaken == count) {
-                    return parts
-                }
-                return null
-            }
-
-            val part = remainingData.substring(0, sepIndex)
-            parts.add(part)
-
-            remainingData = remainingData.substring(sepIndex + separator.length)
-            countTaken++
-            if (countTaken == count) {
-                parts.add(remainingData)
-                break
-            }
-        }
-
-        return if (parts.count() >= count) parts else null
+    protected fun safeSplit(data: String, count: Int, separator: String): List<String>? {
+        val parts = data.split(separator)
+        if (parts.size != count) return null
+        return parts
     }
 
     protected fun resolveSubTypes(packedData: String): String {
@@ -147,8 +157,6 @@ abstract class ResolvingGenericBase(val project: Project) {
 
         return data
     }
-
-    protected abstract fun unpackImpl(packedData: String): Boolean
 
     protected fun unpackTypeArray(text: String) = if (text.isNotEmpty())
         text.split("$$").mapNotNull {

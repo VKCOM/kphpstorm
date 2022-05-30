@@ -1,5 +1,18 @@
 <?php
 
+namespace Context\Param;
+
+use Context\ClassWithGenericMethod;
+use Context\GenericClass;
+use Context\GenericClassWithSeveralTypes;
+use Context\IGenericClass;
+
+/**
+ * @kphp-generic T: IGenericClass
+ * @return GenericClass<T>
+ */
+function genericFunction() { return null; }
+
 /**
  * @param GenericClass<string> $a
  */
@@ -9,11 +22,11 @@ takeClassOfString(new GenericClass());
 
 
 /**
- * @param GenericWithSeveralTypesClass<string, int> $a
+ * @param GenericClassWithSeveralTypes<string, int> $a
  */
 function takeClassWithSeveralTypesOfStringInt($a) {}
 
-takeClassWithSeveralTypesOfStringInt(new GenericWithSeveralTypesClass);
+takeClassWithSeveralTypesOfStringInt(new GenericClassWithSeveralTypes);
 
 
 /**
