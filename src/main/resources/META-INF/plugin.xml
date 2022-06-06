@@ -124,6 +124,7 @@
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.ClassConstTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.GenericMethodsTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.GenericFieldsTypeProvider"/>
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.CallableTypeProvider"/>
 
     <docTagParserExtension tagName="return" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />
     <docTagParserExtension tagName="returns" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />

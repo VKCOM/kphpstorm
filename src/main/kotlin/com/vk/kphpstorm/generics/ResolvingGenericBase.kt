@@ -33,12 +33,18 @@ abstract class ResolvingGenericBase(val project: Project) {
 
     private val reifier = GenericsReifier(project)
 
+    protected open fun paramTypeImpl(param: Parameter): PhpType? { return null }
     protected abstract fun instantiate(): PhpType?
     protected abstract fun unpackImpl(packedData: String): Boolean
 
     fun resolve(incompleteType: String): PhpType? {
         if (!unpack(incompleteType)) return null
         return instantiate()
+    }
+
+    fun paramType(incompleteType: String, index: Int): PhpType? {
+        if (!unpack(incompleteType)) return null
+        return paramTypeImpl(parameters[index])
     }
 
     protected fun specialization(): Map<String, ExPhpType> {

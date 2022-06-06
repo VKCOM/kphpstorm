@@ -26,6 +26,7 @@ class GenericFieldsTypeProvider : PhpTypeProvider4 {
                 GenericClassesTypeProvider.KEY.signed(type) ||
                         GenericFunctionsTypeProvider.KEY.signed(type) ||
                         GenericMethodsTypeProvider.KEY.signed(type) ||
+                        CallableTypeProvider.KEY.signed(type) ||
                         KEY.signed(type) ||
                         !type.startsWith("#")
             }

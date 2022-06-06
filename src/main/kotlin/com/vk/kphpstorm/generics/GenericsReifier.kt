@@ -77,9 +77,11 @@ class GenericsReifier(val project: Project) {
             }
         }
 
-        implicitSpecializationNameMap.forEach { (_, type) ->
+        genericTs.forEach {
+            val type = implicitSpecializationNameMap[it.name] ?: return@forEach
             implicitSpecs.add(type)
         }
+
         implicitSpecializationNameMap.putAll(implicitClassSpecializationNameMap)
     }
 
@@ -96,10 +98,12 @@ class GenericsReifier(val project: Project) {
     private fun reifyArgumentGenericsT(argExType: ExPhpType, paramExType: ExPhpType) {
         if (paramExType is ExPhpTypeGenericsT) {
             val prevReifiedType = implicitSpecializationNameMap[paramExType.nameT]
-            if (prevReifiedType != null && prevReifiedType.toString() != argExType.toString()) {
+            val withAny = argExType == ExPhpType.ANY
+            if (prevReifiedType != null && !withAny && prevReifiedType.toString() != argExType.toString()) {
                 // В таком случае мы получаем ситуацию когда один шаблонный тип
                 // имеет несколько возможных вариантов типа, что является ошибкой.
                 implicitSpecializationErrors[paramExType.nameT] = Pair(argExType, prevReifiedType)
+                return
             }
 
             implicitSpecializationNameMap[paramExType.nameT] = argExType

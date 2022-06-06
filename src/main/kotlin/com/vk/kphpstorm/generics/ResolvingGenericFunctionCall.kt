@@ -24,6 +24,16 @@ class ResolvingGenericFunctionCall(project: Project) : ResolvingGenericBase(proj
     override lateinit var parameters: Array<Parameter>
     override lateinit var genericTs: List<KphpDocGenericParameterDecl>
 
+    override fun paramTypeImpl(param: Parameter): PhpType? {
+        val specializationNameMap = specialization()
+
+        val paramTag = param.docTag ?: return null
+        val exType = paramTag.type.toExPhpType() ?: return null
+        val specializedType = exType.instantiateGeneric(specializationNameMap)
+
+        return ExPhpTypeForcing(specializedType).toPhpType().add(specializedType.toPhpType())
+    }
+
     override fun instantiate(): PhpType? {
         val specializationNameMap = specialization()
 

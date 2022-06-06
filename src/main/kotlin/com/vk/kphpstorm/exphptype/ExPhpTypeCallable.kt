@@ -14,7 +14,7 @@ class ExPhpTypeCallable(val argTypes: List<ExPhpType>, val returnType: ExPhpType
     override fun toHumanReadable(expr: PhpPsiElement) = "callable(${argTypes.joinToString { it.toHumanReadable(expr) }}):${returnType?.toHumanReadable(expr) ?: "void"}"
 
     override fun toPhpType(): PhpType {
-        return PhpType.CALLABLE
+        return PhpType().add(toString())
     }
 
     override fun getSubkeyByIndex(indexKey: String): ExPhpType? {

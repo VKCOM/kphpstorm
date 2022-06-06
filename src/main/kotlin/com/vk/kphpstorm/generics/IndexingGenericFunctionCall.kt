@@ -43,7 +43,7 @@ class IndexingGenericFunctionCall(
                 val parts = PhpType.getParametrizedParts(rawType).map { type -> type.replace("ᤓ", "/") }
 
                 val returnType = parts.last()
-                val paramTypes = parts.dropLast(1).map { type -> type.ifEmpty { "mixed" } }
+                val paramTypes = parts.dropLast(1).map { type -> type.ifEmpty { "any" } }
 
                 return@joinToString "callable(${paramTypes.joinToString(",")}):$returnType"
             }
