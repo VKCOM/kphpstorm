@@ -80,10 +80,10 @@ class KphpGenericsInspection : PhpInspection() {
                 checkGenericTypesBounds(call, genericNames)
                 checkInstantiationArgsCount(call)
                 checkReifiedGenericTypes(call, element, errorPsi)
-                checkReifiedSeveralGenericTypes(call, element)
+                checkReifiedSeveralGenericTypes(call, element, errorPsi)
             }
 
-            private fun checkReifiedSeveralGenericTypes(call: GenericCall, element: PsiElement) {
+            private fun checkReifiedSeveralGenericTypes(call: GenericCall, element: PsiElement, errorPsi: PsiElement) {
                 // В случае даже если есть ошибки, то мы показываем их только
                 // в случае когда нет явного определения шаблона для вызова функции.
                 if (call.implicitSpecializationErrors.isEmpty() || call.withExplicitSpecs()) return
@@ -92,7 +92,7 @@ class KphpGenericsInspection : PhpInspection() {
                 val (type1, type2) = error.value
 
                 holder.registerProblem(
-                    element,
+                    errorPsi,
                     "Couldn't reify generic <${error.key}> for call: it's both $type1 and $type2",
                     ProblemHighlightType.GENERIC_ERROR,
                     AddExplicitInstantiationCommentQuickFix(element),

@@ -38,8 +38,8 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
      * См. комментарий в [ResolvingGenericFunctionCall.unpackImpl]
      */
     override fun unpackImpl(packedData: String): Boolean {
-        // If className and methodName are resolved
-        // $START_TYPE\SomeName.method...
+        // If PhpStorm resolves className and methodName:
+        //   \SomeName.method...
         if (beginCompleted(packedData)) {
             val firstSeparator = packedData.indexOf(GenericMethodsTypeProvider.SEP)
             val fqn = packedData.substring(1, firstSeparator)

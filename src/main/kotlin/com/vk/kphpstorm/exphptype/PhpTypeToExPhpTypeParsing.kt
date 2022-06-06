@@ -236,7 +236,6 @@ object PhpTypeToExPhpTypeParsing {
         }
     }
 
-    // \Closure<\Gooᤓ\null,\Foo,,\bool>
     private fun parseClosureContents(builder: ExPhpTypeBuilder): Pair<List<ExPhpType>, ExPhpType?>? {
         if (!builder.compareAndEat('<'))
             return null
