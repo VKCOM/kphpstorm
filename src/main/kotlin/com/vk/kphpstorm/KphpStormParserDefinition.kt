@@ -6,13 +6,17 @@ import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.PsiCommentImpl
+import com.intellij.psi.util.parentOfType
 import com.jetbrains.php.lang.PhpLanguage
 import com.jetbrains.php.lang.documentation.phpdoc.parser.tags.PhpDocTagParserRegistry
 import com.jetbrains.php.lang.parser.PhpParserDefinition
 import com.jetbrains.php.lang.parser.PhpPsiElementCreator
 import com.jetbrains.php.lang.psi.PhpFile
+import com.jetbrains.php.lang.psi.elements.Function
+import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.elements.PhpUse
 import com.vk.kphpstorm.exphptype.psi.*
+import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.generics.psi.GenericInstantiationPsiCommentImpl
 import com.vk.kphpstorm.kphptags.ALL_KPHPDOC_TAGS
 import com.vk.kphpstorm.kphptags.psi.*
@@ -76,6 +80,10 @@ class GenericsInstantiationInjector : MultiHostInjector {
             val namespace = file.mainNamespaceName?.trim('\\') ?: ""
             val usesText = file.topLevelDefs.values().filterIsInstance<PhpUse>().joinToString("\n") { it.parent.text }
 
+            val parentFunctionGenericT = context.parentOfType<Function>()?.genericNames() ?: emptyList()
+            val parentClassGenericT = context.parentOfType<PhpClass>()?.genericNames() ?: emptyList()
+            val genericT = (parentFunctionGenericT + parentClassGenericT).joinToString(", ") { it.name }
+
             val start = context.startOffset - context.textOffset
             val range = TextRange(start + 3, start + context.textLength - 3)
             registrar.startInjecting(PhpLanguage.INSTANCE)
@@ -85,7 +93,9 @@ namespace $namespace;
 
 $usesText
 
-/**@var tuple(""", ") \$_*/\$_;", context, range
+/**
+ * @kphp-generic $genericT
+ * @var tuple(""", ") \$_*/\$_;", context, range
                 )
                 .doneInjecting()
         }

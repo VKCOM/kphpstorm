@@ -28,7 +28,7 @@ class ResolvingGenericFunctionCall(project: Project) : ResolvingGenericBase(proj
         val specializationNameMap = specialization()
 
         val returnTag = function!!.docComment?.returnTag ?: return null
-        val exType = returnTag.type.toExPhpType() ?: return null
+        val exType = returnTag.type.toExPhpType(project) ?: return null
         val specializedType = exType.instantiateGeneric(specializationNameMap)
 
         return ExPhpTypeForcing(specializedType).toPhpType().add(specializedType.toPhpType())
@@ -36,9 +36,6 @@ class ResolvingGenericFunctionCall(project: Project) : ResolvingGenericBase(proj
 
     override fun unpackImpl(packedData: String): Boolean {
         if (beginCompleted(packedData)) {
-            // Так как 99.99% функций не шаблонные, то мы должны как можно быстрее понять это
-            // и не делать сложные вычисления. Поэтому получаем имя функции и проверяем что вывод
-            // типов для нее действительно нужен.
             val firstSeparator = packedData.indexOf(GenericFunctionsTypeProvider.SEP)
             val functionName = packedData.substring(1, firstSeparator)
             function = PhpIndex.getInstance(project).getFunctionsByFQN(functionName).firstOrNull()

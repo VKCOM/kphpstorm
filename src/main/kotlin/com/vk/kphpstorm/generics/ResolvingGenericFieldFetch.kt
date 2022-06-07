@@ -31,18 +31,15 @@ class ResolvingGenericFieldFetch(project: Project) : ResolvingGenericBase(projec
         val specializationNameMap = specialization()
 
         val varTag = field?.docComment?.varTag ?: return null
-        val exType = varTag.type.toExPhpType() ?: return null
+        val exType = varTag.type.toExPhpType(project) ?: return null
         val specializedType = exType.instantiateGeneric(specializationNameMap)
 
         return PhpType().add(specializedType.toPhpType()).add(ExPhpTypeForcing(specializedType).toPhpType())
     }
 
-    /**
-     * См. комментарий в [ResolvingGenericFunctionCall.unpackImpl]
-     */
     override fun unpackImpl(packedData: String): Boolean {
-        // If className is resolved
-        // \SomeName.fieldName...
+        // If PhpStorm resolved className and fieldName:
+        //   \SomeName(int).field...
         if (beginCompleted(packedData)) {
             val firstSeparator = packedData.indexOf(GenericFieldsTypeProvider.SEP)
             val fqn = packedData.substring(1, firstSeparator)

@@ -91,3 +91,28 @@ function callDMethodIfNotNull($obj, $if_classname) {
     echo "cast to $if_classname is null: obj is ", get_class($obj), "\n";
   }
 }
+
+/**
+ * @kphp-generic TKey, TValue
+ */
+class Map {}
+class Exception {}
+
+class SomeFoo {
+  /**
+   * @kphp-generic Tk, Tv
+   * @param Map<Tk, Tv> $containers
+   * @return Tv
+   */
+  function unwrap($containers) {
+    return;
+  }
+
+  /**
+   * @param Map<int, Exception> $typed_containers
+   */
+  function takesDifferentTypes($typed_containers): void {
+    $value = $this->unwrap($typed_containers);
+    expr_type($value, "\Reify\Exception");
+  }
+}

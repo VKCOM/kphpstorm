@@ -14,10 +14,7 @@ import com.jetbrains.php.lang.psi.elements.NewExpression
 import com.jetbrains.php.lang.psi.elements.PhpUse
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.jetbrains.rd.util.first
-import com.vk.kphpstorm.exphptype.ExPhpType
-import com.vk.kphpstorm.exphptype.ExPhpTypeInstance
-import com.vk.kphpstorm.exphptype.ExPhpTypePipe
-import com.vk.kphpstorm.exphptype.ExPhpTypePrimitive
+import com.vk.kphpstorm.exphptype.*
 import com.vk.kphpstorm.generics.GenericCall
 import com.vk.kphpstorm.generics.GenericConstructorCall
 import com.vk.kphpstorm.generics.GenericFunctionCall
@@ -161,6 +158,7 @@ class KphpGenericsInspection : PhpInspection() {
                     }
 
                     if (resolvedType == null) return@forEach
+                    if (resolvedType is ExPhpTypeGenericsT) return@forEach
 
                     val upperBoundType = decl.extendsType ?: return@forEach
 

@@ -74,7 +74,9 @@ private fun findPhpDocPrettifications(docComment: PhpDocComment, stopOnFirst: Bo
                     phpTypes.size == 2 && phpTypes.last() == "\\null"  -> phpTypes.first()
                     else                                               -> return
                 }
-                val replacementStr = "?" + PhpTypeToExPhpTypeParsing.parseFromString(replacementPart)?.toHumanReadable(type)
+                val replacementStr = "?" + PhpTypeToExPhpTypeParsing.parseFromString(replacementPart)
+                    ?.toHumanReadable(type)
+                    ?.replace("%", "")
                 list.add(NullableTypePrettification(type, replacementStr))
             }
         }

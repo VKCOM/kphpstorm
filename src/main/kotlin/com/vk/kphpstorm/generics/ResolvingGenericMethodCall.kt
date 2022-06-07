@@ -28,17 +28,14 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
         val specializationNameMap = specialization()
 
         val returnTag = method?.docComment?.returnTag ?: return null
-        val exType = returnTag.type.toExPhpType() ?: return null
+        val exType = returnTag.type.toExPhpType(project) ?: return null
         val specializedType = exType.instantiateGeneric(specializationNameMap)
 
         return specializedType.toPhpType()
     }
-    
-    /**
-     * См. комментарий в [ResolvingGenericFunctionCall.unpackImpl]
-     */
+
     override fun unpackImpl(packedData: String): Boolean {
-        // If PhpStorm resolves className and methodName:
+        // If PhpStorm resolved className and methodName:
         //   \SomeName.method...
         if (beginCompleted(packedData)) {
             val firstSeparator = packedData.indexOf(GenericMethodsTypeProvider.SEP)
