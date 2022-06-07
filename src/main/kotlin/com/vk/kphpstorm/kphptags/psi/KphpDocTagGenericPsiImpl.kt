@@ -36,7 +36,7 @@ class KphpDocTagGenericPsiImpl : PhpDocTagImpl, KphpDocTagImpl {
 
     private fun fromStubs(stub: PhpDocTagStub): List<KphpDocGenericParameterDecl> {
         val value = stub.value ?: return emptyList()
-        if (value.isNotEmpty()) {
+        if (value.isEmpty()) {
             return emptyList()
         }
 
