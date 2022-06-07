@@ -19,17 +19,27 @@ class SerializableKeyMap {
 
   /**
    * @param TKey $key
-   * @return TValue
+   * @return ?TValue
+   * @throws Exception
    */
   public function get($key) {
-    return $this->data[$key->serialize()];
+    $serializedKey = $key->serialize();
+    if ($serializedKey) {
+      return null;
+    }
+    return $this->data[not_null($serializedKey)];
   }
 
   /**
    * @param TKey   $key
    * @param TValue $value
+   * @throws Exception
    */
   public function set($key, $value): void {
-    $this->data[$key->serialize()] = $key;
+    $serializedKey = $key->serialize();
+    if ($serializedKey) {
+      return;
+    }
+    $this->data[not_null($serializedKey)] = $value;
   }
 }

@@ -8,6 +8,18 @@ function expr_type($expr, string $string) {
 
 /**
  * @kphp-generic T
+ * @param ?T $arg
+ * @return T
+ */
+function not_null($arg) {
+  if ($arg == null) {
+    exit();
+  }
+  return $arg;
+}
+
+/**
+ * @kphp-generic T
  * @param T $arg
  * @return ?T
  */

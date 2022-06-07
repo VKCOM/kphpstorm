@@ -6,6 +6,7 @@ import com.intellij.psi.util.parentOfType
 import com.jetbrains.php.lang.psi.elements.Function
 import com.jetbrains.php.lang.psi.elements.MethodReference
 import com.jetbrains.php.lang.psi.elements.Parameter
+import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.resolve.types.PhpCharTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
@@ -28,10 +29,13 @@ class GenericMethodsTypeProvider : PhpTypeProvider4 {
             // Для параметров если они шаблонные и имеют дефолтный тип или тип extends, то
             // возвращаем здесь этот тип тем самым типизируя частично код внутри функции.
             val parentFunction = p.parentOfType<Function>() ?: return null
+            val parentClass = p.parentOfType<PhpClass>()
             val paramTag = parentFunction.docComment?.getParamTagByName(p.name) ?: return null
             val docType = paramTag.type.toExPhpType() ?: return null
             if (docType is ExPhpTypeGenericsT) {
-                val decl = parentFunction.genericNames().find { it.name == docType.nameT } ?: return null
+                val genericNames = parentFunction.genericNames() + (parentClass?.genericNames() ?: emptyList())
+
+                val decl = genericNames.find { it.name == docType.nameT } ?: return null
                 val type = decl.extendsType ?: decl.defaultType ?: return null
 
                 return PhpType().add(type.toPhpType()).add(docType.toPhpType())
