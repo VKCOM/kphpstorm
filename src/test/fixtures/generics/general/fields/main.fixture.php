@@ -32,6 +32,14 @@ class GenericClass {
   public $class_string_field;
 }
 
+/**
+ * @kphp-generic T
+ */
+class GenericClass2 {
+  /** @var T */
+  public $class2_plain_field;
+}
+
 $a = new GenericClass/*<Foo>*/ ();
 
 $a->plain_field->fooMethod();
@@ -68,3 +76,14 @@ expr_type(getGenericClass()->nullable_field->fooMethod(), "?int");
 expr_type(getGenericClass()->array_field[0]->fooMethod(), "?int");
 expr_type(getGenericClass()->tuple_field[0]->fooMethod(), "?int");
 expr_type(getGenericClass()->shape_field["key1"]->fooMethod(), "?int");
+
+/**
+ * @return GenericClass<int>|GenericClass2<string>
+ */
+function union() {
+  return new GenericClass();
+}
+
+$b = union();
+expr_type($b->class2_plain_field, "string");
+expr_type($b->plain_field, "int");

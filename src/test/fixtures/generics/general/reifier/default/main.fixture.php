@@ -28,13 +28,16 @@ function twoDefaultType() { return null; }
 $a = twoDefaultType/*<Pair, Vector>*/();
 expr_type($a, "\Reifier\Default\Pair|\Reifier\Default\Vector");
 
-$b = twoDefaultType();
+$b = twoDefaultType/*<Pair>*/();
 expr_type($b, "\Reifier\Default\Pair|\Reifier\Default\Vector");
+
+$c = twoDefaultType();
+expr_type($c, "\Reifier\Default\Pair|\Reifier\Default\Vector");
 
 
 /**
- * @kphp-generic T1 = Pair, T2
- * @param T2 $a
+ * @kphp-generic T1, T2 = Pair
+ * @param T1 $a
  * @return T1|T2
  */
 function singleDefaultTypeAndSecondFromParam($a) { return null; }

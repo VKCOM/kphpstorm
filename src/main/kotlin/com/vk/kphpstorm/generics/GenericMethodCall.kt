@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.PhpTypedElement
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.ExPhpType
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
-import com.vk.kphpstorm.generics.GenericUtil.getInstantiation
+import com.vk.kphpstorm.generics.GenericUtil.getInstantiations
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import kotlin.math.min
@@ -27,7 +27,9 @@ class GenericMethodCall(private val call: MethodReference) : GenericCall(call.pr
         val classType = PhpType().add(callType).global(project)
         val parsed = classType.toExPhpType()
 
-        val instantiation = parsed?.getInstantiation()
+        val instantiation = parsed?.getInstantiations()?.firstOrNull {
+            it.classFqn == klass?.fqn
+        }
 
         if (instantiation != null) {
             val specialization = instantiation.specializationList

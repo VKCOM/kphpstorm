@@ -29,6 +29,7 @@ class ExPhpTypeCallable(val argTypes: List<ExPhpType>, val returnType: ExPhpType
         is ExPhpTypeAny      -> true
         // TODO: добавить полноценную проверку?
         is ExPhpTypeCallable -> true
+        is ExPhpTypePrimitive -> rhs == ExPhpType.CALLABLE
         is ExPhpTypeNullable -> isAssignableFrom(rhs.inner, project)
         else                 -> false
     }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * <error descr="Generic parameters with a default type cannot come after parameters without a default type">@kphp-generic T1, T2 = Pair</error>
+ * <error descr="Generic parameters with a default type cannot come before parameters without a default type">@kphp-generic T1 = Pair, T2</error>
  * @param T2 $a
  * @return T1|T2
  */

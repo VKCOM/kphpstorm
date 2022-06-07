@@ -49,24 +49,24 @@ class KphpGenericsInspection : PhpInspection() {
             }
 
             override fun visitPhpDocTag(tag: PhpDocTag) {
-                checkGenericsTag(tag)
+                checkGenericTag(tag)
             }
 
-            private fun checkGenericsTag(tag: PhpDocTag) {
+            private fun checkGenericTag(tag: PhpDocTag) {
                 if (tag !is KphpDocTagGenericPsiImpl) {
                     return
                 }
 
-                var wasNoDefault = false
+                var wasDefault = false
                 tag.getGenericArgumentsWithExtends().forEach {
-                    if (it.defaultType == null) {
-                        wasNoDefault = true
+                    if (it.defaultType != null) {
+                        wasDefault = true
                     }
 
-                    if (it.defaultType != null && wasNoDefault) {
+                    if (it.defaultType == null && wasDefault) {
                         holder.registerProblem(
                             tag,
-                            "Generic parameters with a default type cannot come after parameters without a default type",
+                            "Generic parameters with a default type cannot come before parameters without a default type",
                             ProblemHighlightType.GENERIC_ERROR
                         )
                     }
@@ -78,7 +78,7 @@ class KphpGenericsInspection : PhpInspection() {
                 val genericNames = call.genericNames()
 
                 checkGenericTypesBounds(call, genericNames)
-                checkInstantiationArgsCount(call)
+                checkInstantiationParamsCount(call)
                 checkReifiedGenericTypes(call, element, errorPsi)
                 checkReifiedSeveralGenericTypes(call, element, errorPsi)
             }
@@ -115,21 +115,36 @@ class KphpGenericsInspection : PhpInspection() {
                 }
             }
 
-            private fun checkInstantiationArgsCount(call: GenericCall) {
-                val countGenericNames = if (call is GenericMethodCall && call.isStatic()) {
-                    call.ownGenericNames().size
-                } else {
-                    call.genericNames().size - call.implicitClassSpecializationNameMap.size
-                }
+            private fun checkInstantiationParamsCount(call: GenericCall) {
+                val minCount = call.ownGenericNames().filter { it.defaultType == null }.size
+                val maxCount = call.ownGenericNames().size
 
                 val countExplicitSpecs = call.explicitSpecs.size
                 val explicitSpecsPsi = call.explicitSpecsPsi
 
-                if (countGenericNames != countExplicitSpecs && explicitSpecsPsi != null) {
+                if (minCount == maxCount && minCount != countExplicitSpecs && explicitSpecsPsi != null) {
                     holder.registerProblem(
                         explicitSpecsPsi,
-                        "$countGenericNames type arguments expected for ${call.function()!!.fqn}",
+                        "$minCount generic parameters expected for call, but $countExplicitSpecs passed",
                         ProblemHighlightType.GENERIC_ERROR
+                    )
+                    return
+                }
+
+                if (countExplicitSpecs < minCount && explicitSpecsPsi != null) {
+                    holder.registerProblem(
+                        explicitSpecsPsi,
+                        "Not enough generic parameters for call, expected at least $minCount",
+                        ProblemHighlightType.GENERIC_ERROR,
+                    )
+                    return
+                }
+
+                if (countExplicitSpecs > maxCount && explicitSpecsPsi != null) {
+                    holder.registerProblem(
+                        explicitSpecsPsi,
+                        "Too many generic parameters for call, expected at most $maxCount",
+                        ProblemHighlightType.GENERIC_ERROR,
                     )
                 }
             }

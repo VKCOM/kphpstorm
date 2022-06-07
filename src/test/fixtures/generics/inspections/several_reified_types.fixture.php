@@ -8,6 +8,6 @@
  */
 function takeSomething($a, $b) {}
 
-<error descr="Couldn't reify generic <T1> for call: it's both string and int">takeSomething(100, "")</error>;
-<error descr="Couldn't reify generic <T1> for call: it's both string and \Foo">takeSomething(new Foo, "")</error>;
+<error descr="Couldn't reify generic <T1> for call: it's both string and int">takeSomething</error>(100, "");
+<error descr="Couldn't reify generic <T1> for call: it's both string and \Foo">takeSomething</error>(new Foo, "");
 takeSomething/*<int>*/ (100, "");

@@ -45,3 +45,11 @@ function returnClassOfStringViaGenericMethod() {
   $a = new ClassWithGenericMethod();
   return $a->genericMethod();
 }
+
+/**
+ * @return GenericClassWithSeveralTypes<int, string>|GenericClass<string>
+ */
+function returnClassOfStringViaGenericMethod1() {
+  $a = new ClassWithGenericMethod();
+  return $a->genericMethod();
+}

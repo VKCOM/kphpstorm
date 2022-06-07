@@ -12,7 +12,7 @@ new NotGeneric(); // ok
 /** @kphp-generic T */
 class GenericT {}
 
-new GenericT<error descr="1 type arguments expected for \GenericT.__construct">/*<<error descr="Expected: expression"></error>>*/</error>();
+new GenericT<error descr="1 generic parameters expected for call, but 0 passed">/*<<error descr="Expected: expression"></error>>*/</error>();
 new GenericT/*<int>*/(); // ok
 
 
@@ -20,8 +20,8 @@ new GenericT/*<int>*/(); // ok
 /** @kphp-generic T1, T2 */
 class GenericT1T2 {}
 
-new GenericT1T2<error descr="2 type arguments expected for \GenericT1T2.__construct">/*<<error descr="Expected: expression"></error>>*/</error>();
-new GenericT1T2<error descr="2 type arguments expected for \GenericT1T2.__construct">/*<int>*/</error>();
+new GenericT1T2<error descr="2 generic parameters expected for call, but 0 passed">/*<<error descr="Expected: expression"></error>>*/</error>();
+new GenericT1T2<error descr="2 generic parameters expected for call, but 1 passed">/*<int>*/</error>();
 new GenericT1T2/*<int, string>*/(); // ok
 
 
@@ -36,3 +36,30 @@ class GenericExplicitConstructorT1AndT {
 }
 
 new GenericExplicitConstructorT1AndT/*<int, string>*/("");
+
+// Функция с дефолтными шаблонными параметрами
+/**
+ * @kphp-generic T1, T2 = Vector<T1>
+ * @param T1 $a
+ * @return T2
+ */
+function foo($a) { return $a; }
+
+$a = foo/*<Foo>*/(new Foo);
+$a = foo/*<Foo, int>*/(new Foo);
+$a = foo<error descr="Not enough generic parameters for call, expected at least 1">/*<<error descr="Expected: expression"></error>>*/</error>(new Foo);
+$a = foo<error descr="Too many generic parameters for call, expected at most 2">/*<Foo, int, string>*/</error>(new Foo);
+
+/**
+ * @kphp-generic T1, T2 = Vector<T1>, T3 = int
+ * @param T1 $a
+ * @return T2
+ */
+function foo1($a) { return $a; }
+
+$a = foo1/*<Foo>*/(new Foo);
+$a = foo1/*<Foo, int>*/(new Foo);
+$a = foo1<error descr="Not enough generic parameters for call, expected at least 1">/*<<error descr="Expected: expression"></error>>*/</error>(new Foo);
+$a = foo1/*<int>*/(100);
+$a = foo1/*<Foo, int, string>*/(new Foo);
+$a = foo1<error descr="Too many generic parameters for call, expected at most 3">/*<Foo, int, string, bool>*/</error>(new Foo);

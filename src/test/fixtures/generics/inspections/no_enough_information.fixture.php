@@ -81,4 +81,4 @@ class GenericExplicitConstructorT1AndImplicitT2 {
 // Выводим ошибку только для первого шаблонного типа
 <error descr="Not enough information to infer generic T1">new GenericExplicitConstructorT1AndImplicitT2()</error>;
 <error descr="Not enough information to infer generic T2">new GenericExplicitConstructorT1AndImplicitT2(100)</error>;
-new GenericExplicitConstructorT1AndImplicitT2<error descr="2 type arguments expected for \GenericExplicitConstructorT1AndImplicitT2.__construct">/*<int>*/</error>(100);
+new GenericExplicitConstructorT1AndImplicitT2<error descr="2 generic parameters expected for call, but 1 passed">/*<int>*/</error>(100);

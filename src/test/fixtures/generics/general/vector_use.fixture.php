@@ -57,7 +57,7 @@ $vec->foreach(function(Goo $el) {
   var_dump($el);
 });
 
-$vec->foreach(fn(Goo $el) => var_dump($el));
+$vec->foreach(fn(Goo $el) => $el->getName());
 
 $vec->foreach_key_value(function(string $key, Goo $el) {
   var_dump($key);
@@ -93,8 +93,8 @@ function returnPair(): Pair {
 $x = returnPair()->second();
 $x->gooMethod();
 
-$vecGoo = new Vector/*<Goo>*/ ();
-$vecBoo = new Vector/*<Boo>*/ ();
+$vecGoo = new Vector/*<Goo>*/();
+$vecBoo = new Vector/*<Boo>*/();
 
 $combinedVec = $vecGoo->combine_with($vecBoo);
 $combinedVec->get(0)->booMethod();

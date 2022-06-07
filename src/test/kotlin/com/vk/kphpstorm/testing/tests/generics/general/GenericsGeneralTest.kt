@@ -42,6 +42,11 @@ class GenericsGeneralTest : GenericTestBase() {
             "generics/general/reifier/default/wrong.fixture.php",
             "generics/Containers/Pair.php",
         )
+        runFixture(
+            "generics/general/reifier/default/generic.fixture.php",
+            "generics/Containers/Vector.php",
+            "generics/Containers/Pair.php",
+        )
     }
 
     fun testReifyFromReturn() {

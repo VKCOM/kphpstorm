@@ -48,21 +48,15 @@ class GenericsReifier(val project: Project) {
             reifyArgumentGenericsT(argExType, paramExType)
         }
 
-        var instantiation = contextType?.getInstantiation()
+        // TODO: А что если тут несколько инстанциаций в типе?
+        val instantiation = contextType?.getInstantiation()
         if (instantiation != null) {
-            // TODO: сделать верный вывод типов тут
-            if (instantiation.classFqn == klass?.fqn) {
-                instantiation = instantiation.specializationList.firstOrNull() as? ExPhpTypeTplInstantiation
-            }
+            val specList = instantiation.specializationList
+            for (i in 0 until min(specList.size, genericTs.size)) {
+                val type = specList[i]
+                val genericT = genericTs[i]
 
-            if (instantiation != null) {
-                val specList = instantiation.specializationList
-                for (i in 0 until min(specList.size, genericTs.size)) {
-                    val type = specList[i]
-                    val genericT = genericTs[i]
-
-                    implicitSpecializationNameMap[genericT.name] = type
-                }
+                implicitSpecializationNameMap[genericT.name] = type
             }
         }
 
@@ -73,7 +67,13 @@ class GenericsReifier(val project: Project) {
                     return@forEach
                 }
 
-                implicitSpecializationNameMap[it.name] = it.defaultType
+                val defaultType = if (it.defaultType.isGeneric()) {
+                    it.defaultType.instantiateGeneric(implicitSpecializationNameMap)
+                } else {
+                    it.defaultType
+                }
+
+                implicitSpecializationNameMap[it.name] = defaultType
             }
         }
 

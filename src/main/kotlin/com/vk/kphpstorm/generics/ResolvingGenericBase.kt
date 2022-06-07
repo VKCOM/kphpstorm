@@ -59,7 +59,20 @@ abstract class ResolvingGenericBase(val project: Project) {
         return specializationNameMap
     }
 
-    private fun specializationList() = explicitGenericsT.ifEmpty { reifier.implicitSpecs }
+    private fun explicitGenericTypes(): List<ExPhpType> {
+        if (explicitGenericsT.isEmpty()) return emptyList()
+
+        val specMap = mutableMapOf<String, ExPhpType>()
+
+        genericTs.forEachIndexed { index, genericT ->
+            val type = explicitGenericsT.getOrNull(index) ?: genericT.defaultType ?: return@forEachIndexed
+            specMap[genericT.name] = type.instantiateGeneric(specMap)
+        }
+
+        return genericTs.mapNotNull { specMap[it.name] }
+    }
+
+    private fun specializationList() = explicitGenericTypes().ifEmpty { reifier.implicitSpecs }
 
     private fun unpack(incompleteType: String): Boolean {
         val packedData = incompleteType.substring(2)

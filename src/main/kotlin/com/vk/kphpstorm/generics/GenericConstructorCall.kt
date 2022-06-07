@@ -39,18 +39,16 @@ class GenericConstructorCall(private val call: NewExpression) : GenericCall(call
     override fun isResolved() = method != null && klass != null
 
     override fun genericNames(): List<KphpDocGenericParameterDecl> {
-        val methodsNames = method?.genericNames() ?: emptyList()
-        val classesNames = klass?.genericNames() ?: emptyList()
+        val methodNames = method?.genericNames() ?: emptyList()
+        val classNames = klass?.genericNames() ?: emptyList()
 
         return mutableListOf<KphpDocGenericParameterDecl>()
-            .apply { addAll(methodsNames) }
-            .apply { addAll(classesNames) }
+            .apply { addAll(methodNames) }
+            .apply { addAll(classNames) }
             .toList()
     }
 
-    override fun ownGenericNames(): List<KphpDocGenericParameterDecl> {
-        return klass?.genericNames() ?: emptyList()
-    }
+    override fun ownGenericNames() = genericNames()
 
     override fun isGeneric() = genericNames().isNotEmpty()
 

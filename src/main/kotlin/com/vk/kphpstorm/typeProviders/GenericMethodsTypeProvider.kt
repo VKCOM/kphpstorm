@@ -47,7 +47,7 @@ class GenericMethodsTypeProvider : PhpTypeProvider4 {
                         GenericFunctionsTypeProvider.KEY.signed(type) ||
                         GenericFieldsTypeProvider.KEY.signed(type) ||
                         KEY.signed(type) ||
-                        !type.startsWith("#")
+                        (!type.startsWith("#") && !type.startsWith("%"))
             }
 
             val resultType = PhpType()

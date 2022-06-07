@@ -118,6 +118,19 @@ object GenericUtil {
         } as? ExPhpTypeTplInstantiation
     }
 
+    fun ExPhpType.getInstantiations(): List<ExPhpTypeTplInstantiation> {
+        if (this is ExPhpTypePipe) {
+            return items.filterIsInstance<ExPhpTypeTplInstantiation>()
+        }
+        val inner = when (this) {
+            is ExPhpTypeNullable -> inner
+            is ExPhpTypeForcing -> inner
+            else -> this
+        } as? ExPhpTypeTplInstantiation ?: return emptyList()
+
+        return listOf(inner)
+    }
+
     fun findInstantiationComment(el: PsiElement): GenericInstantiationPsiCommentImpl? {
         if (el is Field) return null
 

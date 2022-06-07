@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeGenericsT
 import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
-import com.vk.kphpstorm.generics.GenericUtil.getInstantiation
+import com.vk.kphpstorm.generics.GenericUtil.getInstantiations
 import com.vk.kphpstorm.generics.GenericUtil.isReturnGeneric
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
@@ -63,11 +63,18 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
 
         val classType = PhpType().add(classRawName).global(project)
         val parsed = classType.toExPhpType()
-        val instantiation = parsed?.getInstantiation()
+        val instantiations = parsed?.getInstantiations()
 
-        val className = if (instantiation != null && instantiation.specializationList.first() !is ExPhpTypeGenericsT) {
-            classGenericType = instantiation
-            instantiation.classFqn
+        val foundInstantiation = instantiations?.firstOrNull {
+            val klass = PhpIndex.getInstance(project).getClassesByFQN(it.classFqn).firstOrNull()
+            val method = klass?.findMethodByName(methodName)
+
+            method != null
+        }
+
+        val className = if (foundInstantiation != null && foundInstantiation.specializationList.first() !is ExPhpTypeGenericsT) {
+            classGenericType = foundInstantiation
+            foundInstantiation.classFqn
         } else {
             classRawName
         }

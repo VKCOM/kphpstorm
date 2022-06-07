@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeForcing
 import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
-import com.vk.kphpstorm.generics.GenericUtil.getInstantiation
+import com.vk.kphpstorm.generics.GenericUtil.getInstantiations
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import com.vk.kphpstorm.typeProviders.GenericFieldsTypeProvider
@@ -60,20 +60,23 @@ class ResolvingGenericFieldFetch(project: Project) : ResolvingGenericBase(projec
         val fqn = parts[0]
 
         val dotIndex = fqn.lastIndexOf('.')
-        val className = fqn.substring(0, dotIndex)
+        val classRawName = fqn.substring(0, dotIndex)
         val methodName = fqn.substring(dotIndex + 1)
 
-        val classType = PhpType().add(className).global(project)
+        val classType = PhpType().add(classRawName).global(project)
         val parsed = classType.toExPhpType()
-        val instantiation = parsed?.getInstantiation()
-            ?:
-            // Если не удалось найти класс, значит вывести
-            // тип поля мы не сможем, поэтому заканчиваем распаковку.
-            return false
 
-        classGenericType = instantiation
+        val instantiations = parsed?.getInstantiations()
+        val foundInstantiation = instantiations?.firstOrNull {
+            val klass = PhpIndex.getInstance(project).getClassesByFQN(it.classFqn).firstOrNull()
+            val field = klass?.findFieldByName(methodName, false)
 
-        klass = PhpIndex.getInstance(project).getClassesByFQN(instantiation.classFqn).firstOrNull() ?: return false
+            field != null
+        } ?: return false
+
+        classGenericType = foundInstantiation
+
+        klass = PhpIndex.getInstance(project).getClassesByFQN(foundInstantiation.classFqn).firstOrNull() ?: return false
         field = klass?.findFieldByName(methodName, false) ?: return false
 
         classGenericTs = klass!!.genericNames()
