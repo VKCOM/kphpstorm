@@ -41,6 +41,13 @@ class IndexingGenericFunctionCall(
             if (it.typesWithParametrisedParts.firstOrNull()?.startsWith("\\Closure<") == true) {
                 val rawType = it.typesWithParametrisedParts.first()
                 val parts = PhpType.getParametrizedParts(rawType).map { type -> type.replace("ᤓ", "/") }
+                    .map {type ->
+                        if (type.startsWith("\\int<") && type.endsWith("int")) {
+                            "int"
+                        } else {
+                            type
+                        }
+                    }
 
                 val returnType = parts.last()
                 val paramTypes = parts.dropLast(1).map { type -> type.ifEmpty { "mixed" } }

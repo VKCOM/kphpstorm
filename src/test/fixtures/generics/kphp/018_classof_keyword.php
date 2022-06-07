@@ -1,0 +1,132 @@
+<?php
+
+namespace ClassOfKeyword;
+
+#ifndef KPHP
+/**
+ * @kphp-generic T
+ * @param T $obj
+ * @return class-string<T>
+ */
+function classof($obj) {
+    /** @var class-string<T> $name */
+    $name = get_class($obj);
+    return $name;
+}
+
+/**
+ * @kphp-generic T1, T2
+ * @param ?T1 $obj
+ * @param class-string<T2> $class_name
+ * @return ?T2
+ */
+function instance_cast($obj, $class_name) {
+    if ($obj === null)
+        return null;
+    if (!($obj instanceof $class_name))
+        return null;
+    return $obj;
+}
+
+function array_reserve_from(array $arr, array $arr2) {}
+#endif
+
+class B {
+    function method(): int { echo "B method\n"; return 1; }
+}
+class D1 extends B {
+    function dMethod() { echo "d1\n"; }
+}
+class D2 extends B {
+    function dMethod() { echo "d2\n"; }
+}
+
+/**
+ * @kphp-generic T, DstClass
+ * @param T $obj
+ * @param class-string<DstClass> $to_classname
+ * @return DstClass
+ */
+function my_cast($obj, $to_classname) {
+    return instance_cast($obj, $to_classname);
+}
+
+/**
+ * @kphp-generic T, DstClass
+ * @param T $obj
+ * @param class-string<DstClass> $if_classname
+ */
+function callDMethodIfNotNull($obj, $if_classname) {
+    /** @var DstClass */
+    $casted = my_cast($obj, $if_classname);
+    if ($casted)
+        $casted->dMethod();
+    else
+        echo "cast to $if_classname is null: obj is ", get_class($obj), "\n";
+}
+
+/** @var B */
+$b = new D1;
+my_cast($b, D1::class)->dMethod();
+
+callDMethodIfNotNull(new D1, D1::class);
+callDMethodIfNotNull(new D1, D2::class);
+callDMethodIfNotNull(new D2, D1::class);
+callDMethodIfNotNull(new D2, D2::class);
+
+/**
+ * @kphp-generic TElem, ToName
+ * @param TElem[] $arr
+ * @param class-string<ToName> $to
+ * @return ToName[]
+ */
+function my_array_cast($arr, $to) {
+    $out = [];
+    array_reserve_from($out, $arr);
+    foreach ($arr as $k => $v) {
+        $out[$k] = instance_cast($v, $to);
+    }
+    return $out;
+}
+
+/**
+ * @param B[] $arr
+ */
+function demoCastAndPrintAllD1(array $arr) {
+    $casted_arr = my_array_cast($arr, D1::class);
+    foreach ($casted_arr as $obj)
+        if ($obj) $obj->dMethod();
+}
+
+demoCastAndPrintAllD1([new D1, new D2, new D1]);
+
+/**
+ * @kphp-generic T1, T2
+ * @param T1 $o1
+ * @param T2 $o2
+ * @return ?T1
+ */
+function castO2ToTypeofO1($o1, $o2) {
+   /** @var T1 */
+   $casted = instance_cast($o2, classof($o1));
+   echo get_class($casted), "\n";
+   return $casted;
+}
+
+/** @var B */
+$bb = new D1;
+castO2ToTypeofO1($bb, new D1);
+
+
+/**
+ * @kphp-generic T
+ * @param T $o1
+ */
+function castToClassofLocal($o1) {
+    $d1 = new D1;
+    $casted = instance_cast($o1, classof($d1));
+    echo $casted ? "can cast\n" : "can't cast\n";
+}
+
+castToClassofLocal(new D1);
+castToClassofLocal(new D2);

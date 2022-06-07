@@ -74,4 +74,42 @@ class GenericsGeneralTest : GenericTestBase() {
     fun testGenericInGeneric() {
         runFixture("generics/general/generic_in_generic.fixture.php")
     }
+
+    /**
+     * Disabled.
+     *
+     * See https://youtrack.jetbrains.com/issue/WI-67021/During-a-test-primitive-type-hints-are-resolved-as-instances
+     */
+    fun testFromKphp() {
+//        val classes = arrayOf(
+//            "generics/kphp/Classes/A.php",
+//            "generics/kphp/Classes/B.php",
+//            "generics/kphp/Classes/TemplateMagic.php",
+//            "generics/kphp/Classes/TemplateMagicStatic.php",
+//        )
+//        runFixture(
+//            "generics/kphp/016_kphp_param_depends_T.php",
+//            *classes,
+//        )
+//
+//        runFixture(
+//            "generics/kphp/017_templates_primitives.php",
+//            *classes,
+//        )
+//
+//        runFixture(
+//            "generics/kphp/018_classof_keyword.php",
+//            *classes,
+//        )
+//
+//        runFixture(
+//            "generics/kphp/016_kphp_param_depends_T.php",
+//            *classes,
+//        )
+//
+//        runFixture(
+//            "generics/kphp/016_kphp_param_depends_T.php",
+//            *classes,
+//        )
+    }
 }

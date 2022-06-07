@@ -119,6 +119,15 @@ object PhpTypeToExPhpTypeParsing {
             return eq
         }
 
+        fun advance(): Boolean {
+            skipWhitespace()
+            if (offset >= type.length) {
+                return false
+            }
+            offset++
+            return true
+        }
+
         fun parseFQN(): String? {
             skipWhitespace()
             val cur = if (offset < type.length) type[offset] else '\b'
@@ -303,8 +312,13 @@ object PhpTypeToExPhpTypeParsing {
         // вернуть для него всегда просто \int, а не \int<0, 100>
         // Если использовать не typesWithParametrisedParts, а types
         // то это не нужно, но тогда не будет работать вывод типов callable.
-        if (fqn == "\\int")
+        if (fqn == "\\int" && builder.compare('<')) {
+            for (i in 0..20) {
+                if (builder.compareAndEat('>')) break
+                builder.advance()
+            }
             return FQN_PREPARSED[fqn]
+        }
 
         if (fqn == "tuple" && builder.compare('(')) {
             val items = parseTupleContents(builder) ?: return null

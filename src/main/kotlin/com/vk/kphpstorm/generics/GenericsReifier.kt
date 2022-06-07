@@ -96,13 +96,18 @@ class GenericsReifier(val project: Project) {
     private fun reifyArgumentGenericsT(argExType: ExPhpType, paramExType: ExPhpType) {
         if (paramExType is ExPhpTypeGenericsT) {
             val prevReifiedType = implicitSpecializationNameMap[paramExType.nameT]
-            if (prevReifiedType != null && prevReifiedType.toString() != argExType.toString()) {
+            // Особые случаи, когда несколько типов это не ошибка
+            val isAny = argExType == ExPhpType.ANY || prevReifiedType == ExPhpType.ANY
+            val isNull = argExType == ExPhpType.NULL || prevReifiedType == ExPhpType.NULL
+            if (prevReifiedType != null && !isAny && !isNull && prevReifiedType.toString() != argExType.toString()) {
                 // В таком случае мы получаем ситуацию когда один шаблонный тип
                 // имеет несколько возможных вариантов типа, что является ошибкой.
                 implicitSpecializationErrors[paramExType.nameT] = Pair(argExType, prevReifiedType)
             }
 
-            implicitSpecializationNameMap[paramExType.nameT] = argExType
+            if (prevReifiedType == null || argExType != ExPhpType.ANY && argExType != ExPhpType.NULL) {
+                implicitSpecializationNameMap[paramExType.nameT] = argExType
+            }
         }
 
         if (paramExType is ExPhpTypeNullable) {
@@ -116,14 +121,20 @@ class GenericsReifier(val project: Project) {
         if (paramExType is ExPhpTypePipe) {
             // если случай paramExType это Vector|Vector<%T> и argExType это Vector|Vector<A>
             val instantiationParamType =
-                paramExType.items.find { it is ExPhpTypeTplInstantiation } as ExPhpTypeTplInstantiation?
-            if (instantiationParamType != null && argExType is ExPhpTypeTplInstantiation) {
+                paramExType.items.find { it is ExPhpTypeTplInstantiation } as? ExPhpTypeTplInstantiation
+            val instantiationArgType =
+                if (argExType is ExPhpTypePipe)
+                    argExType.items.find { it is ExPhpTypeTplInstantiation } as? ExPhpTypeTplInstantiation
+                else
+                    argExType as? ExPhpTypeTplInstantiation
+
+            if (instantiationParamType != null && instantiationArgType != null) {
                 for (i in 0 until min(
-                    argExType.specializationList.size,
+                    instantiationArgType.specializationList.size,
                     instantiationParamType.specializationList.size
                 )) {
                     reifyArgumentGenericsT(
-                        argExType.specializationList[i],
+                        instantiationArgType.specializationList[i],
                         instantiationParamType.specializationList[i]
                     )
                 }

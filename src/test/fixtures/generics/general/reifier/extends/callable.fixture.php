@@ -28,5 +28,8 @@ function takeTypedCallable($a) {
   return $a;
 }
 
-$b = takeCallable(function() {});
+$b = takeTypedCallable(function() {});
 expr_type($b, "callable");
+
+$b = takeTypedCallable("");
+expr_type($b, "string");
