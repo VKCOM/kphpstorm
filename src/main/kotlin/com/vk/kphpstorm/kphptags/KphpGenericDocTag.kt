@@ -84,7 +84,9 @@ object KphpGenericDocTag : KphpDocTag("@kphp-generic") {
                 return
             }
 
-            val allInstance = extendsType.items.all { it is ExPhpTypeInstance }
+            val allInstance = extendsType.items.all {
+                it is ExPhpTypeInstance || it is ExPhpTypeTplInstantiation || it is ExPhpTypeGenericsT
+            }
             val allPrimitives = extendsType.items.all { it is ExPhpTypePrimitive }
 
             if (!allInstance && !allPrimitives) {

@@ -7,6 +7,8 @@ use Stringable;
 class Foo {}
 class Boo {}
 class Goo {}
+/** @kphp-generic T */
+class Generic {}
 
 /** @kphp-generic T: int */
 function take1() {}
@@ -32,12 +34,18 @@ function take7() {}
 /** @kphp-generic T: Foo|Boo|Goo */
 function take8() {}
 
+/** @kphp-generic T1, T2: T1|Foo */
+function take9() {}
+
+/** @kphp-generic T1, T2: Foo|Generic<T1> */
+function take10() {}
+
 // Special allowed instance + primitive case
 /** @kphp-generic T: Stringable|string */
-function take9() {}
-/** @kphp-generic T: \Stringable|string */
-function take10() {}
-/** @kphp-generic T: string|Stringable */
 function take11() {}
-/** @kphp-generic T: string|\Stringable */
+/** @kphp-generic T: \Stringable|string */
 function take12() {}
+/** @kphp-generic T: string|Stringable */
+function take13() {}
+/** @kphp-generic T: string|\Stringable */
+function take14() {}
