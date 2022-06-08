@@ -3,18 +3,18 @@ package com.vk.kphpstorm.typeProviders
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
+import com.jetbrains.php.lang.psi.elements.*
 import com.jetbrains.php.lang.psi.elements.Function
-import com.jetbrains.php.lang.psi.elements.MethodReference
-import com.jetbrains.php.lang.psi.elements.Parameter
-import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.resolve.types.PhpCharTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
-import com.vk.kphpstorm.exphptype.ExPhpTypeGenericsT
+import com.vk.kphpstorm.exphptype.ExPhpType
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
+import com.vk.kphpstorm.generics.GenericUtil.isGeneric
 import com.vk.kphpstorm.generics.IndexingGenericFunctionCall
 import com.vk.kphpstorm.generics.ResolvingGenericMethodCall
 import com.vk.kphpstorm.helpers.toExPhpType
+import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 
 class GenericMethodsTypeProvider : PhpTypeProvider4 {
     companion object {
@@ -32,14 +32,18 @@ class GenericMethodsTypeProvider : PhpTypeProvider4 {
             val parentClass = p.parentOfType<PhpClass>()
             val paramTag = parentFunction.docComment?.getParamTagByName(p.name) ?: return null
             val docType = paramTag.type.toExPhpType() ?: return null
-            if (docType is ExPhpTypeGenericsT) {
-                val genericNames = parentFunction.genericNames() + (parentClass?.genericNames() ?: emptyList())
+            val genericNames = parentFunction.genericNames() + (parentClass?.genericNames() ?: emptyList())
 
-                val decl = genericNames.find { it.name == docType.nameT } ?: return null
-                val type = decl.extendsType ?: decl.defaultType ?: return null
+            return instantiateDocType(docType, genericNames)
+        }
 
-                return PhpType().add(type.toPhpType()).add(docType.toPhpType())
-            }
+        if (p is Field) {
+            val parentClass = p.containingClass ?: return null
+            val paramTag = p.docComment?.varTag ?: return null
+            val docType = paramTag.type.toExPhpType() ?: return null
+            val genericNames = parentClass.genericNames()
+
+            return instantiateDocType(docType, genericNames)
         }
 
         // $v->f() or ClassName::f()
@@ -66,6 +70,23 @@ class GenericMethodsTypeProvider : PhpTypeProvider4 {
         }
 
         return null
+    }
+
+    private fun instantiateDocType(docType: ExPhpType, genericNames: List<KphpDocGenericParameterDecl>): PhpType? {
+        if (!docType.isGeneric()) {
+            return null
+        }
+
+        val instantiationMap = genericNames.mapNotNull {
+            it.name to (it.extendsType ?: it.defaultType ?: return@mapNotNull null)
+        }.toMap()
+
+        if (instantiationMap.isEmpty()) {
+            return null
+        }
+
+        val type = docType.instantiateGeneric(instantiationMap)
+        return PhpType().add(type.toPhpType()).add(docType.toPhpType())
     }
 
     override fun complete(incompleteType: String, project: Project) =
