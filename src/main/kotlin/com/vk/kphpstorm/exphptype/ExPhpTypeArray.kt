@@ -19,7 +19,7 @@ class ExPhpTypeArray(val inner: ExPhpType) : ExPhpType {
         return PhpType().add(inner.toPhpType()).pluralise()
     }
 
-    override fun getSubkeyByIndex(indexKey: String): ExPhpType? {
+    override fun getSubkeyByIndex(indexKey: String): ExPhpType {
         return inner
     }
 

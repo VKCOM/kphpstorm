@@ -29,6 +29,9 @@ object KphpDocElementTypes {
      */
     val kphpDocTagWarnPerformance = KphpDocTagWarnPerformanceElementType
 
+
+    val kphpDocTagJson = KphpDocTagJsonElementType
+
     /**
      * '@kphp-template-class T1, T2'
      * (NOTE! This is not working in KPHP for now, it is just a matter of IDE experiments for future)

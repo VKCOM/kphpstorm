@@ -81,6 +81,18 @@ abstract class KphpDocTag(
         return findThisTagInDocComment(docCommentOwner.docComment ?: return null)
     }
 
+    fun <T : PhpDocTag> findThisTagsInDocComment(docComment: PhpDocComment): List<T> {
+        val tags = mutableListOf<T>()
+        PhpDocUtil.processTagElementsByName(docComment, nameWithAt) {
+            tags.add(it as T); true
+        }
+        return tags
+    }
+
+    fun <T : PhpDocTag> findThisTagsInDocComment(docCommentOwner: PhpNamedElement): List<T> {
+        return findThisTagsInDocComment(docCommentOwner.docComment ?: return listOf())
+    }
+
     /**
      * Helper for use inside annotate() on syntax error
      */
