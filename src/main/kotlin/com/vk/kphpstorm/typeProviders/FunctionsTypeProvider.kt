@@ -288,10 +288,16 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
         if (funcChar == 't') {
             val parameterTypes = argTypeStr.split('ꄳ').map {
                 PhpType().apply {
-                    it.split('⎋').forEach { add(it) }
-                }.global(project)
+                    it.split('⎋').forEach {
+                        val subType = PhpType().add(it).global(project)
+                        // TODO: add more tests
+                        if (!subType.isAmbiguous) {
+                            add(PhpType().add(it).global(project))
+                        }
+                    }
+                }
             }
-            return inferTuple(parameterTypes)
+            return inferTuple(parameterTypes.map { it.global(project) })
         }
 
         // inferring for "shape(...)" needs special decoding: any arguments are encoded to a single string
@@ -299,7 +305,13 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
             val parameterTypes = argTypeStr.split('ꄴ').map {
                 val (key, unresolvedType) = it.split(':')
                 val type = PhpType().apply {
-                    unresolvedType.split('ꄶ').forEach { add(it) }
+                    unresolvedType.split('ꄶ').forEach { unresolvedSubType ->
+                        val subType = PhpType().add(unresolvedSubType).global(project)
+                        // TODO: add more tests
+                        if (!subType.isAmbiguous) {
+                            add(PhpType().add(unresolvedSubType).global(project))
+                        }
+                    }
                 }.global(project)
 
                 Pair(key, type)

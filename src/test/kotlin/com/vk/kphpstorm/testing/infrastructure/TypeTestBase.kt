@@ -1,8 +1,10 @@
 package com.vk.kphpstorm.testing.infrastructure
 
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.php.lang.psi.elements.FunctionReference
+import com.jetbrains.php.lang.psi.elements.PhpPsiElement
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
@@ -54,9 +56,17 @@ abstract class TypeTestBase : BasePlatformTestCase() {
 
         val typeString = sortedType.toString().ifEmpty { "<empty>" }
 
-        // TODO: add location (line and test name)
+        val file = call.containingFile
         check(typeString == expectedType) {
-            "Type mismatch. Expected: $expectedType, found: $typeString"
+            """
+                In file ${file.name}:${call.line()}
+                
+                Type mismatch. 
+                Expected: $expectedType
+                Found: $typeString
+                
+                
+            """.trimIndent()
         }
     }
 
@@ -70,5 +80,15 @@ abstract class TypeTestBase : BasePlatformTestCase() {
                         el.parameters.last() is StringLiteralExpression && el.parameters.first() is PhpTypedElement
             }
         }.flatten()
+    }
+
+    private fun PhpPsiElement.line(): Int {
+        val document = PsiDocumentManager.getInstance(project).getDocument(containingFile)
+        val lineNumber = if (document != null) {
+            document.getLineNumber(textRange.startOffset) + 1
+        } else {
+            0
+        }
+        return lineNumber
     }
 }

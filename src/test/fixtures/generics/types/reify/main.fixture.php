@@ -58,6 +58,5 @@ function takeTuple($a) {
   return new $a;
 }
 
-// TODO: разобраться с таплами
-//$c = takeTuple(tuple(1, "", new Foo));
-//expr_type($c, "\Reify\Foo");
+$c = takeTuple(tuple(1, "", new Foo));
+expr_type($c, "\Reify\Foo|int|string");

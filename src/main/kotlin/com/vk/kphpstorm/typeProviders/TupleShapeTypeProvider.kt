@@ -83,8 +83,18 @@ class TupleShapeTypeProvider : PhpTypeProvider4 {
                 // so, in complex scenarios like get()[1][2]->... combinations increase geometrically
                 // to partially avoid this, use heruistics:
                 // filter out subtypes detected by PhpStorm native type providers that are 100% useless here
-                if (!it.contains("#π") && !it.contains("#E") && !it.contains("%"))
+                if (!it.contains("#π") && !it.contains("#E") && !it.contains("%")) {
                     resultType.add("#Й.$indexKey $it")
+                    return@forEach
+                }
+
+                if (it.contains(GenericFunctionsTypeProvider.KEY.key) ||
+                    it.contains(GenericMethodsTypeProvider.KEY.key) ||
+                    it.contains(GenericClassesTypeProvider.KEY.key) ||
+                    it.contains(GenericFieldsTypeProvider.KEY.key)
+                ) {
+                    resultType.add("#Й.$indexKey $it")
+                }
             }
 //            println("type($lhs) = ${resultType.toString().replace("|", " | ")}")
 

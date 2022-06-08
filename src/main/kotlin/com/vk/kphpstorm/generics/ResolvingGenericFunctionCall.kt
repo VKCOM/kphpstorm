@@ -37,10 +37,12 @@ class ResolvingGenericFunctionCall(project: Project) : ResolvingGenericBase(proj
     override fun unpackImpl(packedData: String): Boolean {
         if (beginCompleted(packedData)) {
             val firstSeparator = packedData.indexOf(GenericFunctionsTypeProvider.SEP)
-            val functionName = packedData.substring(1, firstSeparator)
-            function = PhpIndex.getInstance(project).getFunctionsByFQN(functionName).firstOrNull()
-            if (function?.isReturnGeneric() == false)
-                return false
+            if (firstSeparator != -1) {
+                val functionName = packedData.substring(1, firstSeparator)
+                function = PhpIndex.getInstance(project).getFunctionsByFQN(functionName).firstOrNull()
+                if (function?.isReturnGeneric() == false)
+                    return false
+            }
         }
 
         val data = resolveSubTypes(packedData)
