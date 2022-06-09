@@ -12,7 +12,6 @@ import com.vk.kphpstorm.helpers.parentDocComment
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.KphpJsonTag
 
-
 class KphpJsonItemCompletionProvider : CompletionProvider<CompletionParameters>() {
     override fun addCompletions(
         parameters: CompletionParameters,
@@ -41,7 +40,7 @@ class KphpJsonItemCompletionProvider : CompletionProvider<CompletionParameters>(
                 val elementName = position.prevSibling.prevSibling?.text
 
                 val element = KphpJsonTag.jsonElements.singleOrNull { it.name == elementName } ?: return
-                for (value in element.allowValues) {
+                for (value in element.allowValues ?: listOf()) {
                     result.addElement(LookupElementBuilder.create(value))
                 }
             }

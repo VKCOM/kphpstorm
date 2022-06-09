@@ -22,7 +22,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         val allowField: Boolean = false,
         val allowClass: Boolean = false,
         val combinedFlatten: Boolean = false,
-        val allowValues: List<String> = listOf(),
+        val allowValues: List<String>? = null,
         val ifType: Pair<((ExPhpType?) -> Boolean), String>? = null,
     )
 
@@ -32,16 +32,22 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         KphpJsonElement("flatten", allowClass = true, combinedFlatten = true),
         KphpJsonElement("rename", allowField = true),
         KphpJsonElement("skip_if_default", allowClass = true, allowField = true, allowValues = listOf("true", "false")),
-        KphpJsonElement("float_precision", allowClass = true, combinedFlatten = true, allowField = true),
+        KphpJsonElement("required", allowField = true),
+        KphpJsonElement("raw_string", allowField = true, ifType = Pair({ it == ExPhpType.STRING }, "string")),
         KphpJsonElement("skip", allowField = true),
+        KphpJsonElement(
+            "float_precision",
+            allowClass = true,
+            combinedFlatten = true,
+            allowField = true,
+            allowValues = listOf(),
+        ),
         KphpJsonElement(
             "array_as_hashmap",
             allowField = true,
             combinedFlatten = true,
-            ifType = Pair({ it is ExPhpTypeArray }, "array")
+            ifType = Pair({ it is ExPhpTypeArray }, "array"),
         ),
-        KphpJsonElement("required", allowField = true),
-        KphpJsonElement("raw_string", allowField = true, ifType = Pair({ it == ExPhpType.STRING }, "string")),
     )
 
     override val description: String
@@ -77,7 +83,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                 val classElement = owner.containingClass ?: return
 
                 val element =
-                    jsonElements.singleOrNull { it.name == elementName && it.allowField } ?: return holder.errTag(
+                    jsonElements.firstOrNull { it.name == elementName && it.allowField } ?: return holder.errTag(
                         docTag,
                         "Unknown @kphp-json tag '$elementName' over class field ${classElement.name}::$$fieldName"
                     )
@@ -88,14 +94,19 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     )
                 }
 
-                val elementValue = jsonElement.stringValue()
-                if (element.allowValues.isNotEmpty()) {
-                    if (elementValue !in element.allowValues) {
-                        holder.errTag(
-                            docTag,
-                            "@kphp-json '$elementName' should be either ${element.allowValues.joinToString(separator = "|")}, got $elementValue"
-                        )
-                        return
+                if (element.allowValues != null) {
+                    val elementValue = jsonElement.stringValue()
+                    if (element.allowValues.isEmpty()) {
+                        if (elementValue == null || elementValue.isEmpty()) {
+                            return holder.errTag(docTag, "@kphp-json '$elementName' expected value")
+                        }
+                    } else {
+                        if (elementValue !in element.allowValues) {
+                            return holder.errTag(
+                                docTag,
+                                "@kphp-json '$elementName' should be either ${element.allowValues.joinToString(separator = "|")}"
+                            )
+                        }
                     }
                 }
 
@@ -122,18 +133,12 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     }
                 }
 
-
                 if (classElement.docComment != null && !element.combinedFlatten) {
                     val otherJsonTags = this.findThisTagsInDocComment<KphpDocTagJsonPsiImpl>(classElement)
 
                     val useFlatten = otherJsonTags.any { it.item()?.name() == "flatten" }
                     if (useFlatten) {
-                        // Мб писать не о всех тэгах, а только об одном?
-                        val allowFlattenName = jsonElements.filter { !it.combinedFlatten }.map { it.name }
-                        holder.errTag(
-                            docTag,
-                            "'${allowFlattenName.joinToString(separator = "|")}' can't be used for a @kphp-json 'flatten' class"
-                        )
+                        holder.errTag(docTag, "'$elementName' can't be used for a @kphp-json 'flatten' class")
                     }
                 }
             }
@@ -142,20 +147,22 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
 
                 val className = owner.name
 
-                val element = jsonElements.singleOrNull { it.name == elementName && it.allowClass }
-                if (element == null) {
-                    holder.errTag(docTag, "Unknown @kphp-json tag '$elementName' above class $className")
-                    return
-                }
+                val element = jsonElements.firstOrNull { it.name == elementName && it.allowClass }
+                    ?: return holder.errTag(docTag, "Unknown @kphp-json tag '$elementName' above class $className")
 
-                val elementValue = jsonElement.stringValue()
-                if (element.allowValues.isNotEmpty()) {
-                    if (elementValue !in element.allowValues) {
-                        holder.errTag(
-                            docTag,
-                            "@kphp-json '$elementName' should be either ${element.allowValues.joinToString(separator = "|")}, got $elementValue"
-                        )
-                        return
+                if (element.allowValues != null) {
+                    val elementValue = jsonElement.stringValue()
+                    if (element.allowValues.isEmpty()) {
+                        if (elementValue == null || elementValue.isEmpty()) {
+                            return holder.errTag(docTag, "@kphp-json '$elementName' expected value")
+                        }
+                    } else {
+                        if (elementValue !in element.allowValues) {
+                            return holder.errTag(
+                                docTag,
+                                "@kphp-json '$elementName' should be either ${element.allowValues.joinToString(separator = "|")}"
+                            )
+                        }
                     }
                 }
 
@@ -166,17 +173,12 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     )
                 }
 
-                if (owner.docComment != null && !element.combinedFlatten && elementName != "flatten") {
+                if (owner.docComment != null && !element.combinedFlatten) {
                     val otherJsonTags = this.findThisTagsInDocComment<KphpDocTagJsonPsiImpl>(owner)
 
                     val useFlatten = otherJsonTags.any { it.item()?.name() == "flatten" }
                     if (useFlatten) {
-                        // Мб писать не о всех тэгах, а только об одном?
-                        val allowFlattenName = jsonElements.filter { !it.combinedFlatten }.map { it.name }
-                        holder.errTag(
-                            docTag,
-                            "'${allowFlattenName.joinToString(separator = "|")}' can't be used for a @kphp-json 'flatten' class"
-                        )
+                        holder.errTag(docTag, "'$elementName' can't be used for a @kphp-json 'flatten' class")
                     }
                 }
 

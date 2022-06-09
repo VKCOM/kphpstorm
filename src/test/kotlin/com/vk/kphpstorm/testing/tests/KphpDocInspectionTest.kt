@@ -41,4 +41,8 @@ class KphpDocInspectionTest : InspectionTestBase(KphpDocInspection()) {
         runFixture("kphpdoc_inspection/warn-performance.fixture.php")
     }
 
+    fun testKphpJsonTag() {
+        runFixture("kphpdoc_inspection/json_tag.fixture.php")
+    }
+
 }
