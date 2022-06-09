@@ -16,7 +16,4 @@ object KphpHighlightingData {
 
     val FUNC_CALL_REGULAR = TextAttributesKey.createTextAttributesKey("FUNC_CALL_REGULAR", PhpHighlightingData.FUNCTION_CALL)
     val FUNC_CALL_KPHP_NATIVE = TextAttributesKey.createTextAttributesKey("FUNC_CALL_KPHP_NATIVE", PhpHighlightingData.FUNCTION_CALL)
-
-    val GENERIC_SPECS = TextAttributesKey.createTextAttributesKey("GENERIC_SPECS", PhpHighlightingData.CLASS)
-    val UNNECESSARY_GENERIC_SPECS = TextAttributesKey.createTextAttributesKey("UNNECESSARY_GENERIC_SPECS", PhpHighlightingData.COMMENT)
 }

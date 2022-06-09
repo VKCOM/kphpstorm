@@ -5,12 +5,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
+import com.jetbrains.php.lang.highlighter.PhpHighlightingData
 import com.jetbrains.php.lang.psi.elements.Function
 import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.vk.kphpstorm.exphptype.*
 import com.vk.kphpstorm.generics.GenericUtil
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.generics.GenericUtil.isStringableStringUnion
+import com.vk.kphpstorm.highlighting.KphpHighlightingData
 import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagElementType
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagGenericPsiImpl
@@ -61,6 +63,20 @@ object KphpGenericDocTag : KphpDocTag("@kphp-generic") {
             parentClass?.genericNames()?.forEach { decl ->
                 if (names.contains(decl.name)) {
                     holder.errTag(docTag, "Duplicate generic type ${decl.name} (first seen in class declaration)")
+                }
+            }
+        }
+
+        if (docTag is KphpDocTagGenericPsiImpl) {
+            docTag.getParametersPsi().forEach { psi ->
+                if (psi.namePsi != null) {
+                    holder.highlight(psi.namePsi, KphpHighlightingData.PHPDOC_TYPE_INSIDE)
+                }
+                if (psi.extendsTypePsi != null) {
+                    holder.highlight(psi.extendsTypePsi!!, PhpHighlightingData.DOC_COMMENT)
+                }
+                if (psi.defaultTypePsi != null) {
+                    holder.highlight(psi.defaultTypePsi!!, PhpHighlightingData.DOC_COMMENT)
                 }
             }
         }

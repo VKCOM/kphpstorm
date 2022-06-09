@@ -2,6 +2,7 @@ package com.vk.kphpstorm.kphptags
 
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.documentation.phpdoc.PhpDocUtil
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment
@@ -86,6 +87,13 @@ abstract class KphpDocTag(
      */
     protected fun AnnotationHolder.errTag(docTag: PhpDocTag, errorMessage: String) {
         this.newAnnotation(HighlightSeverity.ERROR, errorMessage).range(docTag).create()
+    }
+
+    /**
+     * Helper for use inside annotate() for highlighting parts
+     */
+    protected fun AnnotationHolder.highlight(element: PsiElement, textAttributes: TextAttributesKey) {
+        newSilentAnnotation(HighlightSeverity.INFORMATION).range(element).textAttributes(textAttributes).create()
     }
 
     /**

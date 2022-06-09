@@ -21,7 +21,6 @@ class KphpColorsAndFontsPage : ColorSettingsPage, DisplayPrioritySortable {
             AttributesDescriptor("function call: php predefined (array_pop / ini_get / etc)", PhpHighlightingData.PREDEFINED_SYMBOL),
             AttributesDescriptor("function call: kphp native (wait / instance_cast / etc)", KphpHighlightingData.FUNC_CALL_KPHP_NATIVE),
             AttributesDescriptor("function call: regular (not instance)", KphpHighlightingData.FUNC_CALL_REGULAR),
-            AttributesDescriptor("generic specification: function and classes", KphpHighlightingData.GENERIC_SPECS)
     )
 
     override fun getHighlighter() = PhpColorPageHighlighter(mapOf())
@@ -39,7 +38,8 @@ class KphpColorsAndFontsPage : ColorSettingsPage, DisplayPrioritySortable {
             "f_php" to PhpHighlightingData.PREDEFINED_SYMBOL,
             "f_native" to KphpHighlightingData.FUNC_CALL_KPHP_NATIVE,
 
-            "generic" to KphpHighlightingData.GENERIC_SPECS
+            "f_generic" to KphpHighlightingData.PHPDOC_TYPE_INSIDE,
+            "f_generic_extends" to PhpHighlightingData.DOC_COMMENT,
     )
 
     override fun getIcon() = PhpFileType.INSTANCE.icon
@@ -74,7 +74,13 @@ class KphpColorsAndFontsPage : ColorSettingsPage, DisplayPrioritySortable {
         <bg><f_native>instance_to_array</f_native></bg>(${'$'}user);
         <bg><f_php>ini_get</f_php></bg>('memory_limit');
 
-        acceptor/*<generic><User></generic>*/(new User);
+        /**
+         * <bg><pdtag_kphp>@kphp-generic</pdtag_kphp></bg> <bg><f_generic>T</f_generic></bg>: <bg><f_generic_extends>Field<int></f_generic_extends></bg>
+         */
+        function demo_generic(): bool {
+          return true;
+        }
+
     """.trimIndent()
 
     override fun getPriority() = DisplayPriority.KEY_LANGUAGE_SETTINGS
