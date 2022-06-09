@@ -77,10 +77,10 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
 
         when (val owner = rhs.parentDocComment?.owner) {
             is Field -> {
-                val elementName = jsonElement.name()
-
                 val fieldName = owner.name
                 val classElement = owner.containingClass ?: return
+
+                val elementName = jsonElement.name()
 
                 val element =
                     jsonElements.firstOrNull { it.name == elementName && it.allowField } ?: return holder.errTag(
@@ -109,25 +109,28 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                 }
 
                 val isUsedCorrectType = element.ifType?.first?.invoke(owner.type.toExPhpType())
-                if (element.name == elementName && isUsedCorrectType != null && !isUsedCorrectType) {
-                    holder.errTag(
+                if (isUsedCorrectType != null && !isUsedCorrectType) {
+                    return holder.errTag(
                         docTag,
                         "@kphp-json $elementName tag is allowed only above ${element.ifType.second} type, got above $$fieldName field"
                     )
                 }
 
-                if (element.name == "float_precision" && (jsonElement.intValue() ?: 0) < 0) {
-                    holder.errTag(
+                if (elementName == "float_precision" && (jsonElement.intValue() ?: 0) < 0) {
+                    return holder.errTag(
                         docTag,
                         "@kphp-json 'float_precision' value should be non negative integer, got '${jsonElement.intValue()}'"
                     )
                 }
 
-                if (element.name == "skip") {
+                if (elementName == "skip") {
                     val otherJsonTags = this.findThisTagsInDocComment<KphpDocTagJsonPsiImpl>(owner)
 
                     if (otherJsonTags.size > 1) {
-                        holder.errTag(docTag, "@kphp-json 'skip' can't be used together with other @kphp-json tags")
+                        return holder.errTag(
+                            docTag,
+                            "@kphp-json 'skip' can't be used together with other @kphp-json tags"
+                        )
                     }
                 }
 
@@ -136,7 +139,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
 
                     val useFlatten = otherJsonTags.any { it.item()?.name() == "flatten" }
                     if (useFlatten) {
-                        holder.errTag(docTag, "'$elementName' can't be used for a @kphp-json 'flatten' class")
+                        return holder.errTag(docTag, "'$elementName' can't be used for a @kphp-json 'flatten' class")
                     }
                 }
             }
@@ -162,7 +165,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     }
                 }
 
-                if (element.name == "float_precision" && (jsonElement.intValue() ?: 0) < 0) {
+                if (elementName == "float_precision" && (jsonElement.intValue() ?: 0) < 0) {
                     holder.errTag(
                         docTag,
                         "@kphp-json 'float_precision' value should be non negative integer, got '${jsonElement.intValue()}'"
@@ -174,12 +177,12 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
 
                     val useFlatten = otherJsonTags.any { it.item()?.name() == "flatten" }
                     if (useFlatten) {
-                        holder.errTag(docTag, "'$elementName' can't be used for a @kphp-json 'flatten' class")
+                        return holder.errTag(docTag, "'$elementName' can't be used for a @kphp-json 'flatten' class")
                     }
                 }
 
                 if (elementName == "flatten" && owner.fields.size != 1) {
-                    holder.errTag(
+                    return holder.errTag(
                         docTag,
                         "@kphp-json 'flatten' tag is allowed only for class with a single field, class name $className"
                     )

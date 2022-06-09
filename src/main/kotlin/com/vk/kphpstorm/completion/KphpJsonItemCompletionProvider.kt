@@ -1,8 +1,7 @@
 package com.vk.kphpstorm.completion
 
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.CompletionProvider
-import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.util.ProcessingContext
 import com.jetbrains.php.lang.psi.elements.Field
@@ -14,9 +13,7 @@ import com.vk.kphpstorm.kphptags.KphpJsonTag
 
 class KphpJsonItemCompletionProvider : CompletionProvider<CompletionParameters>() {
     override fun addCompletions(
-        parameters: CompletionParameters,
-        context: ProcessingContext,
-        result: CompletionResultSet
+        parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet
     ) {
         val position = parameters.position
         val owner = position.parentDocComment?.owner as? PhpTypedElement ?: return
@@ -28,11 +25,23 @@ class KphpJsonItemCompletionProvider : CompletionProvider<CompletionParameters>(
 
                 for (jsonElement in KphpJsonTag.jsonElements) {
                     if (jsonElement.allowField == isField || jsonElement.allowClass == isClass) {
+                        var element: LookupElementBuilder? = null
                         if (jsonElement.ifType == null) {
-                            result.addElement(LookupElementBuilder.create(jsonElement.name))
+                            element = LookupElementBuilder.create(jsonElement.name)
                         } else if (jsonElement.ifType.first.invoke(owner.type.toExPhpType())) {
-                            result.addElement(LookupElementBuilder.create(jsonElement.name))
+                            element = LookupElementBuilder.create(jsonElement.name)
                         }
+
+                        if (element == null) {
+                            return
+                        }
+
+                        if (jsonElement.allowValues != null) {
+                            element = element.appendTailText("=", true)
+                                .withInsertHandler(KphpDocTagJsonInsertHandler)
+                        }
+
+                        result.addElement(element)
                     }
                 }
             }
@@ -44,6 +53,15 @@ class KphpJsonItemCompletionProvider : CompletionProvider<CompletionParameters>(
                     result.addElement(LookupElementBuilder.create(value))
                 }
             }
+        }
+    }
+
+    private object KphpDocTagJsonInsertHandler : InsertHandler<LookupElement> {
+        override fun handleInsert(context: InsertionContext, element: LookupElement) {
+            val caretOffset = context.editor.caretModel.offset
+
+            context.document.insertString(caretOffset, "=")
+            context.editor.caretModel.moveToOffset(caretOffset + 1)
         }
     }
 }
