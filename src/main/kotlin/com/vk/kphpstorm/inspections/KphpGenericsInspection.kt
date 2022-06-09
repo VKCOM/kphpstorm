@@ -5,7 +5,9 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.util.findParentOfType
 import com.jetbrains.php.PhpIndex
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.inspections.PhpInspection
 import com.jetbrains.php.lang.psi.elements.FunctionReference
@@ -15,10 +17,15 @@ import com.jetbrains.php.lang.psi.elements.PhpUse
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.jetbrains.rd.util.first
 import com.vk.kphpstorm.exphptype.*
+import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
+import com.vk.kphpstorm.exphptype.psi.ExPhpTypeTplInstantiationPsiImpl
 import com.vk.kphpstorm.generics.GenericCall
 import com.vk.kphpstorm.generics.GenericConstructorCall
 import com.vk.kphpstorm.generics.GenericFunctionCall
 import com.vk.kphpstorm.generics.GenericMethodCall
+import com.vk.kphpstorm.generics.GenericUtil.genericNames
+import com.vk.kphpstorm.generics.GenericUtil.getInstantiation
+import com.vk.kphpstorm.generics.GenericUtil.isGeneric
 import com.vk.kphpstorm.generics.GenericUtil.isStringableStringUnion
 import com.vk.kphpstorm.inspections.quickfixes.AddExplicitInstantiationCommentQuickFix
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
@@ -43,6 +50,10 @@ class KphpGenericsInspection : PhpInspection() {
                 }
                 val call = GenericFunctionCall(reference)
                 checkGenericCall(call, reference, reference.firstChild)
+            }
+
+            override fun visitPhpDocType(type: PhpDocType) {
+                checkPhpDocType(type)
             }
 
             override fun visitPhpDocTag(tag: PhpDocTag) {
@@ -70,6 +81,46 @@ class KphpGenericsInspection : PhpInspection() {
                 }
             }
 
+            private fun checkPhpDocType(type: PhpDocType) {
+                // If it's ExPhpTypeInstancePsiImpl (Vector) in Vector<int>.
+                if (type is ExPhpTypeInstancePsiImpl && type.parent is ExPhpTypeTplInstantiationPsiImpl) {
+                    return
+                }
+
+                val instanceType = when (type) {
+                    is ExPhpTypeInstancePsiImpl, is ExPhpTypeTplInstantiationPsiImpl -> type
+                    else -> null
+                } ?: return
+
+                val inKphpGenericTag = instanceType.findParentOfType<KphpDocTagGenericPsiImpl>() != null
+
+                val resolvedType = PhpTypeToExPhpTypeParsing.parse(instanceType.type) ?: return
+                if (resolvedType is ExPhpTypeInstance && inKphpGenericTag) {
+                    // Don't check instances in @kphp-generic tags.
+                    return
+                }
+
+                val (className, countSpecs) = if (resolvedType is ExPhpTypeInstance) {
+                    resolvedType.fqn to 0
+                } else if (resolvedType.getInstantiation() != null) {
+                    val instantiation = resolvedType.getInstantiation()!!
+                    val countExplicitSpecs = instantiation.specializationList.size
+
+                    instantiation.classFqn to countExplicitSpecs
+                } else {
+                    return
+                }
+
+                val klass = PhpIndex.getInstance(type.project).getAnyByFQN(className).firstOrNull() ?: return
+                if (!klass.isGeneric()) {
+                    return
+                }
+
+                val genericNames = klass.genericNames()
+
+                reportParamsCountMismatch(genericNames, countSpecs, type)
+            }
+
             private fun checkGenericCall(call: GenericCall, element: PsiElement, errorPsi: PsiElement) {
                 if (!call.isResolved()) return
                 val genericNames = call.genericNames()
@@ -90,7 +141,7 @@ class KphpGenericsInspection : PhpInspection() {
 
                 holder.registerProblem(
                     errorPsi,
-                    "Couldn't reify generic <${error.key}> for call: it's both $type1 and $type2",
+                    "Couldn't reify generic <${error.key}>: it's both $type1 and $type2",
                     ProblemHighlightType.GENERIC_ERROR,
                     AddExplicitInstantiationCommentQuickFix(element),
                 )
@@ -113,34 +164,44 @@ class KphpGenericsInspection : PhpInspection() {
             }
 
             private fun checkInstantiationParamsCount(call: GenericCall) {
-                val minCount = call.ownGenericNames().filter { it.defaultType == null }.size
-                val maxCount = call.ownGenericNames().size
+                val genericNames = call.ownGenericNames()
 
                 val countExplicitSpecs = call.explicitSpecs.size
                 val explicitSpecsPsi = call.explicitSpecsPsi
 
-                if (minCount == maxCount && minCount != countExplicitSpecs && explicitSpecsPsi != null) {
+                reportParamsCountMismatch(genericNames, countExplicitSpecs, explicitSpecsPsi)
+            }
+
+            private fun reportParamsCountMismatch(
+                genericNames: List<KphpDocGenericParameterDecl>,
+                countSpecs: Int,
+                errorPsi: PsiElement?
+            ) {
+                val minCount = genericNames.filter { it.defaultType == null }.size
+                val maxCount = genericNames.size
+
+                if (minCount == maxCount && minCount != countSpecs && errorPsi != null) {
                     holder.registerProblem(
-                        explicitSpecsPsi,
-                        "$minCount generic parameters expected for call, but $countExplicitSpecs passed",
+                        errorPsi,
+                        "$minCount generic parameters expected, but $countSpecs passed",
                         ProblemHighlightType.GENERIC_ERROR
                     )
                     return
                 }
 
-                if (countExplicitSpecs < minCount && explicitSpecsPsi != null) {
+                if (countSpecs < minCount && errorPsi != null) {
                     holder.registerProblem(
-                        explicitSpecsPsi,
-                        "Not enough generic parameters for call, expected at least $minCount",
+                        errorPsi,
+                        "Not enough generic parameters, expected at least $minCount",
                         ProblemHighlightType.GENERIC_ERROR,
                     )
                     return
                 }
 
-                if (countExplicitSpecs > maxCount && explicitSpecsPsi != null) {
+                if (countSpecs > maxCount && errorPsi != null) {
                     holder.registerProblem(
-                        explicitSpecsPsi,
-                        "Too many generic parameters for call, expected at most $maxCount",
+                        errorPsi,
+                        "Too many generic parameters, expected at most $maxCount",
                         ProblemHighlightType.GENERIC_ERROR,
                     )
                 }

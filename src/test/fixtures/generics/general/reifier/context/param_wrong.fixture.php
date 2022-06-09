@@ -6,7 +6,7 @@ use Context\GenericClass;
 use Context\IGenericClass;
 
 /**
- * @param GenericClass $a
+ * @param <error descr="1 generic parameters expected, but 0 passed">GenericClass</error> $a
  */
 function takeClassOfString($a) {}
 

@@ -20,7 +20,7 @@ function returnClassOfString() {
 
 
 /**
- * @return GenericClass
+ * @return <error descr="1 generic parameters expected, but 0 passed">GenericClass</error>
  */
 function returnWrongClassOfString() {
   return <error descr="Not enough information to infer generic T">new GenericClass()</error>;

@@ -93,6 +93,39 @@ function callDMethodIfNotNull($obj, $if_classname) {
 }
 
 /**
+ * @kphp-generic T
+ * @param T|false $a
+ * @return T
+ */
+function foo1($a) {
+  return $a;
+}
+
+$a = new Foo() ?? false;
+
+$b = foo1($a);
+expr_type($b, "\Reify\Foo");
+
+
+/** @kphp-generic T */
+class GenericT {}
+
+/**
+ * @kphp-generic T
+ * @param T $a
+ * @return T
+ */
+function foo2($a) {
+  return $a;
+}
+
+$a = new GenericT/*<int>*/();
+
+$b = foo2($a);
+expr_type($b, "\Reify\GenericT(int)");
+
+
+/**
  * @kphp-generic TKey, TValue
  */
 class Map {}

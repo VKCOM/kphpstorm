@@ -2,6 +2,7 @@
 
 namespace Reifier\Default;
 
+/** @kphp-generic T1, T2 */
 class Pair {}
 /** @kphp-generic T */
 class Vector {}
@@ -12,8 +13,8 @@ class Vector {}
  */
 function singleDefaultType() { return null; }
 
-$a = singleDefaultType/*<Pair>*/();
-expr_type($a, "\Reifier\Default\Pair");
+$a = singleDefaultType/*<Pair<int, string>>*/();
+expr_type($a, "\Reifier\Default\Pair|\Reifier\Default\Pair(int,string)");
 
 $b = singleDefaultType();
 expr_type($b, "\Reifier\Default\Pair");
@@ -25,11 +26,11 @@ expr_type($b, "\Reifier\Default\Pair");
  */
 function twoDefaultType() { return null; }
 
-$a = twoDefaultType/*<Pair, Vector>*/();
-expr_type($a, "\Reifier\Default\Pair|\Reifier\Default\Vector");
+$a = twoDefaultType/*<Pair<int, string>, Vector<string>>*/();
+expr_type($a, "\Reifier\Default\Pair|\Reifier\Default\Pair(int,string)|\Reifier\Default\Vector|\Reifier\Default\Vector(string)");
 
-$b = twoDefaultType/*<Pair>*/();
-expr_type($b, "\Reifier\Default\Pair|\Reifier\Default\Vector");
+$b = twoDefaultType/*<Pair<int, string>>*/();
+expr_type($b, "\Reifier\Default\Pair|\Reifier\Default\Pair(int,string)|\Reifier\Default\Vector");
 
 $c = twoDefaultType();
 expr_type($c, "\Reifier\Default\Pair|\Reifier\Default\Vector");

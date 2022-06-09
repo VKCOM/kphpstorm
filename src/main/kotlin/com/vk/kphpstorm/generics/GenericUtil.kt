@@ -75,6 +75,11 @@ object GenericUtil {
 
     fun ExPhpType.getGenericTypeOrSelf(): ExPhpType {
         if (this is ExPhpTypePipe) {
+            // If T|false.
+            if (this.items.size == 2 && this.items.any { it is ExPhpTypePrimitive && it.typeStr == "false" }) {
+                return this
+            }
+
             return this.items.firstOrNull {
                 it is ExPhpTypeGenericsT
             } as? ExPhpTypeGenericsT ?: return this
