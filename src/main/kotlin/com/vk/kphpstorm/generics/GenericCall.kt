@@ -59,14 +59,14 @@ abstract class GenericCall(val project: Project) {
 
     /**
      * Returns generic parameters belonging to the current element,
-     * and also, if it is part of a class, then the class parameter as well.
+     * and, if it's part of a class, class parameter as well.
      */
     abstract fun genericNames(): List<KphpDocGenericParameterDecl>
 
     /**
      * Returns generic parameters belonging only to the current element.
-     * If it is a method, then only the method parameters are returned
-     * without the class parameters.
+     * If it's a method, for example, then only the method parameters are
+     * returned without the class parameters.
      */
     abstract fun ownGenericNames(): List<KphpDocGenericParameterDecl>
 

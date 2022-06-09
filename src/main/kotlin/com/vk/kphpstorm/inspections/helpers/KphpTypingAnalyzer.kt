@@ -46,6 +46,7 @@ object KphpTypingAnalyzer {
 
     fun doesDocTypeMatchTypeHint(docType: ExPhpType, hintType: ExPhpType, project: Project): Boolean {
         if (docType is ExPhpTypePipe) {
+            // TODO: redone
             val genericType = docType.getGenericPipeType()
             if (genericType != null) {
                 return doesDocTypeMatchTypeHint(genericType, hintType, project)

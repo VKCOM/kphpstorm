@@ -97,7 +97,7 @@ class KphpUndefinedClassInspection : PhpInspection() {
              * report if this class is unknown (primitives 'int', 'mixed', etc have another psi impl)
              */
             override fun visitPhpDocType(type: PhpDocType) {
-                if (type !is ExPhpTypeInstancePsiImpl)
+                if (type !is ExPhpTypeInstancePsiImpl || type.isKphpBuiltinClass())
                     return
 
                 val resolvedType = PhpTypeToExPhpTypeParsing.parse(type.type)

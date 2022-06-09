@@ -48,7 +48,7 @@ class ExPhpTypeInstancePsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
         return isGenericT
     }
 
-    private fun isKphpBuiltinClass() = text.let {
+    fun isKphpBuiltinClass() = text.let {
         it == "future" || it == "future_queue" || it == "\\RpcConnection"
     }
 }
