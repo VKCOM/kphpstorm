@@ -66,7 +66,7 @@ class KphpGenericsInspection : PhpInspection() {
                 }
 
                 var wasDefault = false
-                tag.getGenericArgumentsWithExtends().forEach {
+                tag.getFullGenericParameters().forEach {
                     if (it.defaultType != null) {
                         wasDefault = true
                     }

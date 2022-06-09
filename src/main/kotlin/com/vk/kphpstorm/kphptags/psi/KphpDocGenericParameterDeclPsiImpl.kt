@@ -12,8 +12,6 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl
 import com.vk.kphpstorm.exphptype.ExPhpTypeInstance
 import com.vk.kphpstorm.exphptype.ExPhpTypePipe
 import com.vk.kphpstorm.exphptype.PhpTypeToExPhpTypeParsing
-import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
-import com.vk.kphpstorm.exphptype.psi.ExPhpTypePrimitivePsiImpl
 import com.vk.kphpstorm.helpers.toExPhpType
 
 data class KphpDocGenericParameterDecl(
@@ -80,12 +78,9 @@ class KphpDocGenericParameterDeclPsiImpl(node: ASTNode) : PhpDocPsiElementImpl(n
         val elementType = PhpDocElementType("phpdocGenericParameterDecl")
     }
 
-    private var extendsType: PhpDocTypeImpl? = null
-
-    /**
-     * Can be [ExPhpTypeInstancePsiImpl] or [ExPhpTypePrimitivePsiImpl].
-     */
-    private var defaultType: PhpDocTypeImpl? = null
+    val namePsi: PsiElement? = firstChild
+    var extendsTypePsi: PhpDocTypeImpl? = null
+    var defaultTypePsi: PhpDocTypeImpl? = null
 
     init {
         val types = findChildrenByClass(PhpDocTypeImpl::class.java)
@@ -93,27 +88,20 @@ class KphpDocGenericParameterDeclPsiImpl(node: ASTNode) : PhpDocPsiElementImpl(n
         types.forEach {
             val textBefore = PsiTreeUtil.findSiblingBackward(it, PhpDocTokenTypes.DOC_TEXT, null)
             if (textBefore?.text == ":") {
-                extendsType = it
+                extendsTypePsi = it
             } else if (textBefore?.text == "=") {
-                defaultType = it
+                defaultTypePsi = it
             }
         }
     }
 
-    override fun getName(): String {
-        // TODO: сделать через элементы?
-        if (extendsType != null) {
-            return text.substringBefore(':').trim()
-        }
-
-        return text.substringBefore('=').trim()
-    }
+    override fun getName() = namePsi?.text ?: ""
 
     fun decl(): KphpDocGenericParameterDecl {
         return KphpDocGenericParameterDecl(
             name,
-            extendsType?.type?.toExPhpType()?.toString(),
-            defaultType?.type?.toExPhpType()?.toString()
+            extendsTypePsi?.type?.toExPhpType()?.toString(),
+            defaultTypePsi?.type?.toExPhpType()?.toString()
         )
     }
 }

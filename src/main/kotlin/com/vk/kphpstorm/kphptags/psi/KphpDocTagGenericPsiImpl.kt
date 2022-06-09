@@ -13,24 +13,35 @@ class KphpDocTagGenericPsiImpl : PhpDocTagImpl, KphpDocTagImpl {
     constructor(node: ASTNode) : super(node)
     constructor(stub: PhpDocTagStub, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
+    fun getParametersPsi(): List<KphpDocGenericParameterDeclPsiImpl> {
+        val args = mutableListOf<KphpDocGenericParameterDeclPsiImpl>()
+        var child = this.firstChild
+        while (child != null) {
+            if (child is KphpDocGenericParameterDeclPsiImpl)
+                args.add(child)
+            child = child.nextSibling
+        }
+        return args
+    }
+
     /**
      * Функция возвращающая только имена шаблонных аргументов, без extends и default типов.
      *
      * Эта функция необходима, чтобы в [KphpDocGenericParameterDeclPsiImpl.decl] мы могли
-     * вывести типы. Если использовать [getGenericArgumentsWithExtends] вместо, то
+     * вывести типы. Если использовать [getFullGenericParameters] вместо, то
      * будет рекурсия, так как для вывода типа класса, нам нужно знать не шаблонный ли это
-     * аргумент, а для этого используется [getGenericArgumentsWithExtends] которая вызывает
+     * аргумент, а для этого используется [getFullGenericParameters] которая вызывает
      * в себе [KphpDocGenericParameterDeclPsiImpl.decl].которая в себе пытается вывести типы.
      */
-    fun getOnlyNameGenericArguments(): List<String> =
+    fun getOnlyNameGenericParameters(): List<String> =
         when (val stub = this.greenStub) {
-            null -> getOnlyNameGenericArgumentsFromAst()
+            null -> getOnlyNameGenericParametersFromAst()
             else -> fromStubs(stub).map { it.name }
         }
 
-    fun getGenericArgumentsWithExtends(): List<KphpDocGenericParameterDecl> =
+    fun getFullGenericParameters(): List<KphpDocGenericParameterDecl> =
         when (val stub = this.greenStub) {
-            null -> getGenericArgumentsFromAst()
+            null -> getFullGenericParametersFromAst()
             else -> fromStubs(stub)
         }
 
@@ -62,7 +73,7 @@ class KphpDocTagGenericPsiImpl : PhpDocTagImpl, KphpDocTagImpl {
         }
     }
 
-    private fun getGenericArgumentsFromAst(): List<KphpDocGenericParameterDecl> {
+    private fun getFullGenericParametersFromAst(): List<KphpDocGenericParameterDecl> {
         val args = mutableListOf<KphpDocGenericParameterDecl>()
         var child = this.firstChild
         while (child != null) {
@@ -73,7 +84,7 @@ class KphpDocTagGenericPsiImpl : PhpDocTagImpl, KphpDocTagImpl {
         return args
     }
 
-    private fun getOnlyNameGenericArgumentsFromAst(): List<String> {
+    private fun getOnlyNameGenericParametersFromAst(): List<String> {
         val args = mutableListOf<String>()
         var child = this.firstChild
         while (child != null) {

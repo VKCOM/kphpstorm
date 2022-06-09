@@ -27,7 +27,7 @@ object KphpDocTagGenericElementType :
 
     override fun createStub(psi: PhpDocTag, parentStub: StubElement<*>?): PhpDocTagStub {
         // stub value is 'T1,T2:ExtendsClass,T2=default' — without spaces
-        val stubValue = (psi as KphpDocTagGenericPsiImpl).getGenericArgumentsWithExtends()
+        val stubValue = (psi as KphpDocTagGenericPsiImpl).getFullGenericParameters()
             .joinToString(",") {
                 val type = StringBuilder()
                 type.append(it.name)

@@ -48,7 +48,7 @@ object KphpGenericDocTag : KphpDocTag("@kphp-generic") {
         }
 
         if (docTag is KphpDocTagGenericPsiImpl) {
-            val genericArguments = docTag.getGenericArgumentsWithExtends()
+            val genericArguments = docTag.getFullGenericParameters()
             val names = mutableSetOf<String>()
             genericArguments.forEach { decl ->
                 checkExtendsType(decl.extendsType, holder, docTag)

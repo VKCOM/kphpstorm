@@ -48,7 +48,7 @@ object GenericUtil {
     private fun genericNames(docComment: PhpDocComment?): List<KphpDocGenericParameterDecl> {
         val docT = docComment?.getTagElementsByName("@kphp-generic")?.firstOrNull() as? KphpDocTagGenericPsiImpl
             ?: return emptyList()
-        return docT.getGenericArgumentsWithExtends()
+        return docT.getFullGenericParameters()
     }
 
     fun ExPhpType.isGenericPipe(): Boolean {
@@ -185,7 +185,7 @@ object GenericUtil {
         if (doc == null) return false
 
         for (child in doc.children) {
-            if (child is KphpDocTagGenericPsiImpl && child.getOnlyNameGenericArguments().contains(text)) {
+            if (child is KphpDocTagGenericPsiImpl && child.getOnlyNameGenericParameters().contains(text)) {
                 return true
             }
         }
