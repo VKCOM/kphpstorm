@@ -34,4 +34,11 @@ object KphpDocElementTypes {
      * This tag stores "T1,T2:ExtendsClass,T3=default" in stubs and has custom psi for them, therefore is not simple
      */
     val kphpDocTagGeneric = KphpDocTagGenericElementType
+
+    /**
+     * '@kphp-inherit ExtendsClass<Type>, ImplementsClass<Type>'
+     * This tag stores "ExtendsClass<Type>, ImplementsClass<Type>"
+     * in stubs and has custom psi for them, therefore is not simple
+     */
+    val kphpDocTagInherit = KphpDocTagInheritElementType
 }

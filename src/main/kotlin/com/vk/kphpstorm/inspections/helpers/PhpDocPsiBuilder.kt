@@ -72,7 +72,7 @@ object PhpDocPsiBuilder {
     /**
      * Create empty phpdoc and insert it before function/class/field
      */
-    private fun createDocComment(project: Project, element: PhpNamedElement, contents: String = "\n"): PhpDocComment {
+    fun createDocComment(project: Project, element: PhpNamedElement, contents: String = "\n"): PhpDocComment {
         val docComment = PhpPsiElementFactory.createFromText(project, PhpDocElementTypes.DOC_COMMENT, "/**$contents*/")
         val insLevel = if (element is Field) element.parent else element
         return insLevel.parent.addBefore(docComment, insLevel) as PhpDocComment
@@ -81,7 +81,7 @@ object PhpDocPsiBuilder {
     /**
      * Having '/** @var int */', transform to '/** \n * @var int \n */'
      */
-    private fun PhpDocComment.transformToMultiline(project: Project): PhpDocComment {
+    fun PhpDocComment.transformToMultiline(project: Project): PhpDocComment {
         val firstTag = children.find { it is PhpDocTag }
         var item = PsiTreeUtil.skipWhitespacesBackward(firstTag)
 
@@ -102,7 +102,7 @@ object PhpDocPsiBuilder {
         return this
     }
 
-    private fun PhpDocComment.addTag(project: Project, nameWithAt: String, tagValue: String = "", afterTag: PhpDocTag? = null): PhpDocTag {
+    fun PhpDocComment.addTag(project: Project, nameWithAt: String, tagValue: String = "", afterTag: PhpDocTag? = null): PhpDocTag {
         val firstTagStart = PsiTreeUtil.skipWhitespacesBackward(children.find { it is PhpDocTag })
         val firstTagAnchor = when (firstTagStart?.elementType) {
             PhpTokenTypes.DOC_LEADING_ASTERISK -> firstTagStart

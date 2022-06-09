@@ -44,11 +44,20 @@ object GenericUtil {
     }
 
     fun PhpNamedElement.genericNames(): List<KphpDocGenericParameterDecl> = genericNames(docComment)
+    fun PhpNamedElement.genericNonDefaultNames(): List<KphpDocGenericParameterDecl> =
+        genericNames(docComment).filter { it.defaultType == null }
 
     private fun genericNames(docComment: PhpDocComment?): List<KphpDocGenericParameterDecl> {
         val docT = docComment?.getTagElementsByName("@kphp-generic")?.firstOrNull() as? KphpDocTagGenericPsiImpl
             ?: return emptyList()
         return docT.getFullGenericParameters()
+    }
+
+    fun PhpClass.genericParents(): Pair<List<PhpClass>, List<PhpClass>> {
+        val extendsList = extendsList.referenceElements.mapNotNull { it.resolve() as? PhpClass }
+        val implementsList = implementsList.referenceElements.mapNotNull { it.resolve() as? PhpClass }
+
+        return extendsList.filter { it.isGeneric() } to implementsList.filter { it.isGeneric() }
     }
 
     fun ExPhpType.isGenericPipe(): Boolean {

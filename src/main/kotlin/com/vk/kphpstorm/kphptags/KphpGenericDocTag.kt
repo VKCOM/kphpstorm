@@ -24,17 +24,11 @@ object KphpGenericDocTag : KphpDocTag("@kphp-generic") {
     override val elementType: KphpDocTagElementType
         get() = KphpDocElementTypes.kphpDocTagGeneric
 
-    override fun isApplicableFor(owner: PsiElement): Boolean {
-        return owner is Function || owner is PhpClass
-    }
+    override fun isApplicableFor(owner: PsiElement) = owner is Function || owner is PhpClass
 
-    override fun needsAutoCompleteOnTyping(docComment: PhpDocComment, owner: PsiElement?): Boolean {
-        return true
-    }
+    override fun needsAutoCompleteOnTyping(docComment: PhpDocComment, owner: PsiElement?) = true
 
-    override fun areDuplicatesAllowed(): Boolean {
-        return false
-    }
+    override fun areDuplicatesAllowed() = false
 
     override fun onAutoCompleted(docComment: PhpDocComment): String {
         val parentClass = docComment.parentOfType<PhpClass>()

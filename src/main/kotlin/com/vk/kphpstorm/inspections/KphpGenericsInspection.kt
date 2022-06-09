@@ -5,15 +5,13 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.util.findParentOfType
 import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocType
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.inspections.PhpInspection
-import com.jetbrains.php.lang.psi.elements.FunctionReference
-import com.jetbrains.php.lang.psi.elements.MethodReference
-import com.jetbrains.php.lang.psi.elements.NewExpression
-import com.jetbrains.php.lang.psi.elements.PhpUse
+import com.jetbrains.php.lang.psi.elements.*
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.jetbrains.rd.util.first
 import com.vk.kphpstorm.exphptype.*
@@ -28,8 +26,10 @@ import com.vk.kphpstorm.generics.GenericUtil.getInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.isGeneric
 import com.vk.kphpstorm.generics.GenericUtil.isStringableStringUnion
 import com.vk.kphpstorm.inspections.quickfixes.AddExplicitInstantiationCommentQuickFix
+import com.vk.kphpstorm.inspections.quickfixes.RegenerateKphpInheritQuickFix
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagGenericPsiImpl
+import com.vk.kphpstorm.kphptags.psi.KphpDocTagInheritPsiImpl
 
 class KphpGenericsInspection : PhpInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -50,6 +50,54 @@ class KphpGenericsInspection : PhpInspection() {
                 }
                 val call = GenericFunctionCall(reference)
                 checkGenericCall(call, reference, reference.firstChild)
+            }
+
+            override fun visitPhpClass(klass: PhpClass) {
+                val extendsList = klass.extendsList.referenceElements.mapNotNull { it to (it.resolve() as? PhpClass) }
+                val implementsList =
+                    klass.implementsList.referenceElements.mapNotNull { it to (it.resolve() as? PhpClass) }
+
+                val extendsGenericList = extendsList.filter { it.second?.isGeneric() ?: false }
+                val implementsGenericList = implementsList.filter { it.second?.isGeneric() ?: false }
+
+                val inheritors = extendsGenericList + implementsGenericList
+
+                if (inheritors.isEmpty()) {
+                    return
+                }
+
+                val inheritTag = klass.docComment?.getTagElementsByName("@kphp-inherit")
+                    ?.firstOrNull() as? KphpDocTagInheritPsiImpl
+                if (inheritTag == null) {
+                    holder.registerProblem(
+                        klass.nameIdentifier ?: klass,
+                        "Class extends or implements generic class/interface, please specify @kphp-inherit",
+                        ProblemHighlightType.GENERIC_ERROR,
+                        RegenerateKphpInheritQuickFix(
+                            SmartPointerManager.getInstance(klass.project).createSmartPsiElementPointer(klass),
+                            needKeepExistent = false,
+                            "Generate @kphp-inherit tag"
+                        )
+                    )
+                    return
+                }
+
+                val inherits = inheritTag.types().associateBy { it.className() }
+                inheritors.forEach { (ref, inheritClass) ->
+                    if (inheritClass == null) return@forEach
+
+                    if (!inherits.containsKey(inheritClass.fqn)) {
+                        holder.registerProblem(
+                            ref.element,
+                            "Class extends generic class/interface, but this class not specified in @kphp-inherit",
+                            ProblemHighlightType.GENERIC_ERROR,
+                            RegenerateKphpInheritQuickFix(
+                                SmartPointerManager.getInstance(klass.project).createSmartPsiElementPointer(klass),
+                                needKeepExistent = true,
+                            )
+                        )
+                    }
+                }
             }
 
             override fun visitPhpDocType(type: PhpDocType) {
