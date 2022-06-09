@@ -30,6 +30,7 @@ object KphpDocElementTypes {
     val kphpDocTagWarnPerformance = KphpDocTagWarnPerformanceElementType
 
 
+    // TODO
     val kphpDocTagJson = KphpDocTagJsonElementType
 
     /**

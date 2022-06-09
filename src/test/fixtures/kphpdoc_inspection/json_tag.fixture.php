@@ -124,3 +124,13 @@ class J {
    */
   public $f2 = 0;
 }
+
+/**
+ * <error descr="@kphp-json tag 'skip' is not applicable for the class K">@kphp-json skip</error>
+ */
+class K {
+  /**
+   * <error descr="@kphp-json tag 'fields_rename' is not applicable for the field K::$f1">@kphp-json fields_rename=snake_case</error>
+   */
+  public $f1 = 0;
+}

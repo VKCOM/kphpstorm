@@ -39,15 +39,18 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
                 val marker = builder.mark()
                 if (!builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)) {
                     marker.drop()
-                    builder.error(PhpParserErrors.expected("Expected @kphp-json tag"))
+                    builder.error(PhpParserErrors.expected("Property name"))
                     break
                 }
 
-                // NPE
+                if (builder.tokenText == null) {
+                    break
+                }
+
                 if (builder.compare(PhpDocTokenTypes.DOC_TEXT) && builder.tokenText!!.startsWith("=")) {
                     var needNextIdentifier = true
 
-                    if (builder.tokenText!! == "=") {
+                    if (builder.tokenText == "=") {
                         builder.compareAndEat(PhpDocTokenTypes.DOC_TEXT)
                     } else {
                         needNextIdentifier = false
@@ -56,12 +59,12 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
 
                     if (!builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER) && needNextIdentifier) {
                         marker.drop()
-                        builder.error(PhpParserErrors.expected("@kphp-json expected to have a value"))
+                        builder.error(PhpParserErrors.expected("Property value"))
                         break
                     }
                 }
 
-                marker.done(KphpDocJsonItemPsiImpl.elementType)
+                marker.done(KphpDocJsonPropertyPsiImpl.elementType)
                 return true
 
             }
