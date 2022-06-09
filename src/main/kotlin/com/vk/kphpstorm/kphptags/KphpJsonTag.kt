@@ -96,17 +96,15 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
 
                 if (element.allowValues != null) {
                     val elementValue = jsonElement.stringValue()
-                    if (element.allowValues.isEmpty()) {
-                        if (elementValue == null || elementValue.isEmpty()) {
-                            return holder.errTag(docTag, "@kphp-json '$elementName' expected value")
-                        }
-                    } else {
-                        if (elementValue !in element.allowValues) {
-                            return holder.errTag(
-                                docTag,
-                                "@kphp-json '$elementName' should be either ${element.allowValues.joinToString(separator = "|")}"
-                            )
-                        }
+                    if (elementValue == null || elementValue.isEmpty()) {
+                        return holder.errTag(docTag, "@kphp-json '$elementName' expected value")
+                    }
+
+                    if (elementValue !in element.allowValues && element.allowValues.isNotEmpty()) {
+                        return holder.errTag(
+                            docTag,
+                            "@kphp-json '$elementName' should be either ${element.allowValues.joinToString(separator = "|")}"
+                        )
                     }
                 }
 
@@ -152,17 +150,15 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
 
                 if (element.allowValues != null) {
                     val elementValue = jsonElement.stringValue()
-                    if (element.allowValues.isEmpty()) {
-                        if (elementValue == null || elementValue.isEmpty()) {
-                            return holder.errTag(docTag, "@kphp-json '$elementName' expected value")
-                        }
-                    } else {
-                        if (elementValue !in element.allowValues) {
-                            return holder.errTag(
-                                docTag,
-                                "@kphp-json '$elementName' should be either ${element.allowValues.joinToString(separator = "|")}"
-                            )
-                        }
+                    if (elementValue == null || elementValue.isEmpty()) {
+                        return holder.errTag(docTag, "@kphp-json '$elementName' expected value")
+                    }
+
+                    if (elementValue !in element.allowValues && element.allowValues.isNotEmpty()) {
+                        return holder.errTag(
+                            docTag,
+                            "@kphp-json '$elementName' should be either ${element.allowValues.joinToString(separator = "|")}"
+                        )
                     }
                 }
 

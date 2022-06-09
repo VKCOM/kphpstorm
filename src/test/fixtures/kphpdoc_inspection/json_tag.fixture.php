@@ -109,10 +109,18 @@ class I {
 
 /**
  * <error descr="@kphp-json 'float_precision' expected value">@kphp-json float_precision</error>
+ * <error descr="@kphp-json 'fields_rename' expected value">@kphp-json fields_rename</error>
+ * <error descr="@kphp-json 'fields_visibility' expected value">@kphp-json fields_visibility</error>
+ * <error descr="@kphp-json 'skip_if_default' expected value">@kphp-json skip_if_default</error>
  */
 class J {
   /**
    * <error descr="@kphp-json 'float_precision' expected value">@kphp-json float_precision</error>
    */
   public $f1 = 0;
+
+  /**
+   * <error descr="@kphp-json 'skip_if_default' expected value">@kphp-json skip_if_default</error>
+   */
+  public $f2 = 0;
 }
