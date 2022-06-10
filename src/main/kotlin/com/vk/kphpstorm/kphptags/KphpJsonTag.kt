@@ -62,7 +62,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
     )
 
     override val description: String
-        get() = "" // DONE
+        get() = "Used to change the decoding and encoding behavior of JSON"
 
     override val elementType: KphpDocTagElementType
         get() = KphpDocElementTypes.kphpDocTagJson
@@ -86,22 +86,24 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
 
         val propertyPsi = rhs as? KphpDocJsonPropertyPsiImpl ?: return
         val property = properties.firstOrNull { it.name == propertyPsi.name() }
+        val elementValue = propertyPsi.stringValue()
 
-        if (property?.allowValues == null) {
-            val elementValue = propertyPsi.stringValue()
-            if (elementValue != null && property != null) {
-                return holder.errTag(docTag, "@kphp-json '${property.name}' not expected value")
-            }
-        } else {
-            val elementValue = propertyPsi.stringValue()
-            if (elementValue == null || elementValue.isEmpty()) {
-                return holder.errTag(docTag, "@kphp-json '${property.name}' expected value")
-            }
+        if (property != null) {
+            if (property.allowValues == null) {
+                if (elementValue != null) {
+                    return holder.errTag(docTag, "@kphp-json '${property.name}' not expected value")
+                }
+            } else {
+                if (elementValue == null || elementValue.isEmpty()) {
+                    return holder.errTag(docTag, "@kphp-json '${property.name}' expected value")
+                }
 
-            if (elementValue !in property.allowValues && property.allowValues.isNotEmpty()) {
-                return holder.errTag(
-                    docTag, "@kphp-json '${property.name}' should be either ${property.allowValues.joinToString("|")}"
-                )
+                if (elementValue !in property.allowValues && property.allowValues.isNotEmpty()) {
+                    return holder.errTag(
+                        docTag,
+                        "@kphp-json '${property.name}' should be either ${property.allowValues.joinToString("|")}"
+                    )
+                }
             }
         }
 
@@ -125,24 +127,19 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                 }
 
                 if (owner.modifier.isStatic) {
-                    return holder.errTag(
-                        docTag, "@kphp-json is allowed only for instance fields: $$fieldName"
-                    )
+                    return holder.errTag(docTag, "@kphp-json is allowed only for instance fields: $$fieldName")
                 }
 
                 val isUsedCorrectType = property.ifType?.first?.invoke(owner.type.toExPhpType())
-                if (isUsedCorrectType != null && !isUsedCorrectType) {
+                if (isUsedCorrectType == false) {
                     return holder.errTag(
                         docTag,
                         "@kphp-json ${property.name} tag is allowed only above ${property.ifType.second} type, got above $$fieldName field"
                     )
                 }
 
-                if (property.name == "float_precision" && (propertyPsi.intValue() ?: 0) < 0) {
-                    return holder.errTag(
-                        docTag,
-                        "@kphp-json 'float_precision' value should be non negative integer, got '${propertyPsi.intValue()}'"
-                    )
+                if (!checkFloatPrecision(propertyPsi, property, holder, docTag)) {
+                    return
                 }
 
                 if (property.name == "skip") {
@@ -150,38 +147,36 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
 
                     if (otherJsonTags.size > 1) {
                         return holder.errTag(
-                            docTag, "@kphp-json 'skip' can't be used together with other @kphp-json tags"
+                            docTag,
+                            "@kphp-json 'skip' can't be used together with other @kphp-json tags"
                         )
                     }
                 }
 
-                if (checkFlatten(phpClass, property, docTag, holder)) {
-                    return
-                }
+                checkFlatten(phpClass, property, docTag, holder)
             }
             is PhpClass -> {
                 val className = owner.name
 
                 if (property == null) {
                     return holder.errTag(
-                        docTag, "Unknown @kphp-json tag '${propertyPsi.name()}' above class $className"
+                        docTag,
+                        "Unknown @kphp-json tag '${propertyPsi.name()}' above class $className"
                     )
                 }
 
                 if (!property.allowClass) {
                     return holder.errTag(
-                        docTag, "@kphp-json tag '${property.name}' is not applicable for the class $className"
-                    )
-                }
-
-                if (property.name == "float_precision" && (propertyPsi.intValue() ?: 0) < 0) {
-                    holder.errTag(
                         docTag,
-                        "@kphp-json 'float_precision' value should be non negative integer, got '${propertyPsi.intValue()}'"
+                        "@kphp-json tag '${property.name}' is not applicable for the class $className"
                     )
                 }
 
-                if (checkFlatten(owner, property, docTag, holder)) {
+                if (!checkFloatPrecision(propertyPsi, property, holder, docTag)) {
+                    return
+                }
+
+                if (!checkFlatten(owner, property, docTag, holder)) {
                     return
                 }
 
@@ -201,15 +196,34 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         docTag: PhpDocTag,
         holder: AnnotationHolder,
     ): Boolean {
-        if (phpClass.docComment != null && !property.combinedFlatten) {
-            val otherJsonTags = findThisTagsInDocComment<KphpDocTagJsonPsiImpl>(phpClass)
+        if (phpClass.docComment == null || property.combinedFlatten) return true
 
-            val useFlatten = otherJsonTags.any { it.item()?.name() == "flatten" }
-            if (useFlatten) {
-                holder.errTag(docTag, "'${property.name}' can't be used for a @kphp-json 'flatten' class")
-                return true
-            }
+        val otherJsonTags = findThisTagsInDocComment<KphpDocTagJsonPsiImpl>(phpClass)
+
+        val useFlatten = otherJsonTags.any { it.item()?.name() == "flatten" }
+        if (useFlatten) {
+            holder.errTag(docTag, "'${property.name}' can't be used for a @kphp-json 'flatten' class")
+            return false
         }
-        return false
+
+        return true
+    }
+
+    private fun checkFloatPrecision(
+        propertyPsi: KphpDocJsonPropertyPsiImpl,
+        property: Property,
+        holder: AnnotationHolder,
+        docTag: PhpDocTag
+    ): Boolean {
+        val isUsedCorrectFloatPrecision = (propertyPsi.intValue() ?: 0) > 0
+        if (property.name == "float_precision" && !isUsedCorrectFloatPrecision) {
+            holder.errTag(
+                docTag,
+                "@kphp-json 'float_precision' value should be non negative integer, got '${propertyPsi.intValue()}'"
+            )
+            return false
+        }
+
+        return true
     }
 }

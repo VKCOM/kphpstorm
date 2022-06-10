@@ -16,38 +16,39 @@ class KphpJsonPropertyCompletionProvider : CompletionProvider<CompletionParamete
         val position = parameters.position
         val owner = position.parentDocComment?.owner as? PhpTypedElement ?: return
 
-        when (position.prevSibling?.text) {
+        val elementBeforeCursor = position.prevSibling
+        when (elementBeforeCursor?.text) {
+            "=" -> {
+                val elementName = elementBeforeCursor.prevSibling?.text ?: return
+
+                val property = KphpJsonTag.properties.firstOrNull { it.name == elementName } ?: return
+                property.allowValues?.forEach { value ->
+                    result.addElement(LookupElementBuilder.create(value))
+                }
+            }
+
+            // if no text before cursor
             null -> {
                 val isField = owner is Field
                 val isClass = owner is PhpClass
 
-                for (jsonElement in KphpJsonTag.properties) {
-                    if (jsonElement.allowField != isField && jsonElement.allowClass != isClass) {
+                for (property in KphpJsonTag.properties) {
+                    if (property.allowField != isField && property.allowClass != isClass) {
                         continue
                     }
 
-                    if (jsonElement.ifType != null) {
-                        if (!jsonElement.ifType.first.invoke(owner.type.toExPhpType())) {
+                    if (property.ifType != null) {
+                        if (!property.ifType.first.invoke(owner.type.toExPhpType())) {
                             continue
                         }
                     }
 
-                    var element = LookupElementBuilder.create(jsonElement.name)
-
-                    if (jsonElement.allowValues != null) {
+                    var element = LookupElementBuilder.create(property.name)
+                    if (property.allowValues != null) {
                         element = element.appendTailText("=", true).withInsertHandler(KphpDocTagJsonInsertHandler)
                     }
 
                     result.addElement(element)
-                }
-            }
-            "=" -> {
-                val elementName = position.prevSibling.prevSibling?.text
-
-                val element = KphpJsonTag.properties.firstOrNull { it.name == elementName } ?: return
-                val allowValues = element.allowValues ?: return
-                for (value in allowValues) {
-                    result.addElement(LookupElementBuilder.create(value))
                 }
             }
         }
