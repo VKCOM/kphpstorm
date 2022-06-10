@@ -75,6 +75,10 @@ class GenericsGeneralTest : GenericTestBase() {
         runFixture("generics/general/generic_in_generic.fixture.php")
     }
 
+    fun testInheritTag() {
+        runFixture("generics/general/inherit/tag/main.fixture.php")
+    }
+
     /**
      * Disabled.
      *

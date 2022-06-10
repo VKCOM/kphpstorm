@@ -53,22 +53,24 @@ class KphpGenericsInspection : PhpInspection() {
             }
 
             override fun visitPhpClass(klass: PhpClass) {
+                checkInheritTag(klass)
+            }
+
+            private fun checkInheritTag(klass: PhpClass) {
                 val extendsList = klass.extendsList.referenceElements.mapNotNull { it to (it.resolve() as? PhpClass) }
                 val implementsList =
                     klass.implementsList.referenceElements.mapNotNull { it to (it.resolve() as? PhpClass) }
 
+                val allParents = extendsList + implementsList
+
                 val extendsGenericList = extendsList.filter { it.second?.isGeneric() ?: false }
                 val implementsGenericList = implementsList.filter { it.second?.isGeneric() ?: false }
 
-                val inheritors = extendsGenericList + implementsGenericList
-
-                if (inheritors.isEmpty()) {
-                    return
-                }
+                val allGenericParents = extendsGenericList + implementsGenericList
 
                 val inheritTag = klass.docComment?.getTagElementsByName("@kphp-inherit")
                     ?.firstOrNull() as? KphpDocTagInheritPsiImpl
-                if (inheritTag == null) {
+                if (inheritTag == null && allGenericParents.isNotEmpty()) {
                     holder.registerProblem(
                         klass.nameIdentifier ?: klass,
                         "Class extends or implements generic class/interface, please specify @kphp-inherit",
@@ -82,14 +84,41 @@ class KphpGenericsInspection : PhpInspection() {
                     return
                 }
 
-                val inherits = inheritTag.types().associateBy { it.className() }
-                inheritors.forEach { (ref, inheritClass) ->
-                    if (inheritClass == null) return@forEach
+                val tagParents = inheritTag?.types()?.associateBy { it.className() } ?: emptyMap()
+                allGenericParents.forEach { (ref, parentCLass) ->
+                    if (parentCLass == null) return@forEach
 
-                    if (!inherits.containsKey(inheritClass.fqn)) {
+                    if (!tagParents.containsKey(parentCLass.fqn)) {
                         holder.registerProblem(
                             ref.element,
                             "Class extends generic class/interface, but this class not specified in @kphp-inherit",
+                            ProblemHighlightType.GENERIC_ERROR,
+                            RegenerateKphpInheritQuickFix(
+                                SmartPointerManager.getInstance(klass.project).createSmartPsiElementPointer(klass),
+                                needKeepExistent = true,
+                            )
+                        )
+                    }
+                }
+
+                tagParents.forEach { (name, decl) ->
+                    val parent = allParents.find { it.second?.fqn == name }
+                    if (parent == null && decl.className() != null) {
+                        return holder.registerProblem(
+                            decl,
+                            "Class/interface $name not extended or implemented class/interface ${klass.name}",
+                            ProblemHighlightType.GENERIC_ERROR,
+                            RegenerateKphpInheritQuickFix(
+                                SmartPointerManager.getInstance(klass.project).createSmartPsiElementPointer(klass),
+                                needKeepExistent = true,
+                            )
+                        )
+                    }
+
+                    if (parent?.second?.isGeneric() == false) {
+                        return holder.registerProblem(
+                            decl,
+                            "It is not necessary to specify not generic class/interface $name in @kphp-inherit",
                             ProblemHighlightType.GENERIC_ERROR,
                             RegenerateKphpInheritQuickFix(
                                 SmartPointerManager.getInstance(klass.project).createSmartPsiElementPointer(klass),

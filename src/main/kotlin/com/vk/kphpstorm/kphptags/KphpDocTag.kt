@@ -90,6 +90,13 @@ abstract class KphpDocTag(
     }
 
     /**
+     * Helper for use inside annotate() on any error
+     */
+    protected fun AnnotationHolder.error(tagElement: PsiElement, errorMessage: String) {
+        this.newAnnotation(HighlightSeverity.ERROR, errorMessage).range(tagElement).create()
+    }
+
+    /**
      * Helper for use inside annotate() for highlighting parts
      */
     protected fun AnnotationHolder.highlight(element: PsiElement, textAttributes: TextAttributesKey) {

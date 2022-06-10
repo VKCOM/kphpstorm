@@ -4,7 +4,13 @@ import com.intellij.lang.ASTNode
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocElementType
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocPsiElementImpl
+import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl
+import com.vk.kphpstorm.exphptype.ExPhpTypeInstance
+import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
+import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
 import com.vk.kphpstorm.exphptype.psi.ExPhpTypeTplInstantiationPsiImpl
+import com.vk.kphpstorm.generics.GenericUtil.getInstantiation
+import com.vk.kphpstorm.helpers.toExPhpType
 
 /**
  * Inside '@kphp-inherit ExtendsClass<Type>, ImplementsClass<Type>' — 'ExtendsClass<Type>' and 'ImplementsClass<Type'
@@ -18,7 +24,16 @@ class KphpDocInheritParameterDeclPsiImpl(node: ASTNode) : PhpDocPsiElementImpl(n
     }
 
     fun className(): String? {
-        val instantiation = findChildByClass(ExPhpTypeTplInstantiationPsiImpl::class.java) ?: return null
-        return instantiation.type.types.firstOrNull { !it.contains("(") }
+        val instantiation = findChildByClass(PhpDocTypeImpl::class.java) ?: return null
+        if (instantiation !is ExPhpTypeTplInstantiationPsiImpl && instantiation !is ExPhpTypeInstancePsiImpl)
+            return null
+
+        val exType = instantiation.type.toExPhpType() ?: return null
+        if (exType is ExPhpTypeTplInstantiation)
+            return exType.classFqn
+        if (exType is ExPhpTypeInstance)
+            return exType.fqn
+
+        return exType.getInstantiation()?.classFqn
     }
 }

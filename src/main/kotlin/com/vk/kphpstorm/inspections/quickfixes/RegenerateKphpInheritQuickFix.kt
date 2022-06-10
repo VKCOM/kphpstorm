@@ -64,8 +64,11 @@ class RegenerateKphpInheritQuickFix(
         }
 
         removeTagFromDocComment(docComment, "@kphp-inherit")
-        docComment
-            .transformToMultiline(project)
-            .addTag(project, KphpInheritDocTag.nameWithAt, newParents, genericTag)
+
+        if (newParents.isNotEmpty()) {
+            docComment
+                .transformToMultiline(project)
+                .addTag(project, KphpInheritDocTag.nameWithAt, newParents, genericTag)
+        }
     }
 }

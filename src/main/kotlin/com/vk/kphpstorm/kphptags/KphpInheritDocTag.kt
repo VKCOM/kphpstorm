@@ -2,13 +2,17 @@ package com.vk.kphpstorm.kphptags
 
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.highlighter.PhpHighlightingData
 import com.jetbrains.php.lang.psi.elements.PhpClass
+import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
+import com.vk.kphpstorm.exphptype.psi.ExPhpTypeTplInstantiationPsiImpl
 import com.vk.kphpstorm.generics.GenericUtil.genericNonDefaultNames
 import com.vk.kphpstorm.generics.GenericUtil.genericParents
 import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
+import com.vk.kphpstorm.kphptags.psi.KphpDocInheritParameterDeclPsiImpl
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagElementType
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagInheritPsiImpl
 
@@ -47,6 +51,15 @@ object KphpInheritDocTag : KphpDocTag("@kphp-inherit") {
 
         if (docTag is KphpDocTagInheritPsiImpl) {
             holder.highlight(docTag, PhpHighlightingData.DOC_COMMENT)
+        }
+
+        val parameters = PsiTreeUtil.findChildrenOfType(rhs.parent, KphpDocInheritParameterDeclPsiImpl::class.java)
+        parameters.forEach {
+            it as KphpDocInheritParameterDeclPsiImpl
+            val child = it.firstChild
+            if (child !is ExPhpTypeTplInstantiationPsiImpl && child !is ExPhpTypeInstancePsiImpl) {
+                holder.error(it.firstChild, "Expected ClassName<Type>, got ${it.firstChild.text}")
+            }
         }
     }
 }
