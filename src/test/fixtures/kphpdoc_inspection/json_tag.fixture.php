@@ -86,19 +86,14 @@ class G {
 /**
  * <error descr="@kphp-json 'fields_rename' should be either none|snake_case|camelCase">@kphp-json fields_rename=unknown_value</error>
  * <error descr="@kphp-json 'fields_visibility' should be either all|public">@kphp-json fields_visibility=private</error>
- * <error descr="@kphp-json 'skip_if_default' should be either true|false">@kphp-json skip_if_default=unknown_value</error>
  */
 class H {
-  /**
-   * <error descr="@kphp-json 'skip_if_default' should be either true|false">@kphp-json skip_if_default=private</error>
-   */
-  public $f1 = 0;
 }
 
 /**
  * <error descr="'fields_rename' can't be used for a @kphp-json 'flatten' class">@kphp-json fields_rename=camelCase</error>
  * @kphp-json flatten
- * <error descr="'skip_if_default' can't be used for a @kphp-json 'flatten' class">@kphp-json skip_if_default=true</error>
+ * <error descr="'fields_visibility' can't be used for a @kphp-json 'flatten' class">@kphp-json fields_visibility=all</error>
  */
 class I {
   /**
@@ -111,18 +106,12 @@ class I {
  * <error descr="@kphp-json 'float_precision' expected value">@kphp-json float_precision</error>
  * <error descr="@kphp-json 'fields_rename' expected value">@kphp-json fields_rename</error>
  * <error descr="@kphp-json 'fields_visibility' expected value">@kphp-json fields_visibility</error>
- * <error descr="@kphp-json 'skip_if_default' expected value">@kphp-json skip_if_default</error>
  */
 class J {
   /**
    * <error descr="@kphp-json 'float_precision' expected value">@kphp-json float_precision</error>
    */
   public $f1 = 0;
-
-  /**
-   * <error descr="@kphp-json 'skip_if_default' expected value">@kphp-json skip_if_default</error>
-   */
-  public $f2 = 0;
 }
 
 /**
@@ -131,6 +120,16 @@ class J {
 class K {
   /**
    * <error descr="@kphp-json tag 'fields_rename' is not applicable for the field K::$f1">@kphp-json fields_rename=snake_case</error>
+   */
+  public $f1 = 0;
+}
+
+/**
+ * <error descr="@kphp-json 'flatten' not expected value">@kphp-json flatten=true</error>
+ */
+class L {
+  /**
+   * <error descr="@kphp-json 'skip_if_default' not expected value">@kphp-json skip_if_default=true</error>
    */
   public $f1 = 0;
 }

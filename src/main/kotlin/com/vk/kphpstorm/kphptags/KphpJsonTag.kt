@@ -17,7 +17,7 @@ import com.vk.kphpstorm.kphptags.psi.KphpDocTagJsonPsiImpl
 
 object KphpJsonTag : KphpDocTag("@kphp-json") {
 
-    data class property(
+    data class Property(
         val name: String,
         val allowField: Boolean = false,
         val allowClass: Boolean = false,
@@ -27,22 +27,22 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
     )
 
     val properties = listOf(
-        property("fields_rename", allowClass = true, allowValues = listOf("none", "snake_case", "camelCase")),
-        property("fields_visibility", allowClass = true, allowValues = listOf("all", "public")),
-        property("flatten", allowClass = true, combinedFlatten = true),
-        property("rename", allowField = true),
-        property("skip_if_default", allowClass = true, allowField = true, allowValues = listOf("true", "false")),
-        property("required", allowField = true),
-        property("raw_string", allowField = true, ifType = Pair({ it == ExPhpType.STRING }, "string")),
-        property("skip", allowField = true),
-        property(
+        Property("fields_rename", allowClass = true, allowValues = listOf("none", "snake_case", "camelCase")),
+        Property("fields_visibility", allowClass = true, allowValues = listOf("all", "public")),
+        Property("flatten", allowClass = true, combinedFlatten = true),
+        Property("rename", allowField = true),
+        Property("skip_if_default", allowClass = true, allowField = true),
+        Property("required", allowField = true),
+        Property("raw_string", allowField = true, ifType = Pair({ it == ExPhpType.STRING }, "string")),
+        Property("skip", allowField = true),
+        Property(
             "float_precision",
             allowClass = true,
             combinedFlatten = true,
             allowField = true,
             allowValues = listOf(),
         ),
-        property(
+        Property(
             "array_as_hashmap",
             allowField = true,
             combinedFlatten = true,
@@ -76,7 +76,12 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         val propertyPsi = rhs as? KphpDocJsonPropertyPsiImpl ?: return
         val property = properties.firstOrNull { it.name == propertyPsi.name() }
 
-        if (property?.allowValues != null) {
+        if (property?.allowValues == null) {
+            val elementValue = propertyPsi.stringValue()
+            if (elementValue != null && property != null) {
+                return holder.errTag(docTag, "@kphp-json '${property.name}' not expected value")
+            }
+        } else {
             val elementValue = propertyPsi.stringValue()
             if (elementValue == null || elementValue.isEmpty()) {
                 return holder.errTag(docTag, "@kphp-json '${property.name}' expected value")
@@ -139,7 +144,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     }
                 }
 
-                if (chechFlatten(phpClass, property, docTag, holder)) {
+                if (checkFlatten(phpClass, property, docTag, holder)) {
                     return
                 }
             }
@@ -154,8 +159,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
 
                 if (!property.allowClass) {
                     return holder.errTag(
-                        docTag,
-                        "@kphp-json tag '${property.name}' is not applicable for the class $className"
+                        docTag, "@kphp-json tag '${property.name}' is not applicable for the class $className"
                     )
                 }
 
@@ -166,7 +170,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     )
                 }
 
-                if (chechFlatten(owner, property, docTag, holder)) {
+                if (checkFlatten(owner, property, docTag, holder)) {
                     return
                 }
 
@@ -180,9 +184,9 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         }
     }
 
-    private fun chechFlatten(
+    private fun checkFlatten(
         phpClass: PhpClass,
-        property: property,
+        property: Property,
         docTag: PhpDocTag,
         holder: AnnotationHolder,
     ): Boolean {
