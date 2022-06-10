@@ -112,6 +112,11 @@ class J {
    * <error descr="@kphp-json 'float_precision' expected value">@kphp-json float_precision</error>
    */
   public $f1 = 0;
+
+  /**
+   * <error descr="@kphp-json 'rename' expected value">@kphp-json rename</error>
+   */
+  public $f2 = "";
 }
 
 /**

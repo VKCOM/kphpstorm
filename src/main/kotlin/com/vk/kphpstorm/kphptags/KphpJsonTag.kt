@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.elements.Field
 import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.vk.kphpstorm.exphptype.ExPhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeArray
+import com.vk.kphpstorm.exphptype.ExPhpTypeNullable
 import com.vk.kphpstorm.helpers.parentDocComment
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
@@ -26,11 +27,21 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         val ifType: Pair<((ExPhpType?) -> Boolean), String>? = null,
     )
 
+    private val isArray: (ExPhpType?) -> Boolean = {
+        val type = if (it is ExPhpTypeNullable) {
+            it.inner
+        } else {
+            it
+        }
+
+        type is ExPhpTypeArray
+    }
+
     val properties = listOf(
         Property("fields_rename", allowClass = true, allowValues = listOf("none", "snake_case", "camelCase")),
         Property("fields_visibility", allowClass = true, allowValues = listOf("all", "public")),
         Property("flatten", allowClass = true, combinedFlatten = true),
-        Property("rename", allowField = true),
+        Property("rename", allowField = true, allowValues = listOf()),
         Property("skip_if_default", allowClass = true, allowField = true),
         Property("required", allowField = true),
         Property("raw_string", allowField = true, ifType = Pair({ it == ExPhpType.STRING }, "string")),
@@ -46,7 +57,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
             "array_as_hashmap",
             allowField = true,
             combinedFlatten = true,
-            ifType = Pair({ it is ExPhpTypeArray }, "array"),
+            ifType = Pair(isArray, "array"),
         ),
     )
 
