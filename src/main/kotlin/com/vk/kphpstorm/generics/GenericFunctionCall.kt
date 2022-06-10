@@ -16,6 +16,7 @@ class GenericFunctionCall(private val call: FunctionReference) : GenericCall(cal
     override val argumentsTypes: List<ExPhpType?> = callArgs
         .filterIsInstance<PhpTypedElement>().map { it.type.global(project).toExPhpType() }
     override val explicitSpecsPsi = findInstantiationComment(call)
+    override val klass = null
 
     private val function: Function? = call.resolve() as? Function
 

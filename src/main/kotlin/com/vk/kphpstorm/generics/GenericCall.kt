@@ -51,6 +51,7 @@ abstract class GenericCall(val project: Project) {
     abstract val callArgs: Array<PsiElement>
     abstract val explicitSpecsPsi: GenericInstantiationPsiCommentImpl?
     abstract val argumentsTypes: List<ExPhpType?>
+    abstract val klass: PhpClass?
     protected var contextType: ExPhpType? = null
 
     abstract fun element(): PsiElement
@@ -103,7 +104,7 @@ abstract class GenericCall(val project: Project) {
         // необходимы обв списка для дальнейших инспекций
 
         // В первую очередь, выводим все типы шаблонов из аргументов функции (при наличии)
-        reifier.reifyAllGenericsT(null, function.parameters, genericNames, argumentsTypes, contextType)
+        reifier.reifyAllGenericsT(klass, function.parameters, genericNames, argumentsTypes, contextType)
         // Далее, выводим все типы шаблонов из явного списка типов (при наличии)
         extractor.extractExplicitGenericsT(genericNames(), explicitSpecsPsi)
     }

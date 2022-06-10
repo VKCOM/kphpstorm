@@ -41,7 +41,7 @@ abstract class ResolvingGenericBase(val project: Project) {
         return instantiate()
     }
 
-    protected fun specialization(): Map<String, ExPhpType> {
+    protected fun specialization(): MutableMap<String, ExPhpType> {
         val specialization = specializationList()
 
         val specializationNameMap = mutableMapOf<String, ExPhpType>()

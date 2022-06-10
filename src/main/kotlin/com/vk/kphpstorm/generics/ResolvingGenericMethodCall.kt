@@ -2,18 +2,23 @@ package com.vk.kphpstorm.generics
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.php.PhpIndex
+import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocReturnTag
 import com.jetbrains.php.lang.psi.elements.Method
 import com.jetbrains.php.lang.psi.elements.Parameter
 import com.jetbrains.php.lang.psi.elements.PhpClass
+import com.jetbrains.php.lang.psi.elements.impl.PhpClassImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeGenericsT
 import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
+import com.vk.kphpstorm.generics.GenericUtil.genericInheritInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
+import com.vk.kphpstorm.generics.GenericUtil.genericParents
 import com.vk.kphpstorm.generics.GenericUtil.getInstantiations
 import com.vk.kphpstorm.generics.GenericUtil.isReturnGeneric
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import com.vk.kphpstorm.typeProviders.GenericMethodsTypeProvider
+import java.lang.Integer.min
 
 class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(project) {
     override var klass: PhpClass? = null
@@ -25,10 +30,62 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
     override var classGenericType: ExPhpTypeTplInstantiation? = null
 
     override fun instantiate(): PhpType? {
+        val klass = klass ?: return null
+
         val specializationNameMap = specialization()
 
-        val returnTag = method?.docComment?.returnTag ?: return null
-        val exType = returnTag.type.toExPhpType(project) ?: return null
+        val (extendsList, implementsList) = klass.genericParents()
+
+        val parentsList = extendsList + implementsList
+        parentsList.forEach { parent ->
+            val extendsName = parent.fqn
+            val genericNames = parent.genericNames()
+            val inheritInstantiation = klass.genericInheritInstantiation(extendsName)
+            if (inheritInstantiation != null) {
+                val specList = inheritInstantiation.specializationList()
+
+                val classSpecializationMap = genericNames.associate {
+                    it.name to it.defaultType
+                }.toMutableMap()
+
+                for (i in 0 until min(genericNames.size, specList.size)) {
+                    val genericT = genericNames[i]
+                    val spec = specList[i]
+
+                    classSpecializationMap[genericT.name] = spec
+                }
+
+                classSpecializationMap.forEach classForEach@{ (name, type) ->
+                    if (type == null) {
+                        return@classForEach
+                    }
+                    specializationNameMap[name] = type.instantiateGeneric(specializationNameMap)
+                }
+            }
+        }
+
+        val classImpl = klass as PhpClassImpl
+
+        var returnTag: PhpDocReturnTag? = null
+
+        val ifaces = classImpl.directImplementedInterfaces
+        ifaces.forEach { iface ->
+            val method = iface.findMethodByName(method!!.name)
+            returnTag = method?.docComment?.returnTag ?: return@forEach
+        }
+
+        val classes = listOf(classImpl.superClass)
+        classes.forEach { parent ->
+            val method = parent?.findMethodByName(method!!.name)
+            returnTag = method?.docComment?.returnTag ?: return@forEach
+        }
+
+        val classMethodReturnTag = method?.docComment?.returnTag
+        if (classMethodReturnTag != null) {
+            returnTag = classMethodReturnTag
+        }
+
+        val exType = returnTag?.type?.toExPhpType(project) ?: return null
         val specializedType = exType.instantiateGeneric(specializationNameMap)
 
         return specializedType.toPhpType()

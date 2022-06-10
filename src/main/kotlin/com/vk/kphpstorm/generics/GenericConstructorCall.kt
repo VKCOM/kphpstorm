@@ -19,7 +19,7 @@ class GenericConstructorCall(private val call: NewExpression) : GenericCall(call
         .filterIsInstance<PhpTypedElement>().map { it.type.global(project).toExPhpType() }
     override val explicitSpecsPsi = GenericUtil.findInstantiationComment(call)
 
-    private val klass: PhpClass?
+    override val klass: PhpClass?
     private val method: Method?
 
     init {

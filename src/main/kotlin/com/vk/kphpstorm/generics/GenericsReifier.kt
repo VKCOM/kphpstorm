@@ -5,6 +5,9 @@ import com.jetbrains.php.lang.psi.elements.Parameter
 import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement
 import com.vk.kphpstorm.exphptype.*
+import com.vk.kphpstorm.generics.GenericUtil.genericInheritInstantiation
+import com.vk.kphpstorm.generics.GenericUtil.genericNames
+import com.vk.kphpstorm.generics.GenericUtil.genericParents
 import com.vk.kphpstorm.generics.GenericUtil.getGenericTypeOrSelf
 import com.vk.kphpstorm.generics.GenericUtil.getInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.isGeneric
@@ -81,6 +84,38 @@ class GenericsReifier(val project: Project) {
             implicitSpecs.add(type)
         }
         implicitSpecializationNameMap.putAll(implicitClassSpecializationNameMap)
+
+        if (klass != null) {
+            val (extendsList, implementsList) = klass.genericParents()
+
+            val parentsList = extendsList + implementsList
+            parentsList.forEach { parent ->
+                val extendsName = parent.fqn
+                val genericNames = parent.genericNames()
+                val inheritInstantiation = klass.genericInheritInstantiation(extendsName)
+                if (inheritInstantiation != null) {
+                    val specList = inheritInstantiation.specializationList()
+
+                    val classSpecializationMap = genericNames.associate {
+                        it.name to it.defaultType
+                    }.toMutableMap()
+
+                    for (i in 0 until Integer.min(genericNames.size, specList.size)) {
+                        val genericT = genericNames[i]
+                        val spec = specList[i]
+
+                        classSpecializationMap[genericT.name] = spec
+                    }
+
+                    classSpecializationMap.forEach classForEach@{ (name, type) ->
+                        if (type == null) {
+                            return@classForEach
+                        }
+                        implicitSpecializationNameMap[name] = type.instantiateGeneric(implicitSpecializationNameMap)
+                    }
+                }
+            }
+        }
     }
 
     /**

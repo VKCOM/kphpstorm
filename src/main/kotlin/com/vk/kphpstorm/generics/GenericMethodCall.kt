@@ -1,8 +1,10 @@
 package com.vk.kphpstorm.generics
 
 import com.intellij.psi.PsiElement
+import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.psi.elements.Method
 import com.jetbrains.php.lang.psi.elements.MethodReference
+import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.ExPhpType
@@ -19,7 +21,9 @@ class GenericMethodCall(private val call: MethodReference) : GenericCall(call.pr
     override val explicitSpecsPsi = GenericUtil.findInstantiationComment(call)
 
     private val method = call.resolve() as? Method
-    private val klass = method?.containingClass
+    // TODO
+    private val containingClass = method?.containingClass
+    override val klass: PhpClass?
 
     init {
         val callType = call.classReference?.type?.global(project)
@@ -27,11 +31,11 @@ class GenericMethodCall(private val call: MethodReference) : GenericCall(call.pr
         val classType = PhpType().add(callType).global(project)
         val parsed = classType.toExPhpType()
 
-        val instantiation = parsed?.getInstantiations()?.firstOrNull {
-            it.classFqn == klass?.fqn
-        }
+        val instantiation = parsed?.getInstantiations()?.firstOrNull()
 
         if (instantiation != null) {
+            klass = PhpIndex.getInstance(project).getAnyByFQN(instantiation.classFqn).firstOrNull()
+
             val specialization = instantiation.specializationList
             val classSpecializationNameMap = mutableMapOf<String, ExPhpType>()
             val genericNames = klass?.genericNames() ?: emptyList()
@@ -43,6 +47,8 @@ class GenericMethodCall(private val call: MethodReference) : GenericCall(call.pr
             classSpecializationNameMap.forEach { (name, type) ->
                 reifier.implicitClassSpecializationNameMap[name] = type
             }
+        } else {
+            klass = null
         }
 
         init()

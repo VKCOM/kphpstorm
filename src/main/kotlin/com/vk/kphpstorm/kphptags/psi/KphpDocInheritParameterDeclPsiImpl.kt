@@ -5,6 +5,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocElementType
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocRef
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocPsiElementImpl
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl
+import com.vk.kphpstorm.exphptype.ExPhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeInstance
 import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
 import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
@@ -35,5 +36,16 @@ class KphpDocInheritParameterDeclPsiImpl(node: ASTNode) : PhpDocPsiElementImpl(n
             return exType.fqn
 
         return exType.getInstantiation()?.classFqn
+    }
+
+    fun specializationList(): List<ExPhpType> {
+        val instantiationPsi = findChildByClass(PhpDocTypeImpl::class.java) ?: return emptyList()
+        if (instantiationPsi !is ExPhpTypeTplInstantiationPsiImpl)
+            return emptyList()
+
+        val exType = instantiationPsi.type.toExPhpType() ?: return emptyList()
+        val instantiation = exType.getInstantiation() ?: return emptyList()
+
+        return instantiation.specializationList
     }
 }

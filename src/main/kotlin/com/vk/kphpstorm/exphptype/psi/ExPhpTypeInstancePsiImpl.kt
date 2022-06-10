@@ -26,14 +26,14 @@ class ExPhpTypeInstancePsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
             PhpType().add(text)
         }
 
-        if (needBeGenericT(text)) {
+        if (isGenericT()) {
             return PhpType().add("%$text")
         }
 
         return getType(this, text)
     }
 
-    private fun needBeGenericT(text: String): Boolean {
+    fun isGenericT(): Boolean {
         val isGenericT = GenericUtil.nameIsGeneric(this, text)
 
         val phpDoc = parent.parent ?: return isGenericT

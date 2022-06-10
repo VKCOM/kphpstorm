@@ -20,6 +20,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.elements.impl.ClassReferenceImpl
 import com.jetbrains.php.lang.psi.elements.impl.FunctionReferenceImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
+import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
 import com.vk.kphpstorm.helpers.KPHP_NATIVE_FUNCTIONS
 import com.vk.kphpstorm.kphptags.ALL_KPHPDOC_TAGS
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagImpl
@@ -122,6 +123,9 @@ class KphpStormAnnotator : Annotator {
     @Suppress("UNUSED_PARAMETER")
     private fun onTypeInsidePhpdocTag(element: PhpDocTypeImpl, holder: AnnotationHolder) {
         // for future: highlight primitives and classes, template args and shape keys
+        if (element is ExPhpTypeInstancePsiImpl && element.isGenericT()) {
+            holder.textAttributes(element, KphpHighlightingData.PHPDOC_GENERIC_TYPE_T)
+        }
     }
 
     /**

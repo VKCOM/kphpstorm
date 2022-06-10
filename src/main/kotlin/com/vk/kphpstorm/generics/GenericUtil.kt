@@ -13,7 +13,9 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.*
 import com.vk.kphpstorm.generics.psi.GenericInstantiationPsiCommentImpl
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
+import com.vk.kphpstorm.kphptags.psi.KphpDocInheritParameterDeclPsiImpl
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagGenericPsiImpl
+import com.vk.kphpstorm.kphptags.psi.KphpDocTagInheritPsiImpl
 
 object GenericUtil {
     fun PhpNamedElement.isGeneric() = docComment?.getTagElementsByName("@kphp-generic")?.firstOrNull() != null
@@ -58,6 +60,15 @@ object GenericUtil {
         val implementsList = implementsList.referenceElements.mapNotNull { it.resolve() as? PhpClass }
 
         return extendsList.filter { it.isGeneric() } to implementsList.filter { it.isGeneric() }
+    }
+
+    fun PhpClass.genericInheritInstantiation(className: String): KphpDocInheritParameterDeclPsiImpl? {
+        val docT = docComment?.getTagElementsByName("@kphp-inherit")?.firstOrNull() as? KphpDocTagInheritPsiImpl
+            ?: return null
+
+        return docT.types().find {
+            it.className() == className
+        }
     }
 
     fun ExPhpType.isGenericPipe(): Boolean {

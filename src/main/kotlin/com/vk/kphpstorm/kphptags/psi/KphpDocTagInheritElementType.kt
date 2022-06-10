@@ -26,9 +26,17 @@ object KphpDocTagInheritElementType :
     }
 
     override fun createStub(psi: PhpDocTag, parentStub: StubElement<*>?): PhpDocTagStub {
-        // stub value is 'T1,T2:ExtendsClass,T2=default' — without spaces
-        // TODO: add stubs
-        return KphpDocTagStubImpl(parentStub, this, psi.name, "stubValue")
+        val stubValue = (psi as KphpDocTagInheritPsiImpl).types()
+            .joinToString(",") {
+                val type = StringBuilder()
+
+                if (it.className() != null) {
+                    type.append(it.className().toString())
+                }
+
+                type.toString()
+            }
+        return KphpDocTagStubImpl(parentStub, this, psi.name, stubValue)
     }
 
     override fun serialize(stub: PhpDocTagStub, dataStream: StubOutputStream) {
