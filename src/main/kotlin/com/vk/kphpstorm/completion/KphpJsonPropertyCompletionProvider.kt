@@ -12,9 +12,7 @@ import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.KphpJsonTag
 
 class KphpJsonPropertyCompletionProvider : CompletionProvider<CompletionParameters>() {
-    override fun addCompletions(
-        parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet
-    ) {
+    override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
         val position = parameters.position
         val owner = position.parentDocComment?.owner as? PhpTypedElement ?: return
 
@@ -24,25 +22,23 @@ class KphpJsonPropertyCompletionProvider : CompletionProvider<CompletionParamete
                 val isClass = owner is PhpClass
 
                 for (jsonElement in KphpJsonTag.properties) {
-                    if (jsonElement.allowField == isField || jsonElement.allowClass == isClass) {
-                        var element: LookupElementBuilder? = null
-                        if (jsonElement.ifType == null) {
-                            element = LookupElementBuilder.create(jsonElement.name)
-                        } else if (jsonElement.ifType.first.invoke(owner.type.toExPhpType())) {
-                            element = LookupElementBuilder.create(jsonElement.name)
-                        }
-
-                        if (element == null) {
-                            return
-                        }
-
-                        if (jsonElement.allowValues != null) {
-                            element = element.appendTailText("=", true)
-                                .withInsertHandler(KphpDocTagJsonInsertHandler)
-                        }
-
-                        result.addElement(element)
+                    if (jsonElement.allowField != isField && jsonElement.allowClass != isClass) {
+                        continue
                     }
+
+                    if (jsonElement.ifType != null) {
+                        if (!jsonElement.ifType.first.invoke(owner.type.toExPhpType())) {
+                            continue
+                        }
+                    }
+
+                    var element = LookupElementBuilder.create(jsonElement.name)
+
+                    if (jsonElement.allowValues != null) {
+                        element = element.appendTailText("=", true).withInsertHandler(KphpDocTagJsonInsertHandler)
+                    }
+
+                    result.addElement(element)
                 }
             }
             "=" -> {
