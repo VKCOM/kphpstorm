@@ -16,12 +16,15 @@ import com.vk.kphpstorm.helpers.toExPhpType
 abstract class TypeTestBase : BasePlatformTestCase() {
     override fun getTestDataPath() = "src/test/fixtures"
 
-    protected fun runFixture(vararg fixtureFiles: String) {
+    protected open fun runFixture(vararg fixtureFiles: String) {
         KphpStormConfiguration.saveThatSetupForProjectDone(project)
         myFixture.configureByFiles(*fixtureFiles)
 
-        val exprTypeCalls = findExprTypeCalls(fixtureFiles)
-        exprTypeCalls.forEach { call ->
+        runTypeTest(fixtureFiles)
+    }
+
+    protected fun runTypeTest(fixtureFiles: Array<out String>) {
+        findExprTypeCalls(fixtureFiles).forEach { call ->
             checkExprTypeCall(call)
         }
     }
@@ -30,7 +33,7 @@ abstract class TypeTestBase : BasePlatformTestCase() {
         val result = mutableListOf<T>()
         accept(object : PhpElementVisitor() {
             override fun visitElement(element: PsiElement) {
-                if (condition(element) && (element is T)) {
+                if (condition(element) && element is T) {
                     result.add(element)
                 }
 
@@ -47,30 +50,30 @@ abstract class TypeTestBase : BasePlatformTestCase() {
     private fun checkExprTypeCall(call: FunctionReference) {
         val expr = call.parameters.first() as PhpTypedElement
         val expectedTypePsi = call.parameters.last() as StringLiteralExpression
-        val expectedType = expectedTypePsi.contents
-        val type = expr.type.global(myFixture.project).toExPhpType()?.let { PsiToExPhpType.dropGenerics(it) }
+        val expectedTypeString = expectedTypePsi.contents
+        val gotType = expr.type.global(myFixture.project).toExPhpType()?.let { PsiToExPhpType.dropGenerics(it) }
 
-        val sortedType = if (type is ExPhpTypePipe)
-            ExPhpTypePipe(type.items.sortedBy { it.toString() })
-        else type
+        val sortedGotType = if (gotType is ExPhpTypePipe)
+            ExPhpTypePipe(gotType.items.sortedBy { it.toString() })
+        else gotType
 
-        val typeString = sortedType.toString().ifEmpty { "<empty>" }
+        val gotTypeString = sortedGotType.toString().ifEmpty { "<empty>" }
 
         val file = call.containingFile
-        check(typeString == expectedType) {
+        check(gotTypeString == expectedTypeString) {
             """
                 In file ${file.name}:${call.line()}
                 
                 Type mismatch. 
-                Expected: $expectedType
-                Found: $typeString
+                Expected: $expectedTypeString
+                Found: $gotTypeString
                 
                 
             """.trimIndent()
         }
     }
 
-    private fun findExprTypeCalls(fixtureFiles: Array< out String>): List<FunctionReference> {
+    private fun findExprTypeCalls(fixtureFiles: Array<out String>): List<FunctionReference> {
         return fixtureFiles.map {
             val file = myFixture.findFileInTempDir(it) ?: return@map emptyList<FunctionReference>()
             myFixture.openFileInEditor(file)
