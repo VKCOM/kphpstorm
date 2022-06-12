@@ -23,7 +23,7 @@ class ExPhpTypeInstancePsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
 
         // for "future" don't invoke getType(), because it will be treated as relative class name in namespace
         if (isKphpBuiltinClass()) {
-            PhpType().add(text)
+            return PhpType().add(text)
         }
 
         if (isGenericT()) {

@@ -28,19 +28,19 @@ function getT3() {
     <error descr="Can't return 'null', expected 'tuple(int, int)'">return null;</error>
 }
 
-/** <error descr="Actual return type is 'shape()'">@return</error> tuple(int, int) */
+/** <error descr="Actual return type is 'shape(x:int)'">@return</error> tuple(int, int) */
 function getT4() {
-    <error descr="Can't return 'shape()', expected 'tuple(int, int)'">return shape(['x'=>1]);</error>
+    <error descr="Can't return 'shape(x:int)', expected 'tuple(int, int)'">return shape(['x'=>1]);</error>
 }
 
 function getT5() : int {
     <error descr="Can't return 'tuple(int)', expected 'int'">return tuple(5);</error>
 }
 
-/** <error descr="Actual return type is 'tuple(int, int)|shape()'">@return</error> tuple(int, int) */
+/** <error descr="Actual return type is 'tuple(int, int)|shape(x:int)'">@return</error> tuple(int, int) */
 function getT6() {
     // this message is slightly unexpected: it is because getT4() is corrupted by inferred shape
-    <error descr="Can't return 'tuple(int, int)|shape()', expected 'tuple(int, int)'">return getT4();</error>
+    <error descr="Can't return 'tuple(int, int)|shape(x:int)', expected 'tuple(int, int)'">return getT4();</error>
 }
 
 /** @return shape(x: string, y: int) */

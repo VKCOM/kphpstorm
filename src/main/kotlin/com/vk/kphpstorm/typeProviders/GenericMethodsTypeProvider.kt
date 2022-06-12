@@ -93,4 +93,6 @@ class GenericMethodsTypeProvider : PhpTypeProvider4 {
         ResolvingGenericMethodCall(project).resolve(incompleteType)
 
     override fun getBySignature(t: String, v: MutableSet<String>, d: Int, p: Project) = null
+
+    override fun emptyResultIsComplete() = true
 }

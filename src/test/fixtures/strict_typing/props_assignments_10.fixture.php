@@ -89,7 +89,7 @@ function demo() {
     $a->s_arr[] = $s_arr[0];
     $a->s_arr = str_replace('search', 'replace', getSArr());
 
-    <error descr="Can't assign 'int|bool' to 'string' $s">$a->s = str_replace('s', 'r', getTrash())</error>;
+    <error descr="Can't assign 'int' to 'string' $s">$a->s = str_replace('s', 'r', getTrash())</error>;
 }
 
 function demo2() {
