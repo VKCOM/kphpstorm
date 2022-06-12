@@ -18,9 +18,10 @@ class KphpColorsAndFontsPage : ColorSettingsPage, DisplayPrioritySortable {
             AttributesDescriptor("phpdoc: other tags (@param / @see / etc)", KphpHighlightingData.PHPDOC_TAG_REGULAR),
             AttributesDescriptor("phpdoc: type inside @var / @param / @return", KphpHighlightingData.PHPDOC_TYPE_INSIDE),
             AttributesDescriptor("phpdoc: variable of @param", PhpHighlightingData.DOC_PARAMETER),
+            AttributesDescriptor("phpdoc: generic T names", KphpHighlightingData.PHPDOC_GENERIC_TYPE_T),
             AttributesDescriptor("function call: php predefined (array_pop / ini_get / etc)", PhpHighlightingData.PREDEFINED_SYMBOL),
             AttributesDescriptor("function call: kphp native (wait / instance_cast / etc)", KphpHighlightingData.FUNC_CALL_KPHP_NATIVE),
-            AttributesDescriptor("function call: regular (not instance)", KphpHighlightingData.FUNC_CALL_REGULAR)
+            AttributesDescriptor("function call: regular (not instance)", KphpHighlightingData.FUNC_CALL_REGULAR),
     )
 
     override fun getHighlighter() = PhpColorPageHighlighter(mapOf())
