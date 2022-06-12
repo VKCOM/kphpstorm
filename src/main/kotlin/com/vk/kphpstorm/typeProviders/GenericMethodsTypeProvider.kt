@@ -11,7 +11,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
 import com.vk.kphpstorm.exphptype.ExPhpType
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.generics.GenericUtil.isGeneric
-import com.vk.kphpstorm.generics.IndexingGenericFunctionCall
+import com.vk.kphpstorm.generics.IndexingGenericCall
 import com.vk.kphpstorm.generics.ResolvingGenericMethodCall
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
@@ -61,7 +61,7 @@ class GenericMethodsTypeProvider : PhpTypeProvider4 {
             val resultType = PhpType()
             lhsTypes.forEach { type ->
                 val fqn = "$type.$methodName"
-                val data = IndexingGenericFunctionCall(fqn, p.parameters, p, SEP).pack()
+                val data = IndexingGenericCall(fqn, p.parameters, p, SEP).pack()
 
                 resultType.add(KEY.sign(data))
             }

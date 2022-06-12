@@ -12,20 +12,16 @@ import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 
 /**
- * Ввиду причин описанных в [IndexingGenericFunctionCall], мы не можем использовать
- * объединенный класс для обработки вызова во время вывода типов. Однако в других
- * местах мы можем использовать индекс и поэтому нам не нужно паковать данные и
- * потом их распаковывать, мы можем делать все за раз.
+ * Is a union of the [IndexingGenericCall] and [ResolvingGenericCallBase] classes, which
+ * can be used for checks after PhpStorm has completed the indexing.
  *
- * Данный класс является объединением [IndexingGenericFunctionCall] и
- * [ResolvingGenericFunctionCall] и может быть использован для обработки шаблонных
- * вызовов в других местах;
+ * Note: can't be used during indexing!
  *
- * Класс инкапсулирующий в себе всю логику обработки шаблонных вызовов.
+ * [GenericCall] encapsulates all the logic for processing generic calls.
  *
- * Он выводит неявные типы, когда нет явного определения списка типов при инстанциации.
+ * It infers implicit types when no explicit type list definition on instantiation.
  *
- * Например:
+ * For example:
  *
  * ```php
  * /**
@@ -38,23 +34,25 @@ import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
  * f(new A, new B); // => T1 = A, T2 = B
  * ```
  *
- * В случае когда есть явный список типов при инстанциации, он собирает типы
- * из него.
+ * In the case where an explicit instantiation list of types, it collects the types from it.
  *
- * Например:
+ * For example:
  *
  * ```php
  * f/*<C, D>*/(new A, new B); // => T1 = C, T2 = D
  * ```
  */
 abstract class GenericCall(val project: Project) {
-    abstract val callArgs: Array<PsiElement>
-    abstract val explicitSpecsPsi: GenericInstantiationPsiCommentImpl?
-    abstract val argumentsTypes: List<ExPhpType?>
+    abstract val element: PsiElement
+    abstract val arguments: Array<PsiElement>
+    abstract val argumentTypes: List<ExPhpType?>
     abstract val klass: PhpClass?
-    protected var contextType: ExPhpType? = null
 
-    abstract fun element(): PsiElement
+    val explicitSpecsPsi: GenericInstantiationPsiCommentImpl? by lazy {
+        GenericUtil.findInstantiationComment(element)
+    }
+    private var contextType: ExPhpType? = null
+
     abstract fun function(): Function?
     abstract fun isResolved(): Boolean
 
@@ -73,17 +71,16 @@ abstract class GenericCall(val project: Project) {
 
     abstract fun isGeneric(): Boolean
 
-    val genericTs = mutableListOf<KphpDocGenericParameterDecl>()
+    private val genericTs = mutableListOf<KphpDocGenericParameterDecl>()
     private val parameters = mutableListOf<Parameter>()
 
-    protected val extractor = GenericInstantiationExtractor()
-    protected val reifier = GenericsReifier(project)
+    private val extractor = GenericInstantiationExtractor()
+    protected val reifier = GenericReifier(project)
 
     val explicitSpecs get() = extractor.explicitSpecs
     val specializationNameMap get() = extractor.specializationNameMap
     val implicitSpecs get() = reifier.implicitSpecs
     val implicitSpecializationNameMap get() = reifier.implicitSpecializationNameMap
-    val implicitClassSpecializationNameMap get() = reifier.implicitClassSpecializationNameMap
     val implicitSpecializationErrors get() = reifier.implicitSpecializationErrors
 
     protected fun init() {
@@ -95,49 +92,42 @@ abstract class GenericCall(val project: Project) {
         parameters.addAll(function.parameters)
         genericTs.addAll(genericNames)
 
-        // Если текущий вызов находится в return или является аргументом
-        // функции, то мы можем извлечь дополнительные подсказки по типам.
-        calcContextType(element())
+        // If the current call is in return or is a function argument,
+        // then we can extract additional type hints.
+        contextType = calcContextType(element)
 
-        // Несмотря на то, что явный список является превалирующим над
-        // типами выведенными из аргументов функций, нам все равно
-        // необходимы обв списка для дальнейших инспекций
+        // Even though the explicit list takes precedence over types inferred
+        // from function arguments, we still need both lists for further inspections.
 
-        // В первую очередь, выводим все типы шаблонов из аргументов функции (при наличии)
-        reifier.reifyAllGenericsT(klass, function.parameters, genericNames, argumentsTypes, contextType)
-        // Далее, выводим все типы шаблонов из явного списка типов (при наличии)
+        // First, we reify all generic types from the function arguments, if any.
+        reifier.reifyAllGenericsT(klass, function.parameters, genericNames, argumentTypes, contextType)
+        // Next, we extract all explicit generic types from the explicit list of types, if any.
         extractor.extractExplicitGenericsT(genericNames(), explicitSpecsPsi)
     }
 
-    private fun calcContextType(element: PsiElement) {
-        val parent = element.parent
+    private fun calcContextType(element: PsiElement): ExPhpType? {
+        val parent = element.parent ?: return null
         if (parent is PhpReturn) {
-            val parentFunction = parent.parentOfType<Function>()
-            if (parentFunction != null) {
-                val returnType = parentFunction.docComment?.returnTag?.type
-                contextType = returnType?.toExPhpType()
-            }
-
-            return
+            val parentFunction = parent.parentOfType<Function>() ?: return null
+            val returnType = parentFunction.docComment?.returnTag?.type
+            return returnType?.toExPhpType()
         }
 
         if (parent is ParameterList) {
-            val calledInFunctionCall = parent.parentOfType<FunctionReference>()
-            if (calledInFunctionCall != null) {
-                val calledFunction = calledInFunctionCall.resolve() as? Function
-                if (calledFunction != null) {
-                    val index = parent.parameters.indexOf(element)
-                    calledFunction.getParameter(index)?.let {
-                        contextType = it.type.toExPhpType()
-                    }
-                }
+            val calledInFunctionCall = parent.parentOfType<FunctionReference>() ?: return null
+
+            val calledFunction = calledInFunctionCall.resolve() as? Function ?: return null
+            val index = parent.parameters.indexOf(element)
+
+            calledFunction.getParameter(index)?.let {
+                return it.type.toExPhpType()
             }
         }
+
+        return null
     }
 
-    fun withExplicitSpecs(): Boolean {
-        return explicitSpecsPsi != null
-    }
+    fun withExplicitSpecs() = explicitSpecsPsi != null
 
     /**
      * Имея следующую функцию:

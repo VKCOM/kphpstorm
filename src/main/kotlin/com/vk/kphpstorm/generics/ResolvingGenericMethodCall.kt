@@ -4,30 +4,20 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocReturnTag
 import com.jetbrains.php.lang.psi.elements.Method
-import com.jetbrains.php.lang.psi.elements.Parameter
-import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.elements.impl.PhpClassImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeGenericsT
-import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.genericInheritInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.generics.GenericUtil.genericParents
 import com.vk.kphpstorm.generics.GenericUtil.getInstantiations
 import com.vk.kphpstorm.generics.GenericUtil.isReturnGeneric
 import com.vk.kphpstorm.helpers.toExPhpType
-import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import com.vk.kphpstorm.typeProviders.GenericMethodsTypeProvider
 import java.lang.Integer.min
 
-class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(project) {
-    override var klass: PhpClass? = null
+class ResolvingGenericMethodCall(project: Project) : ResolvingGenericCallBase(project) {
     private var method: Method? = null
-
-    override lateinit var parameters: Array<Parameter>
-    override lateinit var genericTs: List<KphpDocGenericParameterDecl>
-    override lateinit var classGenericTs: List<KphpDocGenericParameterDecl>
-    override var classGenericType: ExPhpTypeTplInstantiation? = null
 
     override fun instantiate(): PhpType? {
         val klass = klass ?: return null
@@ -91,7 +81,7 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
         return specializedType.toPhpType()
     }
 
-    override fun unpackImpl(packedData: String): Boolean {
+    override fun unpack(packedData: String): Boolean {
         // If PhpStorm resolved className and methodName:
         //   \SomeName.method...
         if (beginCompleted(packedData)) {
@@ -152,7 +142,7 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericBase(projec
         }
 
         explicitGenericsT = unpackTypeArray(parts[1])
-        argumentsTypes = unpackTypeArray(parts[2])
+        argumentTypes = unpackTypeArray(parts[2])
 
         return true
     }

@@ -80,7 +80,9 @@ class GenericsGeneralTest : GenericTestBase() {
     }
 
     fun testInherit() {
-        runFixture("generics/general/inherit/main.fixture.php")
+        runFixture("generics/general/inherit/simple_class.fixture.php")
+        runFixture("generics/general/inherit/non_generic_child.fixture.php")
+        runFixture("generics/general/inherit/class_and_interface.fixture.php")
     }
 
     /**

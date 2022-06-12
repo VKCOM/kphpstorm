@@ -13,31 +13,53 @@ import java.util.*
 import kotlin.math.min
 
 /**
- * Данный класс инкапсулирует логику обработки данных полученных на этапе
- * индексации и вывода типов ([IndexingGenericFunctionCall]).
+ * Responsible for processing data from [IndexingGenericCall.pack].
  *
- * Результатом для данного класса являются данные возвращаемые методом
- * [specializationList], данный метод возвращает список шаблонных типов
- * для данного вызова.
+ * Override [instantiate] and [unpack] methods for each case you need.
+ *
+ * @see IndexingGenericCall
  */
-abstract class ResolvingGenericBase(val project: Project) {
-    protected abstract var parameters: Array<Parameter>
-    protected abstract var genericTs: List<KphpDocGenericParameterDecl>
-    protected abstract var klass: PhpClass?
+abstract class ResolvingGenericCallBase(protected val project: Project) {
+    protected var parameters: Array<Parameter> = emptyArray()
+    protected var genericTs: List<KphpDocGenericParameterDecl> = emptyList()
+    protected var classGenericTs: List<KphpDocGenericParameterDecl> = emptyList()
 
-    protected abstract var classGenericType: ExPhpTypeTplInstantiation?
-    protected abstract var classGenericTs: List<KphpDocGenericParameterDecl>
+    protected var klass: PhpClass? = null
+    protected var classGenericType: ExPhpTypeTplInstantiation? = null
 
-    protected lateinit var argumentsTypes: List<ExPhpType>
-    protected lateinit var explicitGenericsT: List<ExPhpType>
+    protected var argumentTypes: List<ExPhpType> = emptyList()
+    protected var explicitGenericsT: List<ExPhpType> = emptyList()
 
-    private val reifier = GenericsReifier(project)
+    private val reifier = GenericReifier(project)
 
+    /**
+     * By the results from [unpack] instantiate template types and
+     * returns the final Complete type.
+     *
+     * @return Complete type
+     */
     protected abstract fun instantiate(): PhpType?
-    protected abstract fun unpackImpl(packedData: String): Boolean
 
+    /**
+     * Unpacking data from [IndexingGenericCall.pack].
+     *
+     * @return true if data successfully unpacked, false otherwise
+     */
+    protected abstract fun unpack(packedData: String): Boolean
+
+    /**
+     * Resolves the given [incompleteType] and returns the Complete type.
+     * If it can't resolve the received incomplete type, returns null.
+     *
+     * @return Complete type or null
+     */
     fun resolve(incompleteType: String): PhpType? {
-        if (!unpack(incompleteType)) return null
+        val packedData = incompleteType.substring(2)
+        if (!unpack(packedData)) {
+            return null
+        }
+
+        reifier.reifyAllGenericsT(klass, parameters, genericTs, argumentTypes, null)
         return instantiate()
     }
 
@@ -74,19 +96,8 @@ abstract class ResolvingGenericBase(val project: Project) {
 
     private fun specializationList() = explicitGenericTypes().ifEmpty { reifier.implicitSpecs }
 
-    private fun unpack(incompleteType: String): Boolean {
-        val packedData = incompleteType.substring(2)
-
-        if (unpackImpl(packedData)) {
-            reifier.reifyAllGenericsT(klass, parameters, genericTs, argumentsTypes, null)
-            return true
-        }
-
-        return false
-    }
-
     protected fun beginCompleted(packedData: String): Boolean {
-        return packedData.startsWith(IndexingGenericFunctionCall.START_TYPE + "\\")
+        return packedData.startsWith(IndexingGenericCall.START_TYPE + "\\")
     }
 
     protected fun safeSplit(data: String, count: Int, separator: String): List<String>? {
@@ -97,15 +108,15 @@ abstract class ResolvingGenericBase(val project: Project) {
 
     protected fun resolveSubTypes(packedData: String): String {
         var data = packedData
-            .removePrefix(IndexingGenericFunctionCall.START_TYPE.toString())
-            .removeSuffix(IndexingGenericFunctionCall.END_TYPE.toString())
+            .removePrefix(IndexingGenericCall.START_TYPE.toString())
+            .removeSuffix(IndexingGenericCall.END_TYPE.toString())
 
         val pairsParts = mutableListOf<MutableList<MutablePair<Int, Int>>>()
 
         val pairStack = Stack<MutablePair<Int, Int>>()
         for (i in data.indices) {
 
-            if (data[i] == IndexingGenericFunctionCall.START_TYPE) {
+            if (data[i] == IndexingGenericCall.START_TYPE) {
                 if (pairsParts.isEmpty()) {
                     pairsParts.add(mutableListOf())
                 }
@@ -116,7 +127,7 @@ abstract class ResolvingGenericBase(val project: Project) {
                 pairStack.add(pair)
             }
 
-            if (data[i] == IndexingGenericFunctionCall.END_TYPE) {
+            if (data[i] == IndexingGenericCall.END_TYPE) {
                 if (pairStack.isNotEmpty()) {
                     val pair = pairStack.pop()
                     pair.right = i + 1

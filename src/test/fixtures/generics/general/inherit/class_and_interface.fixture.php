@@ -1,6 +1,6 @@
 <?php
 
-namespace Inherit\Main;
+namespace Inherit\ClassAndInterface;
 
 class Foo { public function fooMethod() {} }
 class Boo { public function booMethod() {} }
@@ -66,8 +66,8 @@ class FooGeneric extends GenericClass implements GenericInterface {
 
 $b = new FooGeneric/*<Foo, Boo>*/();
 
-expr_type($b->interfaceMethod(), "\Inherit\Main\Foo");
-expr_type($b->genericMethod1(), "\Inherit\Main\Foo");
-expr_type($b->genericMethod2(), "\Inherit\Main\Boo");
-expr_type($b->genericMethod3(), "\Inherit\Main\Boo");
-expr_type($b->genericMethod4(), "\Inherit\Main\Foo");
+expr_type($b->interfaceMethod(), "\Inherit\ClassAndInterface\Foo");
+expr_type($b->genericMethod1(), "\Inherit\ClassAndInterface\Foo");
+expr_type($b->genericMethod2(), "\Inherit\ClassAndInterface\Boo");
+expr_type($b->genericMethod3(), "\Inherit\ClassAndInterface\Boo");
+expr_type($b->genericMethod4(), "\Inherit\ClassAndInterface\Foo");

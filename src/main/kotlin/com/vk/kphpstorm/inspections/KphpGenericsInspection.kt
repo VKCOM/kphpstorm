@@ -302,8 +302,8 @@ class KphpGenericsInspection : PhpInspection() {
 
                     val errorPsi =
                         call.explicitSpecsPsi
-                            ?: call.callArgs.firstOrNull()
-                            ?: call.element()
+                            ?: call.arguments.firstOrNull()
+                            ?: call.element
 
                     if (!upperBoundType.isAssignableFrom(resolvedType, call.project)) {
                         val violationMessage = generateViolationMessage(call.project, upperBoundType, resolvedType)

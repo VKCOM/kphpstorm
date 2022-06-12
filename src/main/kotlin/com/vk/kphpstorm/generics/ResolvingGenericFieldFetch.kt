@@ -3,29 +3,15 @@ package com.vk.kphpstorm.generics
 import com.intellij.openapi.project.Project
 import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.psi.elements.Field
-import com.jetbrains.php.lang.psi.elements.Parameter
-import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeForcing
-import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.generics.GenericUtil.getInstantiations
 import com.vk.kphpstorm.helpers.toExPhpType
-import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import com.vk.kphpstorm.typeProviders.GenericFieldsTypeProvider
 
-class ResolvingGenericFieldFetch(project: Project) : ResolvingGenericBase(project) {
+class ResolvingGenericFieldFetch(project: Project) : ResolvingGenericCallBase(project) {
     private var field: Field? = null
-
-    override var klass: PhpClass? = null
-    override var classGenericType: ExPhpTypeTplInstantiation? = null
-    override var classGenericTs: List<KphpDocGenericParameterDecl> = emptyList()
-
-    // No parameters.
-    override var parameters: Array<Parameter> = emptyArray()
-
-    // No own generics.
-    override var genericTs: List<KphpDocGenericParameterDecl> = emptyList()
 
     override fun instantiate(): PhpType? {
         val specializationNameMap = specialization()
@@ -37,7 +23,7 @@ class ResolvingGenericFieldFetch(project: Project) : ResolvingGenericBase(projec
         return PhpType().add(specializedType.toPhpType()).add(ExPhpTypeForcing(specializedType).toPhpType())
     }
 
-    override fun unpackImpl(packedData: String): Boolean {
+    override fun unpack(packedData: String): Boolean {
         // If PhpStorm resolved className and fieldName:
         //   \SomeName(int).field...
         if (beginCompleted(packedData)) {
@@ -78,7 +64,7 @@ class ResolvingGenericFieldFetch(project: Project) : ResolvingGenericBase(projec
 
         classGenericTs = klass!!.genericNames()
 
-        argumentsTypes = emptyList()
+        argumentTypes = emptyList()
         explicitGenericsT = emptyList()
 
         return true

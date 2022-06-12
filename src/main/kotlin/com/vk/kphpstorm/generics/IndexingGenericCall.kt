@@ -5,20 +5,28 @@ import com.jetbrains.php.lang.psi.elements.PhpTypedElement
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 
 /**
- * Ввиду того, что мы не можем резолвить функции во время вывода типов,
- * нам необходимо выделить всю необходимую информацию для дальнейшего
- * вывода.
+ * Type inference in PhpStorm has two steps:
  *
- * Таким образом данный класс выделяет типы из явного списка инстанциации
- * и выводит типы аргументов для вызова. Полученные данные пакуются в
- * строку.
+ * - Indexing, collection of types based only on local information from the file, without access to others.
+ * Because of this, for complex types that depend on information from other files,
+ * we need to pack all the necessary information into a string, what class [IndexingGenericCall] does.
+ * PhpStorm calls these types Incomplete, it requires additional processing in the second stage.
  *
- * Полученная строка может быть передана далее в [ResolvingGenericBase.resolve],
- * для дальнейшей обработки.
+ * - Resolving Incomplete types.
+ * At this point, PhpStorm converts the resulting Incomplete to Complete types.
+ * This is done by the [ResolvingGenericCallBase] class.
+ *
+ * A typical example of using this class with [ResolvingGenericCallBase] is calling the [pack] method in the
+ * [com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4.getType] method.
+ *
+ * Then calling the [ResolvingGenericCallBase.resolve] method in the method
+ * [com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4.complete].
+ *
+ * Note that [separator] must be unique for different types of calls (e.g. functions, methods, constructors).
  */
-class IndexingGenericFunctionCall(
+class IndexingGenericCall(
     private val fqn: String,
-    private val callArgs: Array<PsiElement>,
+    private val arguments: Array<PsiElement>,
     reference: PsiElement,
     private val separator: String,
 ) {
@@ -29,9 +37,15 @@ class IndexingGenericFunctionCall(
 
     private val explicitSpecsPsi = GenericUtil.findInstantiationComment(reference)
 
+    /**
+     * Packs all data into a string so that [ResolvingGenericCallBase.resolve] can then unpack
+     * this data and infer types when indexing is complete.
+     *
+     * @return packed call data
+     */
     fun pack(): String {
         val explicitSpecsString = extractExplicitGenericsT().joinToString("$$")
-        val callArgsString = argumentsTypes().joinToString("$$") {
+        val callArgsString = argumentTypes().joinToString("$$") {
             // Это необходимо здесь так как например для выражения [new Boo] тип будет #_\int и \Boo
             // и если мы сохраним его как #_\int|\Boo, то в дальнейшем тип будет "#_\int|\Boo", и
             // этот тип не разрешится верно, поэтому сохраняем типы через стрелочку, таким образом
@@ -65,6 +79,6 @@ class IndexingGenericFunctionCall(
         return "$START_TYPE$fqn$separator$explicitSpecsString$separator$callArgsString$END_TYPE"
     }
 
-    private fun argumentsTypes() = callArgs.filterIsInstance<PhpTypedElement>().map { it.type }
+    private fun argumentTypes() = arguments.filterIsInstance<PhpTypedElement>().map { it.type }
     private fun extractExplicitGenericsT() = explicitSpecsPsi?.instantiationTypes() ?: emptyList()
 }

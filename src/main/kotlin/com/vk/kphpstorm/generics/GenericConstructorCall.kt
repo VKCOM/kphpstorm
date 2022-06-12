@@ -13,11 +13,11 @@ import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 
-class GenericConstructorCall(private val call: NewExpression) : GenericCall(call.project) {
-    override val callArgs: Array<PsiElement> = call.parameters
-    override val argumentsTypes: List<ExPhpType?> = callArgs
+class GenericConstructorCall(call: NewExpression) : GenericCall(call.project) {
+    override val element = call
+    override val arguments: Array<PsiElement> = call.parameters
+    override val argumentTypes: List<ExPhpType?> = arguments
         .filterIsInstance<PhpTypedElement>().map { it.type.global(project).toExPhpType() }
-    override val explicitSpecsPsi = GenericUtil.findInstantiationComment(call)
 
     override val klass: PhpClass?
     private val method: Method?
@@ -25,15 +25,12 @@ class GenericConstructorCall(private val call: NewExpression) : GenericCall(call
     init {
         val className = call.classReference?.fqn
         klass = PhpIndex.getInstance(project).getClassesByFQN(className).firstOrNull()
-        val constructor = klass?.constructor
-
-        // Если у класса нет конструктора, то создаем его псевдо версию
-        method = constructor ?: createPseudoConstructor(project, klass?.name ?: "Foo")
+        // If the class doesn't have a constructor, then we create its pseudo version.
+        method = klass?.constructor ?: createPseudoConstructor(project, klass?.name ?: "UnknownClass")
 
         init()
     }
 
-    override fun element() = call
     override fun function() = method
 
     override fun isResolved() = method != null && klass != null
@@ -61,7 +58,7 @@ class GenericConstructorCall(private val call: NewExpression) : GenericCall(call
     private fun createPseudoConstructor(project: Project, className: String): Method {
         return PhpPsiElementFactory.createPhpPsiFromText(
             project,
-            Method::class.java, "class $className{ public function __construct() {} }"
+            Method::class.java, "class $className { public function __construct() {} }"
         )
     }
 }

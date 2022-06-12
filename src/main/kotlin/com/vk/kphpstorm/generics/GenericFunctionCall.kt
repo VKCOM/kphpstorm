@@ -5,26 +5,22 @@ import com.jetbrains.php.lang.psi.elements.Function
 import com.jetbrains.php.lang.psi.elements.FunctionReference
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement
 import com.vk.kphpstorm.exphptype.ExPhpType
-import com.vk.kphpstorm.generics.GenericUtil.findInstantiationComment
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.generics.GenericUtil.isGeneric
 import com.vk.kphpstorm.helpers.toExPhpType
 
-
-class GenericFunctionCall(private val call: FunctionReference) : GenericCall(call.project) {
-    override val callArgs: Array<PsiElement> = call.parameters
-    override val argumentsTypes: List<ExPhpType?> = callArgs
-        .filterIsInstance<PhpTypedElement>().map { it.type.global(project).toExPhpType() }
-    override val explicitSpecsPsi = findInstantiationComment(call)
+class GenericFunctionCall(call: FunctionReference) : GenericCall(call.project) {
+    override val element = call
     override val klass = null
+    override val arguments: Array<PsiElement> = call.parameters
+    override val argumentTypes: List<ExPhpType?> = arguments
+        .filterIsInstance<PhpTypedElement>().map { it.type.global(project).toExPhpType() }
 
     private val function: Function? = call.resolve() as? Function
 
     init {
         init()
     }
-
-    override fun element() = call
 
     override fun function() = function
 

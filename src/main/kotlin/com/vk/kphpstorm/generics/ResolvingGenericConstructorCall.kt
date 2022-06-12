@@ -2,26 +2,15 @@ package com.vk.kphpstorm.generics
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.php.PhpIndex
-import com.jetbrains.php.lang.psi.elements.Parameter
-import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeForcing
 import com.vk.kphpstorm.exphptype.ExPhpTypeGenericsT
 import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.generics.GenericUtil.isGeneric
-import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import com.vk.kphpstorm.typeProviders.GenericClassesTypeProvider
 
-class ResolvingGenericConstructorCall(project: Project) : ResolvingGenericBase(project) {
-    override var klass: PhpClass? = null
-
-    override var classGenericType: ExPhpTypeTplInstantiation? = null
-    override var classGenericTs: List<KphpDocGenericParameterDecl> = emptyList()
-
-    override lateinit var parameters: Array<Parameter>
-    override lateinit var genericTs: List<KphpDocGenericParameterDecl>
-
+class ResolvingGenericConstructorCall(project: Project) : ResolvingGenericCallBase(project) {
     override fun instantiate(): PhpType {
         val specializationNameMap = specialization()
 
@@ -32,7 +21,7 @@ class ResolvingGenericConstructorCall(project: Project) : ResolvingGenericBase(p
         return ExPhpTypeForcing(specializedType).toPhpType()
     }
     
-    override fun unpackImpl(packedData: String): Boolean {
+    override fun unpack(packedData: String): Boolean {
         if (beginCompleted(packedData)) {
             val firstSeparator = packedData.indexOf(".__construct")
             if (firstSeparator != -1) {
@@ -63,7 +52,7 @@ class ResolvingGenericConstructorCall(project: Project) : ResolvingGenericBase(p
         genericTs = klass!!.genericNames()
 
         explicitGenericsT = unpackTypeArray(explicitGenericsString)
-        argumentsTypes = unpackTypeArray(argumentsTypesString)
+        argumentTypes = unpackTypeArray(argumentsTypesString)
 
         return true
     }

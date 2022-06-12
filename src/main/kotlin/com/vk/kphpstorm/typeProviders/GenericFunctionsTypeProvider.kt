@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.psi.elements.MethodReference
 import com.jetbrains.php.lang.psi.resolve.types.PhpCharTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
-import com.vk.kphpstorm.generics.IndexingGenericFunctionCall
+import com.vk.kphpstorm.generics.IndexingGenericCall
 import com.vk.kphpstorm.generics.ResolvingGenericFunctionCall
 
 class GenericFunctionsTypeProvider : PhpTypeProvider4 {
@@ -23,7 +23,7 @@ class GenericFunctionsTypeProvider : PhpTypeProvider4 {
             return null
         }
 
-        val data = IndexingGenericFunctionCall(p.fqn!!, p.parameters, p, SEP).pack()
+        val data = IndexingGenericCall(p.fqn!!, p.parameters, p, SEP).pack()
         return PhpType().add(KEY.sign(data))
     }
 

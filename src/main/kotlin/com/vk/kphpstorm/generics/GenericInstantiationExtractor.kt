@@ -6,7 +6,7 @@ import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import kotlin.math.min
 
 /**
- * Класс инкапсулирующий логику выделения шаблонных типов из списка инстанциации.
+ * Encapsulates the logic for extracting generic types from the instantiation list.
  */
 class GenericInstantiationExtractor {
     val explicitSpecs = mutableListOf<ExPhpType>()

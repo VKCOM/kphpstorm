@@ -16,9 +16,9 @@ import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import kotlin.math.min
 
 /**
- * Класс инкапсулирующий логику вывода шаблонных типов из параметров функций.
+ * Encapsulates generic type inference logic from function parameters.
  */
-class GenericsReifier(val project: Project) {
+class GenericReifier(val project: Project) {
     val implicitSpecs = mutableListOf<ExPhpType>()
     val implicitSpecializationNameMap = mutableMapOf<String, ExPhpType>()
     val implicitClassSpecializationNameMap = mutableMapOf<String, ExPhpType>()
@@ -32,10 +32,10 @@ class GenericsReifier(val project: Project) {
         klass: PhpClass?,
         parameters: Array<Parameter>,
         genericTs: List<KphpDocGenericParameterDecl>,
-        argumentsTypes: List<ExPhpType?>,
+        argumentTypes: List<ExPhpType?>,
         contextType: ExPhpType?,
     ) {
-        for (i in 0 until min(argumentsTypes.size, parameters.size)) {
+        for (i in 0 until min(argumentTypes.size, parameters.size)) {
             val param = parameters[i] as? PhpTypedElement ?: continue
             val paramType = param.type.global(project)
             // Когда мы примешиваем extends или default тип, то появляется pipe тип,
@@ -47,7 +47,7 @@ class GenericsReifier(val project: Project) {
                 continue
             }
 
-            val argExType = argumentsTypes[i] ?: continue
+            val argExType = argumentTypes[i] ?: continue
             reifyArgumentGenericsT(argExType, paramExType)
         }
 

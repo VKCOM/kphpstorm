@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.elements.impl.NewExpressionImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.*
 import com.vk.kphpstorm.generics.psi.GenericInstantiationPsiCommentImpl
+import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import com.vk.kphpstorm.kphptags.psi.KphpDocInheritParameterDeclPsiImpl
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagGenericPsiImpl
@@ -20,9 +21,15 @@ import com.vk.kphpstorm.kphptags.psi.KphpDocTagInheritPsiImpl
 object GenericUtil {
     fun PhpNamedElement.isGeneric() = docComment?.getTagElementsByName("@kphp-generic")?.firstOrNull() != null
 
+    fun PhpClass.isGeneric(): Boolean {
+        val withGenericTag = docComment?.getTagElementsByName("@kphp-generic")?.firstOrNull() != null
+        val withInheritTag = docComment?.getTagElementsByName("@kphp-inherit")?.firstOrNull() != null
+        return withGenericTag || withInheritTag
+    }
+
     fun ExPhpType.isGeneric() = toString().contains("%")
 
-    fun PhpType.isGeneric(f: PhpNamedElement) = isGeneric(f.genericNames())
+    fun PhpType.isGeneric(el: PhpNamedElement) = isGeneric(el.genericNames())
 
     fun PhpType.isGeneric(genericNames: List<KphpDocGenericParameterDecl>): Boolean {
         // TODO: Подумать как сделать улучшить
@@ -41,7 +48,8 @@ object GenericUtil {
         if (docComment == null) return false
 
         return docComment!!.getTagElementsByName("@return").any { tag ->
-            tag.type.isGeneric(this)
+            // TODO: think about it
+            tag.type.toExPhpType(project)?.isGeneric() == true
         }
     }
 

@@ -3,26 +3,15 @@ package com.vk.kphpstorm.generics
 import com.intellij.openapi.project.Project
 import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.psi.elements.Function
-import com.jetbrains.php.lang.psi.elements.Parameter
-import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeForcing
-import com.vk.kphpstorm.exphptype.ExPhpTypeTplInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
 import com.vk.kphpstorm.generics.GenericUtil.isReturnGeneric
 import com.vk.kphpstorm.helpers.toExPhpType
-import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import com.vk.kphpstorm.typeProviders.GenericFunctionsTypeProvider
 
-class ResolvingGenericFunctionCall(project: Project) : ResolvingGenericBase(project) {
+class ResolvingGenericFunctionCall(project: Project) : ResolvingGenericCallBase(project) {
     private var function: Function? = null
-
-    override var klass: PhpClass? = null
-    override var classGenericType: ExPhpTypeTplInstantiation? = null
-    override var classGenericTs: List<KphpDocGenericParameterDecl> = emptyList()
-
-    override lateinit var parameters: Array<Parameter>
-    override lateinit var genericTs: List<KphpDocGenericParameterDecl>
 
     override fun instantiate(): PhpType? {
         val specializationNameMap = specialization()
@@ -34,7 +23,7 @@ class ResolvingGenericFunctionCall(project: Project) : ResolvingGenericBase(proj
         return ExPhpTypeForcing(specializedType).toPhpType().add(specializedType.toPhpType())
     }
 
-    override fun unpackImpl(packedData: String): Boolean {
+    override fun unpack(packedData: String): Boolean {
         if (beginCompleted(packedData)) {
             val firstSeparator = packedData.indexOf(GenericFunctionsTypeProvider.SEP)
             if (firstSeparator != -1) {
@@ -65,7 +54,7 @@ class ResolvingGenericFunctionCall(project: Project) : ResolvingGenericBase(proj
         parameters = function!!.parameters
 
         explicitGenericsT = unpackTypeArray(explicitGenericsString)
-        argumentsTypes = unpackTypeArray(argumentsTypesString)
+        argumentTypes = unpackTypeArray(argumentsTypesString)
 
         return true
     }

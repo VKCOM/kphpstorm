@@ -6,7 +6,7 @@ import com.jetbrains.php.lang.psi.elements.FieldReference
 import com.jetbrains.php.lang.psi.resolve.types.PhpCharTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
-import com.vk.kphpstorm.generics.IndexingGenericFunctionCall
+import com.vk.kphpstorm.generics.IndexingGenericCall
 import com.vk.kphpstorm.generics.ResolvingGenericFieldFetch
 
 class GenericFieldsTypeProvider : PhpTypeProvider4 {
@@ -33,7 +33,7 @@ class GenericFieldsTypeProvider : PhpTypeProvider4 {
             val resultType = PhpType()
             lhsTypes.forEach { type ->
                 val fqn = "$type.$fieldName"
-                val data = IndexingGenericFunctionCall(fqn, emptyArray(), p, SEP).pack()
+                val data = IndexingGenericCall(fqn, emptyArray(), p, SEP).pack()
 
                 resultType.add(KEY.sign(data))
             }

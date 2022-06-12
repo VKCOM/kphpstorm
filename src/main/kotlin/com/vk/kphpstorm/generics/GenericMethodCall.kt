@@ -14,15 +14,16 @@ import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
 import kotlin.math.min
 
-class GenericMethodCall(private val call: MethodReference) : GenericCall(call.project) {
-    override val callArgs: Array<PsiElement> = call.parameters
-    override val argumentsTypes: List<ExPhpType?> = callArgs
+class GenericMethodCall(call: MethodReference) : GenericCall(call.project) {
+    override val element = call
+    override val arguments: Array<PsiElement> = call.parameters
+    override val argumentTypes: List<ExPhpType?> = arguments
         .filterIsInstance<PhpTypedElement>().map { it.type.global(project).toExPhpType() }
-    override val explicitSpecsPsi = GenericUtil.findInstantiationComment(call)
 
     private val method = call.resolve() as? Method
     // TODO
     private val containingClass = method?.containingClass
+
     override val klass: PhpClass?
 
     init {
@@ -56,8 +57,6 @@ class GenericMethodCall(private val call: MethodReference) : GenericCall(call.pr
 
     fun isStatic() = method?.isStatic ?: false
 
-    override fun element() = call
-
     override fun function() = method
 
     override fun isResolved() = method != null && klass != null
@@ -72,9 +71,7 @@ class GenericMethodCall(private val call: MethodReference) : GenericCall(call.pr
             .toList()
     }
 
-    override fun ownGenericNames(): List<KphpDocGenericParameterDecl> {
-        return method?.genericNames() ?: emptyList()
-    }
+    override fun ownGenericNames() = method?.genericNames() ?: emptyList()
 
     override fun isGeneric() = genericNames().isNotEmpty()
 

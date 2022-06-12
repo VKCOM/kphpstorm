@@ -12,14 +12,14 @@ import com.vk.kphpstorm.exphptype.ExPhpTypeTuple
 import com.vk.kphpstorm.exphptype.PhpTypeToExPhpTypeParsing
 
 /**
- * Comment like `/*<T[, T2, ...]>*/` between function name and the
- * argument list for a function call.
+ * Comment like `/*<T[, T2, ...]>*/` between function/method/class name, and the
+ * argument list for a call.
  *
  * This comment stores a comma-separated list of explicit generic types.
- * Comment can have any types that can be represented in phpdoc.
+ * Comment can have any types that PhpStorm can represent in phpdoc.
  *
- * The comment has no internal structure, since [PsiComment] cannot
- * have children, as it is a leaf of the tree.
+ * The comment has no internal structure, since [PsiComment] can't
+ * have children, as it's a leaf of the tree.
  */
 class GenericInstantiationPsiCommentImpl(type: IElementType, text: CharSequence) : PsiCommentImpl(type, text) {
     /**

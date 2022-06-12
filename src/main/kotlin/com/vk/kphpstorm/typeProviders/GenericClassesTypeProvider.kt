@@ -11,7 +11,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
 import com.vk.kphpstorm.exphptype.psi.ExPhpTypeTplInstantiationPsiImpl
 import com.vk.kphpstorm.generics.GenericUtil.genericInheritInstantiation
-import com.vk.kphpstorm.generics.IndexingGenericFunctionCall
+import com.vk.kphpstorm.generics.IndexingGenericCall
 import com.vk.kphpstorm.generics.ResolvingGenericConstructorCall
 
 class GenericClassesTypeProvider : PhpTypeProvider4 {
@@ -27,7 +27,7 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
         if (p is NewExpression) {
             val classRef = p.classReference ?: return null
             val fqn = classRef.fqn + ".__construct"
-            val data = IndexingGenericFunctionCall(fqn, p.parameters, p, SEP).pack()
+            val data = IndexingGenericCall(fqn, p.parameters, p, SEP).pack()
             return PhpType().add(KEY.sign(data))
         }
 
