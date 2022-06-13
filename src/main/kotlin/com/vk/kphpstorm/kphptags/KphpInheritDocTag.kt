@@ -31,16 +31,14 @@ object KphpInheritDocTag : KphpDocTag("@kphp-inherit") {
 
     override fun onAutoCompleted(docComment: PhpDocComment): String {
         val klass = docComment.owner as? PhpClass ?: return ""
-        val (extendsGenericList, implementsGenericList) = klass.genericParents()
+        val parentsList = klass.genericParents()
 
-        val inheritList = extendsGenericList + implementsGenericList
-
-        val inherits = inheritList.joinToString(", ") {
+        val parentsString = parentsList.joinToString(", ") {
             val genericTs = it.genericNonDefaultNames().joinToString(", ") { "T" }
             it.name + "<$genericTs>"
         }
 
-        return "$inherits|"
+        return "$parentsString|"
     }
 
     override fun annotate(docTag: PhpDocTag, rhs: PsiElement?, holder: AnnotationHolder) {
@@ -56,7 +54,7 @@ object KphpInheritDocTag : KphpDocTag("@kphp-inherit") {
         val parameters = PsiTreeUtil.findChildrenOfType(rhs.parent, KphpDocInheritParameterDeclPsiImpl::class.java)
         parameters.forEach {
             it as KphpDocInheritParameterDeclPsiImpl
-            val child = it.firstChild
+            val child = it.type()
             if (child !is ExPhpTypeTplInstantiationPsiImpl && child !is ExPhpTypeInstancePsiImpl) {
                 holder.error(it.firstChild, "Expected ClassName<Type>, got ${it.firstChild.text}")
             }

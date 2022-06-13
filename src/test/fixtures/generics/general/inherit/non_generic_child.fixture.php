@@ -2,6 +2,8 @@
 
 namespace Inherit\NonGenericChild;
 
+use MutableVectorList;
+
 class Foo { public function fooMethod() {} }
 class Boo { public function booMethod() {} }
 
@@ -29,3 +31,12 @@ $a = new FooNonGeneric();
 
 expr_type($a->genericMethod1(), "\Inherit\NonGenericChild\Foo");
 expr_type($a->genericMethod2(), "\Inherit\NonGenericChild\Boo");
+
+
+/**
+ * @kphp-inherit MutableVectorList<Foo>
+ */
+class FooVector extends MutableVectorList {}
+
+$vec = new FooVector();
+expr_type($vec->get(0), "\Inherit\NonGenericChild\Foo");

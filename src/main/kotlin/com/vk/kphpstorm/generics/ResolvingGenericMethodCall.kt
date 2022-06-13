@@ -2,14 +2,15 @@ package com.vk.kphpstorm.generics
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.php.PhpIndex
-import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocReturnTag
+import com.jetbrains.php.lang.psi.elements.Function
 import com.jetbrains.php.lang.psi.elements.Method
-import com.jetbrains.php.lang.psi.elements.impl.PhpClassImpl
+import com.jetbrains.php.lang.psi.resolve.types.PhpDocTypeFromSuperMemberTP
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
+import com.vk.kphpstorm.exphptype.ExPhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeGenericsT
 import com.vk.kphpstorm.generics.GenericUtil.genericInheritInstantiation
 import com.vk.kphpstorm.generics.GenericUtil.genericNames
-import com.vk.kphpstorm.generics.GenericUtil.genericParents
+import com.vk.kphpstorm.generics.GenericUtil.getAllGenericParents
 import com.vk.kphpstorm.generics.GenericUtil.getInstantiations
 import com.vk.kphpstorm.generics.GenericUtil.isReturnGeneric
 import com.vk.kphpstorm.helpers.toExPhpType
@@ -21,17 +22,18 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericCallBase(pr
 
     override fun instantiate(): PhpType? {
         val klass = klass ?: return null
+        val method = method ?: return null
 
         val specializationNameMap = specialization()
+        val superClasses = klass.getAllGenericParents()
 
-        val (extendsList, implementsList) = klass.genericParents()
+        val specializationMaps = mutableListOf<MutableMap<String, ExPhpType?>>()
+        superClasses.forEach { (childClass, classes) ->
+            classes.forEach byClasses@{ superClass ->
+                val name = superClass.fqn
+                val genericNames = superClass.genericNames()
+                val inheritInstantiation = childClass.genericInheritInstantiation(name) ?: return@byClasses
 
-        val parentsList = extendsList + implementsList
-        parentsList.forEach { parent ->
-            val extendsName = parent.fqn
-            val genericNames = parent.genericNames()
-            val inheritInstantiation = klass.genericInheritInstantiation(extendsName)
-            if (inheritInstantiation != null) {
                 val specList = inheritInstantiation.specializationList()
 
                 val classSpecializationMap = genericNames.associate {
@@ -45,40 +47,42 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericCallBase(pr
                     classSpecializationMap[genericT.name] = spec
                 }
 
-                classSpecializationMap.forEach classForEach@{ (name, type) ->
-                    if (type == null) {
-                        return@classForEach
-                    }
-                    specializationNameMap[name] = type.instantiateGeneric(specializationNameMap)
-                }
+                specializationMaps.add(classSpecializationMap)
             }
         }
 
-        val classImpl = klass as PhpClassImpl
+        specializationMaps.reverse()
 
-        var returnTag: PhpDocReturnTag? = null
+        specializationMaps.forEach { map ->
+            map.forEach { (name, type) ->
+                map[name] = type?.instantiateGeneric(specializationNameMap)
+            }
 
-        val ifaces = classImpl.directImplementedInterfaces
-        ifaces.forEach { iface ->
-            val method = iface.findMethodByName(method!!.name)
-            returnTag = method?.docComment?.returnTag ?: return@forEach
+            map.forEach { (name, type) ->
+                specializationNameMap[name] = type!!
+            }
         }
 
-        val classes = listOf(classImpl.superClass)
-        classes.forEach { parent ->
-            val method = parent?.findMethodByName(method!!.name)
-            returnTag = method?.docComment?.returnTag ?: return@forEach
-        }
-
-        val classMethodReturnTag = method?.docComment?.returnTag
-        if (classMethodReturnTag != null) {
-            returnTag = classMethodReturnTag
-        }
-
-        val exType = returnTag?.type?.toExPhpType(project) ?: return null
-        val specializedType = exType.instantiateGeneric(specializationNameMap)
+        val returnType = getReturnDocType(method, project) ?: return null
+        val specializedType = returnType.instantiateGeneric(specializationNameMap)
 
         return specializedType.toPhpType()
+    }
+
+    private fun getReturnDocType(function: Function, project: Project): ExPhpType? {
+        var returnType: PhpType? = null
+        var curFunction: Function? = function
+        while (returnType == null && curFunction != null) {
+            val curReturnType = curFunction.docType
+            if (!curReturnType.isEmpty)
+                returnType = curReturnType
+            else if (curFunction is Method)
+                curFunction = PhpDocTypeFromSuperMemberTP.superMethods(curFunction).firstOrNull()
+            else
+                break
+        }
+
+        return returnType?.toExPhpType(project)
     }
 
     override fun unpack(packedData: String): Boolean {
@@ -116,12 +120,13 @@ class ResolvingGenericMethodCall(project: Project) : ResolvingGenericCallBase(pr
             method != null
         }
 
-        val className = if (foundInstantiation != null && foundInstantiation.specializationList.first() !is ExPhpTypeGenericsT) {
-            classGenericType = foundInstantiation
-            foundInstantiation.classFqn
-        } else {
-            classRawName
-        }
+        val className =
+            if (foundInstantiation != null && foundInstantiation.specializationList.first() !is ExPhpTypeGenericsT) {
+                classGenericType = foundInstantiation
+                foundInstantiation.classFqn
+            } else {
+                classRawName
+            }
 
         if (klass == null) {
             klass = PhpIndex.getInstance(project).getClassesByFQN(className).firstOrNull() ?: return false

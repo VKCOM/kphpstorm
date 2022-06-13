@@ -81,8 +81,15 @@ class GenericsGeneralTest : GenericTestBase() {
 
     fun testInherit() {
         runFixture("generics/general/inherit/simple_class.fixture.php")
-        runFixture("generics/general/inherit/non_generic_child.fixture.php")
+        runFixture("generics/general/inherit/simple_class_with_defaults.fixture.php")
+        runFixture(
+            "generics/general/inherit/non_generic_child.fixture.php",
+            "generics/Containers/MutableVectorList.php",
+            "generics/Containers/VectorList.php",
+        )
         runFixture("generics/general/inherit/class_and_interface.fixture.php")
+        runFixture("generics/general/inherit/2_deep_extends.fixture.php")
+        runFixture("generics/general/inherit/2_deep_extends_with_override.fixture.php")
     }
 
     /**

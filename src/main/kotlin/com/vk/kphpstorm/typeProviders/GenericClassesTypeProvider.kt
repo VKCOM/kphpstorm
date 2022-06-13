@@ -10,7 +10,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpCharTypeKey
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
 import com.vk.kphpstorm.exphptype.psi.ExPhpTypeTplInstantiationPsiImpl
-import com.vk.kphpstorm.generics.GenericUtil.genericInheritInstantiation
+import com.vk.kphpstorm.generics.GenericUtil.genericInheritInstantiationPsi
 import com.vk.kphpstorm.generics.IndexingGenericCall
 import com.vk.kphpstorm.generics.ResolvingGenericConstructorCall
 
@@ -36,7 +36,7 @@ class GenericClassesTypeProvider : PhpTypeProvider4 {
             if (containingClass != null) {
                 val superClass = containingClass.extendsList.referenceElements.firstOrNull() ?: return null
                 val superClassName = superClass.fqn ?: return null
-                val instantiationParameter = containingClass.genericInheritInstantiation(superClassName)
+                val instantiationParameter = containingClass.genericInheritInstantiationPsi(superClassName)
                 val instantiation = instantiationParameter?.firstChild as? ExPhpTypeTplInstantiationPsiImpl
                 return instantiation?.type
             }

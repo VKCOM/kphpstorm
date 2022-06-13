@@ -4,6 +4,7 @@
  * Mutable generic collection.
  *
  * @kphp-generic T
+ * @kphp-inherit VectorList<T>
  */
 class MutableVectorList extends VectorList {
   /**

@@ -2,6 +2,7 @@ package com.vk.kphpstorm.generics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.util.containers.Stack
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment
 import com.jetbrains.php.lang.psi.elements.Field
 import com.jetbrains.php.lang.psi.elements.Function
@@ -13,10 +14,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.*
 import com.vk.kphpstorm.generics.psi.GenericInstantiationPsiCommentImpl
 import com.vk.kphpstorm.helpers.toExPhpType
-import com.vk.kphpstorm.kphptags.psi.KphpDocGenericParameterDecl
-import com.vk.kphpstorm.kphptags.psi.KphpDocInheritParameterDeclPsiImpl
-import com.vk.kphpstorm.kphptags.psi.KphpDocTagGenericPsiImpl
-import com.vk.kphpstorm.kphptags.psi.KphpDocTagInheritPsiImpl
+import com.vk.kphpstorm.kphptags.psi.*
 
 object GenericUtil {
     fun PhpNamedElement.isGeneric() = docComment?.getTagElementsByName("@kphp-generic")?.firstOrNull() != null
@@ -63,18 +61,49 @@ object GenericUtil {
         return docT.getFullGenericParameters()
     }
 
-    fun PhpClass.genericParents(): Pair<List<PhpClass>, List<PhpClass>> {
+    fun PhpClass.genericParents(): List<PhpClass> {
         val extendsList = extendsList.referenceElements.mapNotNull { it.resolve() as? PhpClass }
         val implementsList = implementsList.referenceElements.mapNotNull { it.resolve() as? PhpClass }
 
-        return extendsList.filter { it.isGeneric() } to implementsList.filter { it.isGeneric() }
+        return extendsList.filter { it.isGeneric() } + implementsList.filter { it.isGeneric() }
     }
 
-    fun PhpClass.genericInheritInstantiation(className: String): KphpDocInheritParameterDeclPsiImpl? {
+    fun PhpClass.getAllGenericParents(): Stack<Pair<PhpClass, List<PhpClass>>> {
+        var currentClass = this
+        val superClasses = Stack<Pair<PhpClass, List<PhpClass>>>()
+        while (currentClass.superClass != null) {
+            val superClass = currentClass.superClass ?: continue
+            val classes = currentClass.implementedInterfaces.toMutableList()
+            classes.add(superClass)
+            superClasses.add(currentClass to classes)
+            currentClass = superClass
+        }
+
+        for (i in 0 until superClasses.size) {
+            if (!superClasses.last().second.any { it.isGeneric() }) {
+                superClasses.pop()
+            }
+        }
+
+        superClasses.reverse()
+
+        return superClasses
+    }
+
+    fun PhpClass.genericInheritInstantiation(className: String): KphpDocInheritParameterDecl? {
         val docT = docComment?.getTagElementsByName("@kphp-inherit")?.firstOrNull() as? KphpDocTagInheritPsiImpl
             ?: return null
 
-        return docT.types().find {
+        return docT.getParameters().find {
+            it.name == className
+        }
+    }
+
+    fun PhpClass.genericInheritInstantiationPsi(className: String): KphpDocInheritParameterDeclPsiImpl? {
+        val docT = docComment?.getTagElementsByName("@kphp-inherit")?.firstOrNull() as? KphpDocTagInheritPsiImpl
+            ?: return null
+
+        return docT.getParametersPsi().find {
             it.className() == className
         }
     }

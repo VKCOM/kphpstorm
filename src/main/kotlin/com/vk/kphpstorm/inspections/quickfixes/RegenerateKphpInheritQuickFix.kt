@@ -34,15 +34,14 @@ class RegenerateKphpInheritQuickFix(
             val containingNamespace = klass.namespaceName
             val inheritTag = docComment.getTagElementsByName("@kphp-inherit").firstOrNull() as? KphpDocTagInheritPsiImpl
                 ?: return
-            val tagParents = inheritTag.types().associateBy { it.className() }
+            val tagParents = inheritTag.getParameters().associateBy { it.name }
 
-            val (extendsList, implementsList) = klass.genericParents()
-            val definedParent = extendsList + implementsList
+            val definedParent = klass.genericParents()
 
             val newParents = mutableListOf<String>()
             definedParent.forEach {
                 if (tagParents.containsKey(it.fqn)) {
-                    newParents.add(tagParents[it.fqn]!!.text)
+                    newParents.add(tagParents[it.fqn].toString())
                 } else {
                     val genericTs = it.genericNonDefaultNames().joinToString(", ") { "T" }
                     newParents.add(it.fqn + "<$genericTs>")
@@ -53,9 +52,7 @@ class RegenerateKphpInheritQuickFix(
                 it.removePrefix(containingNamespace)
             }
         } else {
-            val (extendsGenericList, implementsGenericList) = klass.genericParents()
-
-            val parentsList = extendsGenericList + implementsGenericList
+            val parentsList = klass.genericParents()
 
             parentsList.joinToString(", ") {
                 val genericTs = it.genericNonDefaultNames().joinToString(", ") { "T" }

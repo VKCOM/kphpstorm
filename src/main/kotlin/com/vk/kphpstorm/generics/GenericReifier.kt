@@ -86,9 +86,7 @@ class GenericReifier(val project: Project) {
         implicitSpecializationNameMap.putAll(implicitClassSpecializationNameMap)
 
         if (klass != null) {
-            val (extendsList, implementsList) = klass.genericParents()
-
-            val parentsList = extendsList + implementsList
+            val parentsList = klass.genericParents()
             parentsList.forEach { parent ->
                 val extendsName = parent.fqn
                 val genericNames = parent.genericNames()

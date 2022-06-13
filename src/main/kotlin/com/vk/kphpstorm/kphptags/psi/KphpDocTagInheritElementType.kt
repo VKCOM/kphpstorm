@@ -26,13 +26,18 @@ object KphpDocTagInheritElementType :
     }
 
     override fun createStub(psi: PhpDocTag, parentStub: StubElement<*>?): PhpDocTagStub {
-        val stubValue = (psi as KphpDocTagInheritPsiImpl).types()
+        val stubValue = (psi as KphpDocTagInheritPsiImpl).getParameters()
             .joinToString(",") {
                 val type = StringBuilder()
 
-                if (it.className() != null) {
-                    type.append(it.className().toString())
-                }
+                type.append(it.name.toString())
+                type.append(':')
+
+                val specsList = it.specializationList().joinToString(".") { specType -> specType.toString() }
+                type.append(specsList)
+
+                type.append(':')
+                type.append(it.text.replace(',', ';'))
 
                 type.toString()
             }

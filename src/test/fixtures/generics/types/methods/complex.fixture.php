@@ -2,7 +2,7 @@
 
 namespace Methods\Complex;
 
-use pair;
+use Pair;
 use Vector;
 
 class Goo {}
@@ -22,3 +22,4 @@ class Foo {
 $vec = new Vector/*<Pair<Foo<Goo>, Goo>>*/();
 $a = $vec->get(0)->first()->getArray()[0];
 expr_type($a, "\Methods\Complex\Goo");
+

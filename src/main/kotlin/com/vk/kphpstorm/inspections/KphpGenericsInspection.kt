@@ -84,7 +84,7 @@ class KphpGenericsInspection : PhpInspection() {
                     return
                 }
 
-                val tagParents = inheritTag?.types()?.associateBy { it.className() } ?: emptyMap()
+                val tagParents = inheritTag?.getParametersPsi()?.associateBy { it.decl().name } ?: emptyMap()
                 allGenericParents.forEach { (ref, parentCLass) ->
                     if (parentCLass == null) return@forEach
 
@@ -103,7 +103,7 @@ class KphpGenericsInspection : PhpInspection() {
 
                 tagParents.forEach { (name, decl) ->
                     val parent = allParents.find { it.second?.fqn == name }
-                    if (parent == null && decl.className() != null) {
+                    if (parent == null && decl.decl().name != null) {
                         return holder.registerProblem(
                             decl,
                             "Class/interface $name not extended or implemented class/interface ${klass.name}",
