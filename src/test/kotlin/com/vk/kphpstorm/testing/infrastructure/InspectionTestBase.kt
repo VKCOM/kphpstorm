@@ -22,17 +22,19 @@ abstract class InspectionTestBase(
      * Run inspection on file.fixture.php and check that all <warning> and <error> match
      * If file.qf.php exists, apply quickfixes and compare result to file.qf.php
      */
-    protected fun runFixture(fixtureFile: String) {
+    protected fun runFixture(vararg fixtureFiles: String) {
         // Highlighting test
         KphpStormConfiguration.saveThatSetupForProjectDone(project)
-        myFixture.configureByFile(fixtureFile)
+        myFixture.configureByFiles(*fixtureFiles)
         myFixture.testHighlighting(true, false, true)
 
         // Quick-fix test
-        val qfFile = fixtureFile.replace(".fixture.php", ".qf.php")
-        if (File(myFixture.testDataPath + "/" + qfFile).exists()) {
-            myFixture.getAllQuickFixes().forEach { myFixture.launchAction(it) }
-            myFixture.checkResultByFile(qfFile)
+        fixtureFiles.forEach { fixtureFile ->
+            val qfFile = fixtureFile.replace(".fixture.php", ".qf.php")
+            if (File(myFixture.testDataPath + "/" + qfFile).exists()) {
+                myFixture.getAllQuickFixes().forEach { myFixture.launchAction(it) }
+                myFixture.checkResultByFile(qfFile)
+            }
         }
     }
 }

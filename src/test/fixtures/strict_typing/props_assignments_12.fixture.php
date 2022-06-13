@@ -34,6 +34,6 @@ function demo1() {
 
 function demo2() {
     $a = new A;
-    <error descr="Can't assign 'shape()' to 'tuple(int, A)' $t_int_A">$a->t_int_A = shape(['x'=>1])</error>;
+    <error descr="Can't assign 'shape(x:int)' to 'tuple(int, A)' $t_int_A">$a->t_int_A = shape(['x'=>1])</error>;
     <error descr="Can't assign 'tuple(int, A)' to 'shape(i:int, a:A)' $s_int_a">$a->s_int_a = tuple(1, new A)</error>;
 }

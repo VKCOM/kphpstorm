@@ -13,6 +13,7 @@ object KphpHighlightingData {
     val PHPDOC_TAG_KPHP = TextAttributesKey.createTextAttributesKey("PHPDOC_TAG_KPHP", PhpHighlightingData.DOC_TAG)
     val PHPDOC_TAG_REGULAR = TextAttributesKey.createTextAttributesKey("PHPDOC_TAG_REGULAR", PhpHighlightingData.DOC_TAG)
     val PHPDOC_TYPE_INSIDE = TextAttributesKey.createTextAttributesKey("PHPDOC_TYPE_INSIDE", PhpHighlightingData.DOC_IDENTIFIER)
+    val PHPDOC_GENERIC_TYPE_T = TextAttributesKey.createTextAttributesKey("PHPDOC_GENERIC_TYPE_T", PhpHighlightingData.DOC_IDENTIFIER)
 
     val FUNC_CALL_REGULAR = TextAttributesKey.createTextAttributesKey("FUNC_CALL_REGULAR", PhpHighlightingData.FUNCTION_CALL)
     val FUNC_CALL_KPHP_NATIVE = TextAttributesKey.createTextAttributesKey("FUNC_CALL_KPHP_NATIVE", PhpHighlightingData.FUNCTION_CALL)

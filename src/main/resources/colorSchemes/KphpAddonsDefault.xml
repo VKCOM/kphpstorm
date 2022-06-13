@@ -19,6 +19,12 @@
       <option name="FONT_TYPE" value="2"/>
     </value>
   </option>
+  <option name="PHPDOC_GENERIC_TYPE_T">
+    <value>
+      <option name="FOREGROUND" value="4D5054"/>
+      <option name="FONT_TYPE" value="2"/>
+    </value>
+  </option>
 
   <option name="FUNC_CALL_KPHP_NATIVE">
     <value>

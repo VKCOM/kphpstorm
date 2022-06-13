@@ -1,11 +1,23 @@
 package com.vk.kphpstorm
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.injection.MultiHostInjector
+import com.intellij.lang.injection.MultiHostRegistrar
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.PsiCommentImpl
+import com.intellij.psi.util.parentOfType
+import com.jetbrains.php.lang.PhpLanguage
 import com.jetbrains.php.lang.documentation.phpdoc.parser.tags.PhpDocTagParserRegistry
 import com.jetbrains.php.lang.parser.PhpParserDefinition
 import com.jetbrains.php.lang.parser.PhpPsiElementCreator
+import com.jetbrains.php.lang.psi.PhpFile
+import com.jetbrains.php.lang.psi.elements.Function
+import com.jetbrains.php.lang.psi.elements.PhpClass
+import com.jetbrains.php.lang.psi.elements.PhpUse
 import com.vk.kphpstorm.exphptype.psi.*
+import com.vk.kphpstorm.generics.GenericUtil.genericNames
+import com.vk.kphpstorm.generics.psi.GenericInstantiationPsiCommentImpl
 import com.vk.kphpstorm.kphptags.ALL_KPHPDOC_TAGS
 import com.vk.kphpstorm.kphptags.psi.*
 
@@ -30,25 +42,28 @@ class KphpStormParserDefinition() : PhpParserDefinition() {
      */
     override fun createElement(node: ASTNode): PsiElement {
         return when (node.elementType) {
-            KphpDocElementTypes.kphpDocTagSimple          -> KphpDocTagSimplePsiImpl(node)
-            KphpDocElementTypes.kphpDocTagTemplateClass   -> KphpDocTagTemplateClassPsiImpl(node)
-            KphpDocTplParameterDeclPsiImpl.elementType    -> KphpDocTplParameterDeclPsiImpl(node)
-            KphpDocElementTypes.kphpDocTagWarnPerformance -> KphpDocTagWarnPerformancePsiImpl(node)
-            KphpDocWarnPerformanceItemPsiImpl.elementType -> KphpDocWarnPerformanceItemPsiImpl(node)
+            KphpDocElementTypes.kphpDocTagSimple           -> KphpDocTagSimplePsiImpl(node)
+            KphpDocElementTypes.kphpDocTagGeneric          -> KphpDocTagGenericPsiImpl(node)
+            KphpDocGenericParameterDeclPsiImpl.elementType -> KphpDocGenericParameterDeclPsiImpl(node)
+            KphpDocInheritParameterDeclPsiImpl.elementType -> KphpDocInheritParameterDeclPsiImpl(node)
+            KphpDocElementTypes.kphpDocTagInherit          -> KphpDocTagInheritPsiImpl(node)
+            KphpDocElementTypes.kphpDocTagWarnPerformance  -> KphpDocTagWarnPerformancePsiImpl(node)
+            KphpDocWarnPerformanceItemPsiImpl.elementType  -> KphpDocWarnPerformanceItemPsiImpl(node)
 
-            ExPhpTypePrimitivePsiImpl.elementType        -> ExPhpTypePrimitivePsiImpl(node)
-            ExPhpTypeInstancePsiImpl.elementType         -> ExPhpTypeInstancePsiImpl(node)
-            ExPhpTypePipePsiImpl.elementType             -> ExPhpTypePipePsiImpl(node)
-            ExPhpTypeAnyPsiImpl.elementType              -> ExPhpTypeAnyPsiImpl(node)
-            ExPhpTypeArrayPsiImpl.elementType            -> ExPhpTypeArrayPsiImpl(node)
-            ExPhpTypeTuplePsiImpl.elementType            -> ExPhpTypeTuplePsiImpl(node)
-            ExPhpTypeShapePsiImpl.elementType            -> ExPhpTypeShapePsiImpl(node)
-            ExPhpTypeNullablePsiImpl.elementType         -> ExPhpTypeNullablePsiImpl(node)
-            ExPhpTypeTplInstantiationPsiImpl.elementType -> ExPhpTypeTplInstantiationPsiImpl(node)
-            ExPhpTypeCallablePsiImpl.elementType         -> ExPhpTypeCallablePsiImpl(node)
-            ExPhpTypeForcingPsiImpl.elementType          -> ExPhpTypeForcingPsiImpl(node)
+            ExPhpTypePrimitivePsiImpl.elementType          -> ExPhpTypePrimitivePsiImpl(node)
+            ExPhpTypeInstancePsiImpl.elementType           -> ExPhpTypeInstancePsiImpl(node)
+            ExPhpTypePipePsiImpl.elementType               -> ExPhpTypePipePsiImpl(node)
+            ExPhpTypeAnyPsiImpl.elementType                -> ExPhpTypeAnyPsiImpl(node)
+            ExPhpTypeArrayPsiImpl.elementType              -> ExPhpTypeArrayPsiImpl(node)
+            ExPhpTypeTuplePsiImpl.elementType              -> ExPhpTypeTuplePsiImpl(node)
+            ExPhpTypeShapePsiImpl.elementType              -> ExPhpTypeShapePsiImpl(node)
+            ExPhpTypeNullablePsiImpl.elementType           -> ExPhpTypeNullablePsiImpl(node)
+            ExPhpTypeTplInstantiationPsiImpl.elementType   -> ExPhpTypeTplInstantiationPsiImpl(node)
+            ExPhpTypeCallablePsiImpl.elementType           -> ExPhpTypeCallablePsiImpl(node)
+            ExPhpTypeClassStringPsiImpl.elementType        -> ExPhpTypeClassStringPsiImpl(node)
+            ExPhpTypeForcingPsiImpl.elementType            -> ExPhpTypeForcingPsiImpl(node)
 
-            else                                         -> PhpPsiElementCreator.create(node)
+            else -> PhpPsiElementCreator.create(node)
         }
     }
 }
@@ -58,3 +73,35 @@ class KphpStormParserDefinition() : PhpParserDefinition() {
  * This has no sense but correct plugin.xml validity while development
  */
 class FakePhpLanguage : com.intellij.lang.Language("PHP")
+
+class GenericsInstantiationInjector : MultiHostInjector {
+    override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
+        if (context is GenericInstantiationPsiCommentImpl) {
+            val file = context.containingFile as? PhpFile ?: return
+
+            val namespace = file.mainNamespaceName?.trim('\\') ?: ""
+            val usesText = file.topLevelDefs.values().filterIsInstance<PhpUse>().joinToString("\n") { it.parent.text }
+
+            val parentFunctionGenericT = context.parentOfType<Function>()?.genericNames() ?: emptyList()
+            val parentClassGenericT = context.parentOfType<PhpClass>()?.genericNames() ?: emptyList()
+            val genericT = (parentFunctionGenericT + parentClassGenericT).joinToString(", ") { it.name }
+
+            val start = context.startOffset - context.textOffset
+            val range = TextRange(start + 3, start + context.textLength - 3)
+            registrar.startInjecting(PhpLanguage.INSTANCE)
+                .addPlace(
+                    """<?php
+namespace $namespace;
+
+$usesText
+
+/**
+ * @kphp-generic $genericT
+ * @var tuple(""", ") \$_*/\$_;", context, range
+                )
+                .doneInjecting()
+        }
+    }
+
+    override fun elementsToInjectIn() = listOf(PsiCommentImpl::class.java)
+}

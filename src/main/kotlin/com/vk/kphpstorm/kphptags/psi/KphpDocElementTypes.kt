@@ -30,12 +30,15 @@ object KphpDocElementTypes {
     val kphpDocTagWarnPerformance = KphpDocTagWarnPerformanceElementType
 
     /**
-     * '@kphp-template-class T1, T2'
-     * (NOTE! This is not working in KPHP for now, it is just a matter of IDE experiments for future)
-     * This tag stores "T1,T2" in stubs and has custom psi for them, therefore is not simple
+     * '@kphp-generic T1, T2: ExtendsClass, T3 = default'
+     * This tag stores "T1,T2:ExtendsClass,T3=default" in stubs and has custom psi for them, therefore is not simple
      */
-    val kphpDocTagTemplateClass = KphpDocTagTemplateClassElementType
+    val kphpDocTagGeneric = KphpDocTagGenericElementType
 
+    /**
+     * '@kphp-inherit ExtendsClass<Type>, ImplementsClass<Type>'
+     * This tag stores "ExtendsClass<Type>, ImplementsClass<Type>"
+     * in stubs and has custom psi for them, therefore is not simple
+     */
+    val kphpDocTagInherit = KphpDocTagInheritElementType
 }
-
-

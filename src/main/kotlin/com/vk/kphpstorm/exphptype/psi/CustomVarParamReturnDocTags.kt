@@ -35,7 +35,7 @@ class PhpDocParamTagParserEx : PhpDocTagParser() {
  */
 class PhpDocVarTagParserEx : PhpDocTagParser() {
     override fun getElementType(): IElementType =
-            PhpDocElementTypes.phpDocTag
+            PhpDocElementTypes.phpDocParam
 
     override fun parseContents(builder: PhpPsiBuilder) =
             TokensToExPhpTypePsiParsing.parseVarAndType(builder)

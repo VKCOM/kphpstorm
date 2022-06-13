@@ -67,10 +67,21 @@
                      enabledByDefault="false" level="ERROR"
                      implementationClass="com.vk.kphpstorm.inspections.KphpUnsupportedFunctionCallInspection"/>
 
+    <!-- Generics inspections-->
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="KphpGenericsInspection"
+                     displayName="KPHP generic violation"
+                     enabledByDefault="false" level="WARNING"
+                     implementationClass="com.vk.kphpstorm.inspections.KphpGenericsInspection"/>
+
     <intentionAction>
       <className>com.vk.kphpstorm.inspections.PrettifyPhpdocBlockIntention</className>
       <category>PHP</category>
       <descriptionDirectoryName>PrettifyPhpdocBlockIntention</descriptionDirectoryName>
+    </intentionAction>
+    <intentionAction>
+      <className>com.vk.kphpstorm.inspections.CollapseGenericsInstantiationIntention</className>
+      <category>PHP</category>
+      <descriptionDirectoryName>CollapseGenericsInstantiationIntention</descriptionDirectoryName>
     </intentionAction>
 
     <additionalTextAttributes scheme="Default" file="colorSchemes/KphpAddonsDefault.xml"/>
@@ -81,6 +92,11 @@
                             implementationClass="com.vk.kphpstorm.completion.KphpStormCompletionContributor"/>
     <lang.parserDefinition language="PHP" order="first"
                            implementationClass="com.vk.kphpstorm.KphpStormParserDefinition"/>
+    <lang.ast.factory
+        language="PHP"
+        order="first"
+        implementationClass="com.vk.kphpstorm.KphpStormASTFactory" />
+
     <stubElementTypeHolder class="com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes"/>
     <annotator language="PHP" implementationClass="com.vk.kphpstorm.highlighting.KphpStormAnnotator"/>
 
@@ -90,13 +106,24 @@
                           implementationClass="com.vk.kphpstorm.highlighting.KphpStormTypeInfoProvider"/>
 
     <postStartupActivity implementation="com.vk.kphpstorm.configuration.KphpStormStartupActivity"/>
+
+    <multiHostInjector implementation="com.vk.kphpstorm.GenericsInstantiationInjector"/>
+    <lang.foldingBuilder language="PHP"
+                         implementationClass="com.vk.kphpstorm.highlighting.KphpGenericCommentFolderBuilder"/>
+    <codeInsight.inlayProvider language="PHP"
+                               implementationClass="com.vk.kphpstorm.highlighting.hints.GenericsInlayTypeHintsProvider"/>
+
   </extensions>
 
   <extensions defaultExtensionNs="com.jetbrains.php">
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.TupleShapeTypeProvider"/>
-<!--    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.TemplateObjectAccessTypeProvider"/>-->
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.GenericFunctionsTypeProvider"/>
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.GenericClassesTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.FunctionsTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.ForeachTypeProvider"/>
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.ClassConstTypeProvider"/>
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.GenericMethodsTypeProvider"/>
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.GenericFieldsTypeProvider"/>
 
     <docTagParserExtension tagName="return" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />
     <docTagParserExtension tagName="returns" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />

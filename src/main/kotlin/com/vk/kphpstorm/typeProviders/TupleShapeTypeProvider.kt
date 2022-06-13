@@ -83,8 +83,18 @@ class TupleShapeTypeProvider : PhpTypeProvider4 {
                 // so, in complex scenarios like get()[1][2]->... combinations increase geometrically
                 // to partially avoid this, use heruistics:
                 // filter out subtypes detected by PhpStorm native type providers that are 100% useless here
-                if (!it.contains("#π") && !it.contains("#E"))
+                if (!it.contains("#π") && !it.contains("#E") && !it.contains("%")) {
                     resultType.add("#Й.$indexKey $it")
+                    return@forEach
+                }
+
+                if (it.contains(GenericFunctionsTypeProvider.KEY.key) ||
+                    it.contains(GenericMethodsTypeProvider.KEY.key) ||
+                    it.contains(GenericClassesTypeProvider.KEY.key) ||
+                    it.contains(GenericFieldsTypeProvider.KEY.key)
+                ) {
+                    resultType.add("#Й.$indexKey $it")
+                }
             }
 //            println("type($lhs) = ${resultType.toString().replace("|", " | ")}")
 
@@ -121,6 +131,10 @@ class TupleShapeTypeProvider : PhpTypeProvider4 {
      */
     override fun complete(incompleteTypeStr: String, project: Project): PhpType? {
         val spacePos = incompleteTypeStr.indexOf(' ')
+        if (spacePos == -1) {
+            return null
+        }
+
         val indexKey = incompleteTypeStr.substring(3, spacePos)
         val lhsTypeStr = incompleteTypeStr.substring(spacePos + 1)
         val wholeType = PhpType().add(lhsTypeStr).global(project)
@@ -218,8 +232,9 @@ class TupleShapeTypeProvider : PhpTypeProvider4 {
                     || it == "\\any"                // any[*] is any, not undefined
                     || it == "\\array"              // array[*] is any (untyped arrays)
         }
-        if (!needsCustomIndexing)
-            return null
+        // TODO: Нам нужно тут выводить самим так как дженерики
+//        if (!needsCustomIndexing)
+//            return null
 
         return wholeType.toExPhpType()?.getSubkeyByIndex(indexKey)?.toPhpType()
     }

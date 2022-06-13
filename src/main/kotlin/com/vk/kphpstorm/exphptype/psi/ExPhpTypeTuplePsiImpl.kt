@@ -28,6 +28,7 @@ class ExPhpTypeTuplePsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
             if (child is PhpDocType) {
                 if (itemsStr.length > 1)
                     itemsStr += ','
+                // TODO: подумать
                 itemsStr += child.type.toStringAsNested()
             }
             child = child.nextSibling

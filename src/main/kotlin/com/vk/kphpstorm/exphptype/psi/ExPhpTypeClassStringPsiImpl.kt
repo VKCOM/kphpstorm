@@ -1,0 +1,47 @@
+package com.vk.kphpstorm.exphptype.psi
+
+import com.intellij.lang.ASTNode
+import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocElementType
+import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocTypeImpl
+import com.jetbrains.php.lang.psi.resolve.types.PhpType
+import com.vk.kphpstorm.exphptype.KphpPrimitiveTypes
+import com.vk.kphpstorm.generics.GenericUtil
+import com.vk.kphpstorm.helpers.toExPhpType
+
+/**
+ * class-string<Foo> — psi is class-string(Foo) corresponding type of Foo::class
+ * PhpType is "class-string(Foo)"
+ */
+class ExPhpTypeClassStringPsiImpl(node: ASTNode) : PhpDocTypeImpl(node) {
+    companion object {
+        val elementType = PhpDocElementType("exPhpTypeClassString")
+    }
+
+    override fun getNameNode(): ASTNode? = null
+
+    override fun getType(): PhpType {
+        val text = text
+        val brace = if (text.contains('(')) listOf('(', ')') else listOf('<', '>')
+        // Во время написания типа если он уже завершен.
+        val className = if (text.contains(brace[0]) && text.contains(brace[1])) {
+            val genericType = text.substring(text.indexOf(brace[0]) + 1 until text.indexOf(brace[1]))
+
+            // В случае когда класс на самом деле является шаблонным типом нам нужно мимикрировать тип
+            // и добавить знак процента к имени типа, чтобы в дальнейшем работать с ним как с шаблоном.
+            val genericMark = if (GenericUtil.nameIsGeneric(this, genericType)) "%" else ""
+
+            "$genericMark$genericType"
+        } else {
+            ""
+        }
+
+        if (className.isEmpty()) return KphpPrimitiveTypes.PHP_TYPE_ANY
+        if (className.startsWith("%")) return PhpType().add("class-string($className)")
+
+        val classPsi = firstChild?.nextSibling?.nextSibling as? ExPhpTypeInstancePsiImpl
+            ?: return KphpPrimitiveTypes.PHP_TYPE_ANY
+
+        val innerType = getType(classPsi, text).toExPhpType()
+        return PhpType().add("class-string($innerType)")
+    }
+}

@@ -73,7 +73,7 @@ internal object TokensToExPhpTypePsiParsing {
         }
     }
 
-    private fun parseTemplateSpecialization(builder: PhpPsiBuilder): Boolean {
+    private fun parseGenericSpecialization(builder: PhpPsiBuilder): Boolean {
         if (!builder.compareAndEat(PhpDocTokenTypes.DOC_LAB))
             return !builder.expected("<")
 
@@ -201,6 +201,17 @@ internal object TokensToExPhpTypePsiParsing {
             return true
         }
 
+        if (builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) && builder.tokenText == "class-string") {
+            val marker = builder.mark()
+            builder.advanceLexer()
+            if (!parseGenericSpecialization(builder)) {
+                marker.drop()
+                return false
+            }
+            marker.done(ExPhpTypeClassStringPsiImpl.elementType)
+            return true
+        }
+
         if (builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) && (builder.tokenText == "ffi_cdata" || builder.tokenText == "ffi_scope")) {
             val marker = builder.mark()
             builder.advanceLexer()
@@ -249,7 +260,7 @@ internal object TokensToExPhpTypePsiParsing {
 
             if (builder.compare(PhpDocTokenTypes.DOC_LAB)) {
                 val instantiationMarker = marker.precede()
-                if (!parseTemplateSpecialization(builder))
+                if (!parseGenericSpecialization(builder))
                     instantiationMarker.drop()
                 else
                     instantiationMarker.done(ExPhpTypeTplInstantiationPsiImpl.elementType)

@@ -11,8 +11,6 @@ val ALL_KPHPDOC_TAGS: List<KphpDocTag> = listOf(
         KphpFlattenDocTag,
         KphpRequiredDocTag,
         KphpSyncDocTag,
-        KphpTemplateDocTag,
-        KphpReturnDocTag,
         KphpShouldNotThrowDocTag,
         KphpThrowsDocTag,
         KphpDisableWarningsDocTag,
@@ -26,7 +24,8 @@ val ALL_KPHPDOC_TAGS: List<KphpDocTag> = listOf(
 
         KphpSerializableDocTag,
         KphpReservedFieldsDocTag,
-        KphpTemplateClassDocTag,
+        KphpGenericDocTag,
+        KphpInheritDocTag,
         KphpMemcacheClassDocTag,
         KphpImmutableClassDocTag,
         KphpTlClassDocTag,

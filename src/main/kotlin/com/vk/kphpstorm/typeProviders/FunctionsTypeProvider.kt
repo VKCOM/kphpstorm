@@ -3,9 +3,11 @@ package com.vk.kphpstorm.typeProviders
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.psi.elements.*
+import com.jetbrains.php.lang.psi.elements.impl.ArrayCreationExpressionImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
 import com.vk.kphpstorm.exphptype.*
+import com.vk.kphpstorm.generics.GenericUtil.isGeneric
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.helpers.toStringAsNested
 
@@ -245,9 +247,33 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
             }
         }
 
-        // for shape([...]) let it be just shape(), without detalization; all shapes are compatible with each other
+        // ввиду шаблонов нам может понадобиться точный тип для шейпов, поэтому мы выводим его здесь
         if (funcName == "shape") {
-            return PhpType().add("shape()")
+            val innerArray = p.parameters.firstOrNull() as? ArrayCreationExpression ?: return null
+
+            var containsUnresolved = false
+            val types = ArrayCreationExpressionImpl.children(innerArray).mapNotNull {
+                if (it !is ArrayHashElement) return@mapNotNull null
+                if (it.value !is PhpTypedElement) return@mapNotNull null
+                if (it.key == null) return@mapNotNull null
+                if (it.key !is StringLiteralExpression) return@mapNotNull null
+
+                val key = (it.key as StringLiteralExpression).contents
+                val type = (it.value as PhpTypedElement).type
+                if (!type.isComplete) {
+                    containsUnresolved = true
+                }
+
+                Pair(key, type)
+            }
+
+            if (containsUnresolved) {
+                return PhpType().add(
+                    "#!h ${types.joinToString("ꄴ") { it.first + ":" + it.second.toStringAsNested("ꄶ") }}"
+                )
+            }
+
+            return inferShape(types)
         }
 
 //        println("unhandled function: $funcName")
@@ -262,10 +288,35 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
         if (funcChar == 't') {
             val parameterTypes = argTypeStr.split('ꄳ').map {
                 PhpType().apply {
-                    it.split('⎋').forEach { add(it) }
-                }.global(project)
+                    it.split('⎋').forEach {
+                        val subType = PhpType().add(it).global(project)
+                        // TODO: add more tests
+                        if (!subType.isAmbiguous) {
+                            add(PhpType().add(it).global(project))
+                        }
+                    }
+                }
             }
-            return inferTuple(parameterTypes)
+            return inferTuple(parameterTypes.map { it.global(project) })
+        }
+
+        // inferring for "shape(...)" needs special decoding: any arguments are encoded to a single string
+        if (funcChar == 'h') {
+            val parameterTypes = argTypeStr.split('ꄴ').map {
+                val (key, unresolvedType) = it.split(':')
+                val type = PhpType().apply {
+                    unresolvedType.split('ꄶ').forEach { unresolvedSubType ->
+                        val subType = PhpType().add(unresolvedSubType).global(project)
+                        // TODO: add more tests
+                        if (!subType.isAmbiguous) {
+                            add(PhpType().add(unresolvedSubType).global(project))
+                        }
+                    }
+                }.global(project)
+
+                Pair(key, type)
+            }
+            return inferShape(parameterTypes)
         }
 
         // for all other cases, just a single argument is encoded
@@ -286,9 +337,14 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
         return null
     }
 
-
     private fun PhpType.force(): PhpType {
-        return when (this.toExPhpType()) {
+        val type = this.toExPhpType() ?: return this
+
+        if (type.isGeneric()) {
+            return PhpType().add(this)
+        }
+
+        return when(type) {
             is ExPhpTypeForcing  -> this
             is ExPhpTypeInstance -> this
             else                 -> PhpType().add("force($this)")
@@ -300,7 +356,6 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
         val argType = (arg as? PhpTypedElement)?.type ?: return null
         return if (argType.isEmpty) KphpPrimitiveTypes.PHP_TYPE_ANY else argType
     }
-    
 
     private fun inferTypeSameAs(argType: PhpType): PhpType {
         return argType.force()
@@ -336,6 +391,12 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
     private fun inferTuple(parameterTypes: List<PhpType>): PhpType {
         return PhpType().add(
                 parameterTypes.joinToString(",", "tuple(", ")") { it.toStringAsNested() }
+        )
+    }
+
+    private fun inferShape(parameterTypes: List<Pair<String, PhpType>>): PhpType {
+        return PhpType().add(
+            parameterTypes.joinToString(",", "shape(", ")") { it.first + ":" + it.second.toStringAsNested() }
         )
     }
 }

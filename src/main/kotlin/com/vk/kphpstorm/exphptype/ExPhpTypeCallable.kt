@@ -21,13 +21,15 @@ class ExPhpTypeCallable(val argTypes: List<ExPhpType>, val returnType: ExPhpType
         return null
     }
 
-    override fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType {
-        return ExPhpTypeCallable(argTypes.map { it.instantiateTemplate(nameMap) }, returnType?.instantiateTemplate(nameMap))
+    override fun instantiateGeneric(nameMap: Map<String, ExPhpType>): ExPhpType {
+        return ExPhpTypeCallable(argTypes.map { it.instantiateGeneric(nameMap) }, returnType?.instantiateGeneric(nameMap))
     }
 
     override fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean = when (rhs) {
         is ExPhpTypeAny      -> true
+        // TODO: добавить полноценную проверку?
         is ExPhpTypeCallable -> true
+        is ExPhpTypePrimitive -> rhs == ExPhpType.CALLABLE || rhs == ExPhpType.STRING
         is ExPhpTypeNullable -> isAssignableFrom(rhs.inner, project)
         else                 -> false
     }

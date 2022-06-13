@@ -49,3 +49,12 @@ fun setSelectionInEditor(editor: Editor, elementToSelect: PsiElement) {
             editor.offsetToLogicalPosition(offset + elementToSelect.textLength)
     ))
 }
+
+fun setSelectionInEditor(editor: Editor, elementToSelect: PsiElement, shiftStart: Int, shiftEnd: Int) {
+    val offset = elementToSelect.textOffset
+    editor.caretModel.caretsAndSelections = listOf(CaretState(
+        editor.offsetToLogicalPosition(offset + shiftStart),
+        editor.offsetToLogicalPosition(offset + shiftStart),
+        editor.offsetToLogicalPosition(offset + shiftEnd),
+    ))
+}
