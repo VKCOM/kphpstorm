@@ -17,7 +17,7 @@ class A {
     public $var;
 }
 
-// prototypes of kphp build-in functions we are testing
+// prototypes of kphp built-in functions we are testing
 if(0) {
     function array_first_value(array &$a) { $r = current($a); return ${'r'}; }
     function array_last_value(array &$a) { $r = current(${'a'}); return ${'a'}; }
