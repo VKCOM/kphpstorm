@@ -1,4 +1,9 @@
-# KPHPStorm
+# KPHPStorm plugin for PhpStorm
+
+[![Build](https://github.com/unserialize/kphpstorm/workflows/Build/badge.svg)](https://github.com/unserialize/kphpstorm/workflows/Build/badge.svg)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
+[![Total Downloads](https://img.shields.io/jetbrains/plugin/d/14814)](https://plugins.jetbrains.com/plugin/14814-kphpstorm)
+[![Latest Version](https://img.shields.io/jetbrains/plugin/v/14814)](https://plugins.jetbrains.com/plugin/14814-kphpstorm)
 
 PhpStorm plugin that makes IDE understand KPHP specifics.
 [JetBrains repository](https://plugins.jetbrains.com/plugin/14814-kphpstorm/)
