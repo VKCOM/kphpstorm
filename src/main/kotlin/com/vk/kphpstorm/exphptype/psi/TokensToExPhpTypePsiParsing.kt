@@ -6,6 +6,8 @@ import com.jetbrains.php.lang.parser.PhpParserErrors
 import com.jetbrains.php.lang.parser.PhpPsiBuilder
 import com.jetbrains.php.lang.parser.parsing.Namespace
 import com.vk.kphpstorm.exphptype.KphpPrimitiveTypes
+import com.vk.kphpstorm.helpers.compareAndEatAny
+import com.vk.kphpstorm.helpers.compareAny
 
 /**
  * Custom parsing of @param/@var/@return — having only tokens (and PsiBuilder), make psi.
@@ -20,13 +22,13 @@ internal object TokensToExPhpTypePsiParsing {
 
     // example: tuple(int[], A, \shared\Instance)
     private fun parseTupleContents(builder: PhpPsiBuilder): Boolean {
-        if (!builder.compareAndEat(PhpDocTokenTypes.DOC_LPAREN) && !builder.compareAndEat(PhpDocTokenTypes.DOC_LAB))
+        if (!(builder.compareAndEatAny(PhpDocTokenTypes.DOC_LPAREN, PhpDocTokenTypes.DOC_LAB)))
             return !builder.expected("(")
 
         while (true) {
             if (!parseTypeExpression(builder))
                 return builder.expected("expression")
-            if (builder.compareAndEat(PhpDocTokenTypes.DOC_RPAREN) || builder.compareAndEat(PhpDocTokenTypes.DOC_RAB))
+            if (builder.compareAndEatAny(PhpDocTokenTypes.DOC_RPAREN, PhpDocTokenTypes.DOC_RAB))
                 return true
 
             if (builder.compareAndEat(PhpDocTokenTypes.DOC_COMMA))
@@ -38,7 +40,7 @@ internal object TokensToExPhpTypePsiParsing {
     // example: shape(x:int, y?:\A, z:tuple(...))
     // in the end there may be DOC_TEXT "...": shape(x:int, ...)
     private fun parseShapeContents(builder: PhpPsiBuilder): Boolean {
-        if (!builder.compareAndEat(PhpDocTokenTypes.DOC_LPAREN) && !builder.compareAndEat(PhpDocTokenTypes.DOC_LAB))
+        if (!(builder.compareAndEatAny(PhpDocTokenTypes.DOC_LPAREN, PhpDocTokenTypes.DOC_LAB)))
             return !builder.expected("(")
 
         while (true) {
@@ -57,13 +59,13 @@ internal object TokensToExPhpTypePsiParsing {
 
             if (!parseTypeExpression(builder))
                 return builder.expected("expression")
-            if (builder.compareAndEat(PhpDocTokenTypes.DOC_RPAREN) || builder.compareAndEat(PhpDocTokenTypes.DOC_RAB))
+            if (builder.compareAndEatAny(PhpDocTokenTypes.DOC_RPAREN, PhpDocTokenTypes.DOC_RAB))
                 return true
 
             if (builder.compareAndEat(PhpDocTokenTypes.DOC_COMMA)) {
                 if (builder.compare(PhpDocTokenTypes.DOC_TEXT) && builder.tokenText == "...") {
                     builder.advanceLexer()
-                    if (!builder.compareAndEat(PhpDocTokenTypes.DOC_RPAREN) && !builder.compareAndEat(PhpDocTokenTypes.DOC_RAB))
+                    if (!(builder.compareAndEatAny(PhpDocTokenTypes.DOC_RPAREN, PhpDocTokenTypes.DOC_RAB)))
                         return builder.expected(")")
                     return true
                 }
@@ -94,10 +96,7 @@ internal object TokensToExPhpTypePsiParsing {
             return !builder.expected("<")
 
         while (true) {
-            if (builder.compareAndEat(PhpDocTokenTypes.DOC_TEXT) ||
-                builder.compareAndEat(PhpDocTokenTypes.DOC_COMMA) ||
-                builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)
-            )
+            if (builder.compareAndEatAny(PhpDocTokenTypes.DOC_TEXT, PhpDocTokenTypes.DOC_COMMA, PhpDocTokenTypes.DOC_IDENTIFIER))
                 continue
 
             if (builder.compareAndEat(PhpDocTokenTypes.DOC_RAB))
@@ -241,7 +240,7 @@ internal object TokensToExPhpTypePsiParsing {
             return true
         }
 
-        if (builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) || builder.compare(PhpDocTokenTypes.DOC_NAMESPACE)) {
+        if (builder.compareAny(PhpDocTokenTypes.DOC_IDENTIFIER, PhpDocTokenTypes.DOC_NAMESPACE)) {
             val marker = builder.mark()
             Namespace.parseReference(builder)
             builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)

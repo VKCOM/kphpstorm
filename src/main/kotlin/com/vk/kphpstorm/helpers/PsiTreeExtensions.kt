@@ -3,10 +3,12 @@ package com.vk.kphpstorm.helpers
 import com.intellij.openapi.editor.CaretState
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.elementType
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment
 import com.jetbrains.php.lang.parser.PhpElementTypes
+import com.jetbrains.php.lang.parser.PhpPsiBuilder
 import com.jetbrains.php.lang.psi.elements.Field
 import com.jetbrains.php.lang.psi.elements.Function
 import com.jetbrains.php.lang.psi.elements.PhpClass
@@ -48,4 +50,30 @@ fun setSelectionInEditor(editor: Editor, elementToSelect: PsiElement) {
             editor.offsetToLogicalPosition(offset),
             editor.offsetToLogicalPosition(offset + elementToSelect.textLength)
     ))
+}
+
+/**
+ * Example:
+ *
+ * ```
+ *  builder.compare(token1, token2, ...etc)
+ *  // equivalent to
+ *  builder.compare(token1) || builder.compare(token2) || etc
+ *  ```
+ */
+fun PhpPsiBuilder.compareAny(vararg tokens: IElementType): Boolean {
+    return tokens.any { this.compare(it) }
+}
+
+/**
+ * Example:
+ *
+ * ```
+ *  builder.compareAndEatAny(token1, token2, ...etc)
+ *  // equivalent to
+ *  builder.compareAndEatAny(token1) || builder.compareAndEatAny(token2) || etc
+ *  ```
+ */
+fun PhpPsiBuilder.compareAndEatAny(vararg tokens: IElementType): Boolean {
+    return tokens.any { this.compareAndEat(it) }
 }

@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.parser.PhpParserErrors
 import com.jetbrains.php.lang.parser.PhpPsiBuilder
 import com.jetbrains.php.lang.psi.stubs.PhpStubElementType
+import com.vk.kphpstorm.helpers.compareAny
 
 object KphpDocTagWarnPerformanceElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>("@kphp-warn-performance"), KphpDocTagElementType {
     override fun createPsi(stub: PhpDocTagStub): PhpDocTag {
@@ -41,7 +42,7 @@ object KphpDocTagWarnPerformanceElementType : PhpStubElementType<PhpDocTagStub, 
 
         override fun parseContents(builder: PhpPsiBuilder): Boolean {
             do {
-                if (builder.compare(PhpDocTokenTypes.DOC_LEADING_ASTERISK) || builder.compare(PhpDocTokenTypes.DOC_COMMENT_END))
+                if (builder.compareAny(PhpDocTokenTypes.DOC_LEADING_ASTERISK, PhpDocTokenTypes.DOC_COMMENT_END))
                     break
 
                 val marker = builder.mark()
