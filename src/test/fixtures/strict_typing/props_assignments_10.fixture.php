@@ -17,8 +17,7 @@ class A {
     public $var;
 }
 
-// while running tests, standard library is not included
-// so, write prototypes of functions we are testing
+// prototypes of kphp build-in functions we are testing
 if(0) {
     function array_first_value(array &$a) { $r = current($a); return ${'r'}; }
     function array_last_value(array &$a) { $r = current(${'a'}); return ${'a'}; }
