@@ -72,6 +72,10 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
     }
 
     override fun needsAutoCompleteOnTyping(docComment: PhpDocComment, owner: PsiElement?): Boolean {
+        if (owner is Field && owner.modifier.isStatic) {
+            return false
+        }
+
         return true
     }
 
@@ -110,8 +114,11 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         when (val owner = rhs.parentDocComment?.owner) {
             is Field -> {
                 val fieldName = owner.name
-                val phpClass = owner.containingClass ?: return
+                if (owner.modifier.isStatic) {
+                    return holder.errTag(docTag, "@kphp-json is allowed only for instance fields: $$fieldName")
+                }
 
+                val phpClass = owner.containingClass ?: return
                 if (property == null) {
                     return holder.errTag(
                         docTag,
@@ -124,10 +131,6 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                         docTag,
                         "@kphp-json tag '${property.name}' is not applicable for the field ${phpClass.name}::$$fieldName"
                     )
-                }
-
-                if (owner.modifier.isStatic) {
-                    return holder.errTag(docTag, "@kphp-json is allowed only for instance fields: $$fieldName")
                 }
 
                 val isUsedCorrectType = property.ifType?.first?.invoke(owner.type.toExPhpType())

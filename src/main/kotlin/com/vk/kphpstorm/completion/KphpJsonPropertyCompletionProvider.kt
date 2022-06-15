@@ -16,6 +16,10 @@ class KphpJsonPropertyCompletionProvider : CompletionProvider<CompletionParamete
         val position = parameters.position
         val owner = position.parentDocComment?.owner as? PhpTypedElement ?: return
 
+        if (owner is Field && owner.modifier.isStatic) {
+            return
+        }
+
         val elementBeforeCursor = position.prevSibling
         when (elementBeforeCursor?.text) {
             "=" -> {

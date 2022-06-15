@@ -48,6 +48,11 @@ class C {
    * <error descr="@kphp-json is allowed only for instance fields: $f1">@kphp-json skip</error>
    */
   public static $f1 = 0;
+
+  /**
+   * <error descr="@kphp-json is allowed only for instance fields: $f2">@kphp-json unknown_field</error>
+   */
+  public static $f2 = 0;
 }
 
 /**
