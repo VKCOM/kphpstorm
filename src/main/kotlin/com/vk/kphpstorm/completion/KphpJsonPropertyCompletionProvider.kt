@@ -1,5 +1,6 @@
 package com.vk.kphpstorm.completion
 
+import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
@@ -48,8 +49,13 @@ class KphpJsonPropertyCompletionProvider : CompletionProvider<CompletionParamete
                     }
 
                     var element = LookupElementBuilder.create(property.name)
-                    if (property.allowValues != null) {
+                    val allowValues = property.allowValues
+                    if (allowValues != null) {
                         element = element.appendTailText("=", true).withInsertHandler(KphpDocTagJsonInsertHandler)
+
+                        if (allowValues.isNotEmpty()) {
+                            element = element.withTypeText(allowValues.joinToString("|"))
+                        }
                     }
 
                     result.addElement(element)
@@ -64,6 +70,8 @@ class KphpJsonPropertyCompletionProvider : CompletionProvider<CompletionParamete
 
             context.document.insertString(caretOffset, "=")
             context.editor.caretModel.moveToOffset(caretOffset + 1)
+
+            AutoPopupController.getInstance(context.project).scheduleAutoPopup(context.editor)
         }
     }
 }

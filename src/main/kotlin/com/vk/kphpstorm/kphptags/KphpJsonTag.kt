@@ -93,7 +93,8 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         val elementValue = propertyPsi.stringValue()
 
         if (property != null) {
-            if (property.allowValues == null) {
+            val allowValues = property.allowValues
+            if (allowValues == null) {
                 if (elementValue != null) {
                     return holder.errTag(docTag, "@kphp-json '${property.name}' not expected value")
                 }
@@ -102,10 +103,10 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     return holder.errTag(docTag, "@kphp-json '${property.name}' expected value")
                 }
 
-                if (elementValue !in property.allowValues && property.allowValues.isNotEmpty()) {
+                if (elementValue !in allowValues && allowValues.isNotEmpty()) {
                     return holder.errTag(
                         docTag,
-                        "@kphp-json '${property.name}' should be either ${property.allowValues.joinToString("|")}"
+                        "@kphp-json '${property.name}' should be either ${allowValues.joinToString("|")}"
                     )
                 }
             }
