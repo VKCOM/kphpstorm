@@ -51,7 +51,7 @@ function withLambdas() {
     };
 
     $f2 = function(): void {
-        <error descr="Can't return 'string', expected 'void'">return 'asdf';</error>
+        <error descr="Can't return 'string', expected 'void'">return <error descr="A void function must not return a value">'asdf'</error>;</error>
     };
 
     // this is ok, because lambdas are not typed, so if not declared - void is not assumed
@@ -71,6 +71,6 @@ function withLambdas() {
     };
 
     $f6 = function($untyped): void {
-        return $untyped;
+        return <error descr="A void function must not return a value">$untyped</error>;
     };
 }
