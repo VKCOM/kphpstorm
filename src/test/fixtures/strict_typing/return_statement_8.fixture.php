@@ -19,5 +19,5 @@ function demo3(int $a) {
 }
 
 function demo4(): void {
-    <error descr="Can't return 'int', expected 'void'">return 123;</error>
+    <error descr="Can't return 'int', expected 'void'">return <error descr="A void function must not return a value">123</error>;</error>
 }
