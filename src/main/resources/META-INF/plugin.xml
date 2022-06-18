@@ -106,7 +106,7 @@
   </extensions>
 
   <actions>
-    <group id="com.vk.kphpstorm" text="KPHPStorm" popup="true">
+    <group id="com.vk.kphpstorm" text="KPHPStorm" popup="true" icon="/icons/kphp_logo.svg">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
       <action
         id="com.vk.kphpstorm.configuration.SetupPluginForProjectAction"

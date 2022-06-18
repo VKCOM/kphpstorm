@@ -33,7 +33,7 @@ function getInt6() : int {
 }
 
 function getInt7() : void {
-    <error descr="Can't return 'int', expected 'void'">return 5;</error>
+    <error descr="Can't return 'int', expected 'void'">return <error descr="A void function must not return a value">5</error>;</error>
 }
 
 function getInt8() : int {
