@@ -219,7 +219,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         holder: AnnotationHolder,
         docTag: PhpDocTag
     ): Boolean {
-        val isUsedCorrectFloatPrecision = (propertyPsi.intValue() ?: 0) > 0
+        val isUsedCorrectFloatPrecision = (propertyPsi.intValue() ?: 0) >= 0
         if (property.name == "float_precision" && !isUsedCorrectFloatPrecision) {
             holder.errTag(
                 docTag,

@@ -64,6 +64,11 @@ class D {
    * @kphp-json float_precision=3
    */
   public $f1 = 123.4567;
+
+  /**
+   * @kphp-json float_precision=0
+   */
+  public $f2 = 987.654;
 }
 
 /**
