@@ -50,8 +50,8 @@ class B {
 }
 
 /**
- * @kphp-json fields_visibility=all
- * @kphp-json fields_rename=camelCase
+ * @kphp-json visibility_policy=all
+ * @kphp-json rename_policy=camelCase
  */
 class C {
 }

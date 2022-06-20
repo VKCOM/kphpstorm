@@ -89,16 +89,16 @@ class G {
 }
 
 /**
- * <error descr="@kphp-json 'fields_rename' should be either none|snake_case|camelCase">@kphp-json fields_rename=unknown_value</error>
- * <error descr="@kphp-json 'fields_visibility' should be either all|public">@kphp-json fields_visibility=private</error>
+ * <error descr="@kphp-json 'rename_policy' should be either none|snake_case|camelCase">@kphp-json rename_policy=unknown_value</error>
+ * <error descr="@kphp-json 'visibility_policy' should be either all|public">@kphp-json visibility_policy=private</error>
  */
 class H {
 }
 
 /**
- * <error descr="'fields_rename' can't be used for a @kphp-json 'flatten' class">@kphp-json fields_rename=camelCase</error>
+ * <error descr="'rename_policy' can't be used for a @kphp-json 'flatten' class">@kphp-json rename_policy=camelCase</error>
  * @kphp-json flatten
- * <error descr="'fields_visibility' can't be used for a @kphp-json 'flatten' class">@kphp-json fields_visibility=all</error>
+ * <error descr="'visibility_policy' can't be used for a @kphp-json 'flatten' class">@kphp-json visibility_policy=all</error>
  */
 class I {
   /**
@@ -109,8 +109,8 @@ class I {
 
 /**
  * <error descr="@kphp-json 'float_precision' expected value">@kphp-json float_precision</error>
- * <error descr="@kphp-json 'fields_rename' expected value">@kphp-json fields_rename</error>
- * <error descr="@kphp-json 'fields_visibility' expected value">@kphp-json fields_visibility</error>
+ * <error descr="@kphp-json 'rename_policy' expected value">@kphp-json rename_policy</error>
+ * <error descr="@kphp-json 'visibility_policy' expected value">@kphp-json visibility_policy</error>
  */
 class J {
   /**
@@ -129,7 +129,7 @@ class J {
  */
 class K {
   /**
-   * <error descr="@kphp-json tag 'fields_rename' is not applicable for the field K::$f1">@kphp-json fields_rename=snake_case</error>
+   * <error descr="@kphp-json tag 'rename_policy' is not applicable for the field K::$f1">@kphp-json rename_policy=snake_case</error>
    */
   public $f1 = 0;
 }

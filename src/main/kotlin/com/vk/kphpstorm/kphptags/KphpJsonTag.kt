@@ -38,8 +38,8 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
     }
 
     val properties = listOf(
-        Property("fields_rename", allowClass = true, allowValues = listOf("none", "snake_case", "camelCase")),
-        Property("fields_visibility", allowClass = true, allowValues = listOf("all", "public")),
+        Property("rename_policy", allowClass = true, allowValues = listOf("none", "snake_case", "camelCase")),
+        Property("visibility_policy", allowClass = true, allowValues = listOf("all", "public")),
         Property("flatten", allowClass = true, combinedFlatten = true),
         Property("rename", allowField = true, allowValues = listOf()),
         Property("skip_if_default", allowClass = true, allowField = true),
