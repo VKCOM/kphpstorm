@@ -224,11 +224,11 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         holder: AnnotationHolder,
         docTag: PhpDocTag
     ): Boolean {
-        val isUsedCorrectFloatPrecision = (propertyPsi.intValue() ?: 0) >= 0
+        val isUsedCorrectFloatPrecision = (propertyPsi.intValue() ?: -1) >= 0
         if (property.name == "float_precision" && !isUsedCorrectFloatPrecision) {
             holder.errTag(
                 docTag,
-                "@kphp-json 'float_precision' value should be non negative integer, got '${propertyPsi.intValue()}'"
+                "@kphp-json 'float_precision' value should be non negative integer, got '${propertyPsi.stringValue()}'"
             )
             return false
         }

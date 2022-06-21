@@ -41,6 +41,11 @@ class B {
    * <error descr="@kphp-json 'float_precision' value should be non negative integer, got '-2'">@kphp-json float_precision=-2</error>
    */
   public $f1 = 0;
+
+  /**
+   * <error descr="@kphp-json 'float_precision' value should be non negative integer, got 'value'">@kphp-json float_precision = value</error>
+   */
+  public $f2 = 0;
 }
 
 class C {
