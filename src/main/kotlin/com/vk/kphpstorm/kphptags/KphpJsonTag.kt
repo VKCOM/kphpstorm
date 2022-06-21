@@ -24,6 +24,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         val allowField: Boolean = false,
         val allowClass: Boolean = false,
         val combinedFlatten: Boolean = false,
+        val booleanValue: Boolean = false,
         val allowValues: List<String>? = null,
         val ifType: Pair<((ExPhpType?) -> Boolean), String>? = null,
     )
@@ -45,12 +46,18 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
     val properties = listOf(
         Property("rename_policy", allowClass = true, allowValues = listOf("none", "snake_case", "camelCase")),
         Property("visibility_policy", allowClass = true, allowValues = listOf("all", "public")),
-        Property("flatten", allowClass = true, combinedFlatten = true),
+        Property("flatten", allowClass = true, combinedFlatten = true, booleanValue = true),
         Property("rename", allowField = true, allowValues = listOf()),
-        Property("skip_if_default", allowClass = true, allowField = true),
-        Property("required", allowField = true),
-        Property("skip", allowField = true),
-        Property("raw_string", allowField = true, combinedFlatten = true, ifType = Pair({ it == ExPhpType.STRING }, "string")),
+        Property("skip_if_default", allowClass = true, allowField = true, booleanValue = true),
+        Property("required", allowField = true, booleanValue = true),
+        Property("skip", allowField = true, booleanValue = true),
+        Property(
+            "raw_string",
+            allowField = true,
+            combinedFlatten = true,
+            booleanValue = true,
+            ifType = Pair({ it == ExPhpType.STRING }, "string")
+        ),
         Property(
             "float_precision",
             allowClass = true,
@@ -62,6 +69,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
             "array_as_hashmap",
             allowField = true,
             combinedFlatten = true,
+            booleanValue = true,
             ifType = Pair(isArray, "array"),
         ),
     )
@@ -101,7 +109,9 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
             val allowValues = property.allowValues
             if (allowValues == null) {
                 if (elementValue != null) {
-                    return holder.errTag(docTag, "@kphp-json '${property.name}' not expected value")
+                    if (!property.booleanValue) {
+                        return holder.errTag(docTag, "@kphp-json '${property.name}' not expected value")
+                    }
                 }
             } else {
                 if (elementValue == null || elementValue.isEmpty()) {
@@ -113,6 +123,12 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                         docTag,
                         "@kphp-json '${property.name}' should be either ${allowValues.joinToString("|")}"
                     )
+                }
+            }
+
+            if (property.booleanValue) {
+                if (propertyPsi.booleanValue() == null) {
+                    return holder.errTag(docTag, "@kphp-json '${property.name}' should be empty or true|false, got '${elementValue}'")
                 }
             }
         }

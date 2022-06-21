@@ -140,11 +140,16 @@ class K {
 }
 
 /**
- * <error descr="@kphp-json 'flatten' not expected value">@kphp-json flatten=true</error>
+ * <error descr="@kphp-json 'flatten' should be empty or true|false, got 'disable'">@kphp-json flatten=disable</error>
  */
 class L {
   /**
-   * <error descr="@kphp-json 'skip_if_default' not expected value">@kphp-json skip_if_default=true</error>
+   * <error descr="@kphp-json 'skip_if_default' should be empty or true|false, got 'enable'">@kphp-json skip_if_default=enable</error>
    */
   public $f1 = 0;
+
+  /**
+   * <error descr="@kphp-json 'skip' should be empty or true|false, got '2'">@kphp-json skip = 2</error>
+   */
+  public $f3 = 123;
 }

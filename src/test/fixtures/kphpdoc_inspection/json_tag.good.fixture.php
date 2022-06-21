@@ -82,6 +82,31 @@ class D {
 }
 
 /**
+ * @kphp-json skip_if_default=false
+ */
+class E {
+  /**
+   * @kphp-json raw_string = true
+   */
+  public $f1 = "";
+
+  /**
+   * @kphp-json array_as_hashmap = false
+   */
+  public $f2 = [];
+
+  /**
+   * @kphp-json required=1
+   */
+  public $f3 = "";
+
+  /**
+   * @kphp-json skip = 0
+   */
+  public $f4 = 123;
+}
+
+/**
  * @kphp-json flatten
  */
 class F1 {
@@ -102,7 +127,7 @@ class F2 {
 }
 
 /**
- * @kphp-json flatten
+ * @kphp-json flatten = true
  */
 class F3 {
   /**
