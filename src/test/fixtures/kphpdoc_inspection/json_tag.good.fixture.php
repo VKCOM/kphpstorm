@@ -135,3 +135,28 @@ class F3 {
    */
   public $f1 = [1, 2, 3];
 }
+
+class G1 {
+  /**
+   * @kphp-json rename = new_name
+   * @kphp-json skip = 0
+   */
+  public $f1 = 0;
+}
+
+/**
+ * @kphp-json flatten=false
+ * @kphp-json rename_policy = none
+ */
+class G2 {
+  public $f1 = 0;
+}
+
+/**
+ * @kphp-json flatten= 0
+ */
+class G3 {
+  public $f1 = 1;
+
+  public $f2 = 2;
+}

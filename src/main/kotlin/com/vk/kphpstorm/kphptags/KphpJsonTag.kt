@@ -167,7 +167,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     return
                 }
 
-                if (property.name == "skip") {
+                if (property.name == "skip" && propertyPsi.booleanValue() == true) {
                     val otherJsonTags = findThisTagsInDocComment<KphpDocTagJsonPsiImpl>(owner)
 
                     if (otherJsonTags.size > 1) {
@@ -205,7 +205,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     return
                 }
 
-                if (property.name == "flatten" && owner.fields.size != 1) {
+                if (property.name == "flatten" && owner.fields.size != 1 && propertyPsi.booleanValue() == true) {
                     return holder.errTag(
                         docTag,
                         "@kphp-json 'flatten' tag is allowed only for class with a single field, class name $className"
@@ -225,7 +225,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
 
         val otherJsonTags = findThisTagsInDocComment<KphpDocTagJsonPsiImpl>(phpClass)
 
-        val useFlatten = otherJsonTags.any { it.item()?.name() == "flatten" }
+        val useFlatten = otherJsonTags.any { it.item()?.name() == "flatten" && it.item()?.booleanValue() == true }
         if (useFlatten) {
             holder.errTag(docTag, "'${property.name}' can't be used for a @kphp-json 'flatten' class")
             return false
