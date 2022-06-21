@@ -84,7 +84,7 @@ class D {
 /**
  * @kphp-json flatten
  */
-class E {
+class F1 {
   /**
    * @kphp-json float_precision=3
    */
@@ -94,7 +94,17 @@ class E {
 /**
  * @kphp-json flatten
  */
-class F {
+class F2 {
+  /**
+   * @kphp-json raw_string
+   */
+  public string $f1;
+}
+
+/**
+ * @kphp-json flatten
+ */
+class F3 {
   /**
    * @kphp-json array_as_hashmap
    */

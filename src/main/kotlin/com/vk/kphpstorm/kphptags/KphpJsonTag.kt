@@ -49,8 +49,8 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         Property("rename", allowField = true, allowValues = listOf()),
         Property("skip_if_default", allowClass = true, allowField = true),
         Property("required", allowField = true),
-        Property("raw_string", allowField = true, ifType = Pair({ it == ExPhpType.STRING }, "string")),
         Property("skip", allowField = true),
+        Property("raw_string", allowField = true, combinedFlatten = true, ifType = Pair({ it == ExPhpType.STRING }, "string")),
         Property(
             "float_precision",
             allowClass = true,
