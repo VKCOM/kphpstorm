@@ -21,7 +21,17 @@ class A {
    * @kphp-json array_as_hashmap
    * @var int[] $f4
    */
-  public $f4 = [445];
+  public array $f4 = [445];
+
+  /**
+   * @kphp-json array_as_hashmap
+   * @var int[]
+   */
+  public $f5;
+
+  function __construct() {
+    $this->f5 = [];
+  }
 }
 
 /**

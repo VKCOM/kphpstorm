@@ -9,6 +9,7 @@ import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.vk.kphpstorm.exphptype.ExPhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeArray
 import com.vk.kphpstorm.exphptype.ExPhpTypeNullable
+import com.vk.kphpstorm.exphptype.ExPhpTypePipe
 import com.vk.kphpstorm.helpers.parentDocComment
 import com.vk.kphpstorm.helpers.toExPhpType
 import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
@@ -34,7 +35,11 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
             it
         }
 
-        type is ExPhpTypeArray
+        if (type is ExPhpTypePipe) {
+            type.items.all { itemType -> itemType is ExPhpTypeArray }
+        } else {
+            type is ExPhpTypeArray
+        }
     }
 
     val properties = listOf(
