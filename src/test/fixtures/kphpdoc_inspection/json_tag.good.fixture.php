@@ -61,7 +61,7 @@ class B {
 
 /**
  * @kphp-json visibility_policy=all
- * @kphp-json rename_policy=camelCase
+ * @kphp-json rename_policy = camelCase
  */
 class C {
 }
@@ -71,7 +71,7 @@ class C {
  */
 class D {
   /**
-   * @kphp-json float_precision=3
+   * @kphp-json float_precision = 3
    */
   public $f1 = 123.4567;
 

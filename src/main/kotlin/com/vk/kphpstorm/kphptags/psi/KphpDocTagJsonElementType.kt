@@ -57,10 +57,14 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
                         builder.advanceLexer()
                     }
 
-                    if (!builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER) && needNextIdentifier) {
-                        marker.drop()
-                        builder.error(PhpParserErrors.expected("Property value"))
-                        break
+                    if (needNextIdentifier) {
+                        if (!builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) && !builder.compare(PhpDocTokenTypes.DOC_TEXT)) {
+                            marker.drop()
+                            builder.error(PhpParserErrors.expected("Property value"))
+                            break
+                        }
+
+                        builder.advanceLexer()
                     }
                 }
 
