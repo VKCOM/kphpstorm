@@ -103,33 +103,10 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
 
         val propertyPsi = rhs as? KphpDocJsonPropertyPsiImpl ?: return
         val property = properties.firstOrNull { it.name == propertyPsi.name() }
-        val elementValue = propertyPsi.stringValue()
 
         if (property != null) {
-            val allowValues = property.allowValues
-            if (allowValues == null) {
-                if (elementValue != null) {
-                    if (!property.booleanValue) {
-                        return holder.errTag(docTag, "@kphp-json '${property.name}' not expected value")
-                    }
-                }
-            } else {
-                if (elementValue == null || elementValue.isEmpty()) {
-                    return holder.errTag(docTag, "@kphp-json '${property.name}' expected value")
-                }
-
-                if (elementValue !in allowValues && allowValues.isNotEmpty()) {
-                    return holder.errTag(
-                        docTag,
-                        "@kphp-json '${property.name}' should be either ${allowValues.joinToString("|")}"
-                    )
-                }
-            }
-
-            if (property.booleanValue) {
-                if (propertyPsi.booleanValue() == null) {
-                    return holder.errTag(docTag, "@kphp-json '${property.name}' should be empty or true|false, got '${elementValue}'")
-                }
+            if (!checkPropertyValue(propertyPsi, property, holder, docTag)) {
+                return
             }
         }
 
@@ -213,6 +190,44 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                 }
             }
         }
+    }
+
+    private fun checkPropertyValue(
+        propertyPsi: KphpDocJsonPropertyPsiImpl,
+        property: Property,
+        holder: AnnotationHolder,
+        docTag: PhpDocTag
+    ): Boolean {
+        val elementValue = propertyPsi.stringValue()
+
+        val allowValues = property.allowValues
+        if (allowValues == null) {
+            if (elementValue != null) {
+                if (!property.booleanValue) {
+                    holder.errTag(docTag, "@kphp-json '${property.name}' not expected value")
+                    return false
+                }
+            }
+        } else {
+            if (elementValue == null || elementValue.isEmpty()) {
+                holder.errTag(docTag, "@kphp-json '${property.name}' expected value")
+                return false
+            }
+
+            if (elementValue !in allowValues && allowValues.isNotEmpty()) {
+                holder.errTag(docTag, "@kphp-json '${property.name}' should be either ${allowValues.joinToString("|")}")
+                return false
+            }
+        }
+
+        if (property.booleanValue) {
+            if (propertyPsi.booleanValue() == null) {
+                holder.errTag(docTag, "@kphp-json '${property.name}' should be empty or true|false, got '${elementValue}'")
+                return false
+            }
+        }
+
+        return true
     }
 
     private fun checkFlatten(
