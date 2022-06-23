@@ -30,6 +30,11 @@ class KphpJsonPropertyCompletionProvider : CompletionProvider<CompletionParamete
                 property.allowValues?.forEach { value ->
                     result.addElement(LookupElementBuilder.create(value))
                 }
+
+                if (property.booleanValue) {
+                    result.addElement(LookupElementBuilder.create("true"))
+                    result.addElement(LookupElementBuilder.create("false"))
+                }
             }
 
             // if no text before cursor
