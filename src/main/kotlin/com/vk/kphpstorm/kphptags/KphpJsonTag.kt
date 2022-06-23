@@ -205,49 +205,44 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         val elementValue = propertyPsi.stringValue()
 
         val allowValues = property.allowValues
-        if (allowValues == null) {
-            if (elementValue != null) {
-                if (!property.booleanValue) {
-                    holder.errTag(docTag, "@kphp-json '${property.name}' not expected value")
-                    return false
-                }
-            }
-        } else {
-            if (!property.booleanValue) {
-                if (elementValue == null || elementValue.isEmpty()) {
-                    holder.errTag(docTag, "@kphp-json '${property.name}' expected value")
-                    return false
-                }
-            }
-
-            if (property.booleanValue) {
-                val newAllowValues = allowValues.toMutableList()
-                newAllowValues.addAll(listOf("true", "false"))
-
-                val isAllowedBooleanValue = if (elementValue == null) {
-                    true
-                } else {
-                    propertyPsi.booleanValue() != null
-                }
-
-                if (elementValue !in newAllowValues && !isAllowedBooleanValue) {
-                    holder.errTag(
-                        docTag,
-                        "@kphp-json '${property.name}' should be empty or ${newAllowValues.joinToString("|")}, got '${elementValue}'"
-                    )
-                    return false
-                }
-            } else {
-                if (elementValue !in allowValues && allowValues.isNotEmpty()) {
-                    holder.errTag(docTag, "@kphp-json '${property.name}' should be either ${allowValues.joinToString("|")}")
-                    return false
-                }
-            }
-        }
-
         if (property.booleanValue && allowValues == null) {
             if (propertyPsi.booleanValue() == null) {
                 holder.errTag(docTag, "@kphp-json '${property.name}' should be empty or true|false, got '${elementValue}'")
+                return false
+            }
+        }
+
+        if (allowValues == null) {
+            return true
+        }
+
+        if (!property.booleanValue) {
+            if (elementValue == null || elementValue.isEmpty()) {
+                holder.errTag(docTag, "@kphp-json '${property.name}' expected value")
+                return false
+            }
+        }
+
+        if (property.booleanValue) {
+            val newAllowValues = allowValues.toMutableList()
+            newAllowValues.addAll(listOf("true", "false"))
+
+            val isAllowedBooleanValue = if (elementValue == null) {
+                true
+            } else {
+                propertyPsi.booleanValue() != null
+            }
+
+            if (elementValue !in newAllowValues && !isAllowedBooleanValue) {
+                holder.errTag(
+                    docTag,
+                    "@kphp-json '${property.name}' should be empty or ${newAllowValues.joinToString("|")}, got '${elementValue}'"
+                )
+                return false
+            }
+        } else {
+            if (elementValue !in allowValues && allowValues.isNotEmpty()) {
+                holder.errTag(docTag, "@kphp-json '${property.name}' should be either ${allowValues.joinToString("|")}")
                 return false
             }
         }
