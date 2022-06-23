@@ -156,6 +156,11 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                 if (!checkFlatten(phpClass, property, docTag, holder)) {
                     return
                 }
+
+                val otherJsonTags = findThisTagsInDocComment<KphpDocTagJsonPsiImpl>(owner)
+                if (otherJsonTags.count { it.item()?.name() == property.name } > 1) {
+                    return holder.errTag(docTag, "@kphp-json '${property.name}' is duplicated")
+                }
             }
             is PhpClass -> {
                 val className = owner.name
@@ -191,6 +196,11 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                         docTag,
                         "@kphp-json 'flatten' tag is allowed only for class with a single field, class name $className"
                     )
+                }
+
+                val otherJsonTags = findThisTagsInDocComment<KphpDocTagJsonPsiImpl>(owner)
+                if (otherJsonTags.count { it.item()?.name() == property.name } > 1) {
+                    return holder.errTag(docTag, "@kphp-json '${property.name}' is duplicated")
                 }
             }
         }

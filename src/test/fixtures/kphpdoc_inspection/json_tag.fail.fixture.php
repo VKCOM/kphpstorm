@@ -158,3 +158,17 @@ class L {
    */
   public string $f4;
 }
+
+/**
+ * <error descr="@kphp-json 'rename_policy' is duplicated">@kphp-json rename_policy=snake_case</error>
+ * @kphp-json float_precision= 2
+ * <error descr="@kphp-json 'rename_policy' is duplicated">@kphp-json rename_policy=camelCase</error>
+ */
+class M {
+  /**
+   * @kphp-json rename = name1
+   * <error descr="@kphp-json 'skip_if_default' is duplicated">@kphp-json skip_if_default = true</error>
+   * <error descr="@kphp-json 'skip_if_default' is duplicated">@kphp-json skip_if_default</error>
+   */
+  public $f1 = 0;
+}
