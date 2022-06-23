@@ -160,3 +160,15 @@ class G3 {
 
   public $f2 = 2;
 }
+
+class H {
+  /**
+   * @kphp-json skip = encode
+   */
+  public $f1 = 0;
+
+  /**
+   * @kphp-json skip=decode
+   */
+  public $f2 = 0;
+}

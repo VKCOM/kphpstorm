@@ -149,7 +149,12 @@ class L {
   public $f1 = 0;
 
   /**
-   * <error descr="@kphp-json 'skip' should be empty or true|false, got '2'">@kphp-json skip = 2</error>
+   * <error descr="@kphp-json 'skip' should be empty or encode|decode|true|false, got '2'">@kphp-json skip = 2</error>
    */
   public $f3 = 123;
+
+  /**
+   * <error descr="@kphp-json 'skip' should be empty or encode|decode|true|false, got 'decoder'">@kphp-json skip = decoder</error>
+   */
+  public string $f4;
 }

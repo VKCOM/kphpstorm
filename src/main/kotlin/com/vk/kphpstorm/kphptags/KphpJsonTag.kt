@@ -50,7 +50,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         Property("rename", allowField = true, allowValues = listOf()),
         Property("skip_if_default", allowClass = true, allowField = true, booleanValue = true),
         Property("required", allowField = true, booleanValue = true),
-        Property("skip", allowField = true, booleanValue = true),
+        Property("skip", allowField = true, booleanValue = true, allowValues = listOf("encode", "decode")),
         Property(
             "raw_string",
             allowField = true,
@@ -104,12 +104,6 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         val propertyPsi = rhs as? KphpDocJsonPropertyPsiImpl ?: return
         val property = properties.firstOrNull { it.name == propertyPsi.name() }
 
-        if (property != null) {
-            if (!checkPropertyValue(propertyPsi, property, holder, docTag)) {
-                return
-            }
-        }
-
         when (val owner = rhs.parentDocComment?.owner) {
             is Field -> {
                 val fieldName = owner.name
@@ -123,6 +117,10 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                         docTag,
                         "Unknown @kphp-json tag '${propertyPsi.name()}' over class field ${phpClass.name}::$$fieldName"
                     )
+                }
+
+                if (!checkPropertyValue(propertyPsi, property, holder, docTag)) {
+                    return
                 }
 
                 if (!property.allowField) {
@@ -155,7 +153,9 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     }
                 }
 
-                checkFlatten(phpClass, property, docTag, holder)
+                if (!checkFlatten(phpClass, property, docTag, holder)) {
+                    return
+                }
             }
             is PhpClass -> {
                 val className = owner.name
@@ -165,6 +165,10 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                         docTag,
                         "Unknown @kphp-json tag '${propertyPsi.name()}' above class $className"
                     )
+                }
+
+                if (!checkPropertyValue(propertyPsi, property, holder, docTag)) {
+                    return
                 }
 
                 if (!property.allowClass) {
@@ -209,18 +213,39 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                 }
             }
         } else {
-            if (elementValue == null || elementValue.isEmpty()) {
-                holder.errTag(docTag, "@kphp-json '${property.name}' expected value")
-                return false
+            if (!property.booleanValue) {
+                if (elementValue == null || elementValue.isEmpty()) {
+                    holder.errTag(docTag, "@kphp-json '${property.name}' expected value")
+                    return false
+                }
             }
 
-            if (elementValue !in allowValues && allowValues.isNotEmpty()) {
-                holder.errTag(docTag, "@kphp-json '${property.name}' should be either ${allowValues.joinToString("|")}")
-                return false
+            if (property.booleanValue) {
+                val newAllowValues = allowValues.toMutableList()
+                newAllowValues.addAll(listOf("true", "false"))
+
+                val isAllowedBooleanValue = if (elementValue == null) {
+                    true
+                } else {
+                    propertyPsi.booleanValue() != null
+                }
+
+                if (elementValue !in newAllowValues && !isAllowedBooleanValue) {
+                    holder.errTag(
+                        docTag,
+                        "@kphp-json '${property.name}' should be empty or ${newAllowValues.joinToString("|")}, got '${elementValue}'"
+                    )
+                    return false
+                }
+            } else {
+                if (elementValue !in allowValues && allowValues.isNotEmpty()) {
+                    holder.errTag(docTag, "@kphp-json '${property.name}' should be either ${allowValues.joinToString("|")}")
+                    return false
+                }
             }
         }
 
-        if (property.booleanValue) {
+        if (property.booleanValue && allowValues == null) {
             if (propertyPsi.booleanValue() == null) {
                 holder.errTag(docTag, "@kphp-json '${property.name}' should be empty or true|false, got '${elementValue}'")
                 return false
