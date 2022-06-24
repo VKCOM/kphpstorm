@@ -230,13 +230,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
             val newAllowValues = allowValues.toMutableList()
             newAllowValues.addAll(listOf("true", "false"))
 
-            val isAllowedBooleanValue = if (elementValue == null) {
-                true
-            } else {
-                propertyPsi.booleanValue() != null
-            }
-
-            if (elementValue !in newAllowValues && !isAllowedBooleanValue) {
+            if (elementValue !in newAllowValues && propertyPsi.booleanValue() == null) {
                 holder.errTag(
                     docTag,
                     "@kphp-json '${property.name}' should be empty or ${newAllowValues.joinToString("|")}, got '${elementValue}'"
