@@ -36,14 +36,30 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
 
         override fun parseContents(builder: PhpPsiBuilder): Boolean {
             while (true) {
+                val forMarker = builder.mark()
+                var forIdentifier = false
+                if (builder.compare(DOC_IDENTIFIER) && builder.tokenText == "for") {
+                    builder.advanceLexer()
+
+                    if (builder.compare(DOC_IDENTIFIER)) {
+                        forIdentifier = true
+                        builder.advanceLexer()
+                    } else {
+                        forMarker.drop()
+                        builder.error(PhpParserErrors.expected("JsonEncoder name"))
+                        break
+                    }
+                }
+                if (forIdentifier) {
+                    forMarker.done(KphpDocJsonForEncoderPsiImpl.elementType)
+                } else {
+                    forMarker.drop()
+                }
+
                 val marker = builder.mark()
                 if (!builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)) {
                     marker.drop()
                     builder.error(PhpParserErrors.expected("Property name"))
-                    break
-                }
-
-                if (builder.tokenText == null) {
                     break
                 }
 
