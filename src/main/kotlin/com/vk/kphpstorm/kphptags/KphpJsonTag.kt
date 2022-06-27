@@ -50,6 +50,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         Property("rename", allowField = true, allowValues = listOf()),
         Property("skip_if_default", allowClass = true, allowField = true, booleanValue = true),
         Property("required", allowField = true, booleanValue = true),
+        Property("fields", allowClass = true, allowValues = listOf()),
         Property("skip", allowField = true, booleanValue = true, allowValues = listOf("encode", "decode")),
         Property(
             "raw_string",

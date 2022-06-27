@@ -20,7 +20,7 @@ class KphpDocJsonPropertyPsiImpl(node: ASTNode) : PhpDocPsiElementImpl(node) {
     fun booleanValue(): Boolean? {
         val value = stringValue() ?: return true
 
-        if (value.isEmpty() ||value == "true" || value == "1") {
+        if (value.isEmpty() || value == "true" || value == "1") {
             return true
         }
 
