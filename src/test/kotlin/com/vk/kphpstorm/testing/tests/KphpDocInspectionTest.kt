@@ -43,7 +43,8 @@ class KphpDocInspectionTest : InspectionTestBase(KphpDocInspection()) {
 
     fun testKphpJsonTag() {
         runFixture("kphpdoc_inspection/json_tag.fail.fixture.php")
-        runFixture("kphpdoc_inspection/json_tag.good.fixture.php")
+        runFixture("kphpdoc_inspection/json_tag.good_1.fixture.php")
+        runFixture("kphpdoc_inspection/json_tag.good_2.fixture.php")
     }
 
 }

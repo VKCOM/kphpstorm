@@ -7,6 +7,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.psi.elements.Field
 import com.jetbrains.php.lang.psi.elements.PhpClass
+import com.jetbrains.php.lang.psi.elements.PhpNamedElement
 import com.vk.kphpstorm.exphptype.ExPhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeArray
 import com.vk.kphpstorm.exphptype.ExPhpTypeNullable
@@ -100,7 +101,9 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
             return
         }
 
+        var forName: String? = null
         val psiElement = if (rhs is KphpDocJsonForEncoderPsiImpl) {
+            forName = rhs.name()
             PsiTreeUtil.skipWhitespacesForward(rhs)
         } else {
             rhs
@@ -108,8 +111,9 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
 
         val propertyPsi = psiElement as? KphpDocJsonPropertyPsiImpl ?: return
         val property = properties.firstOrNull { it.name == propertyPsi.name() }
+        val owner = rhs.parentDocComment?.owner as? PhpNamedElement ?: return
 
-        when (val owner = rhs.parentDocComment?.owner) {
+        when (owner) {
             is Field -> {
                 val fieldName = owner.name
                 if (owner.modifier.isStatic) {
@@ -162,10 +166,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     return
                 }
 
-                val otherJsonTags = findThisTagsInDocComment<KphpDocTagJsonPsiImpl>(owner)
-                if (otherJsonTags.count { it.item()?.name() == property.name } > 1) {
-                    return holder.errTag(docTag, "@kphp-json '${property.name}' is duplicated")
-                }
+                checkDuplicated(owner, property, forName, holder, docTag)
             }
             is PhpClass -> {
                 val className = owner.name
@@ -203,12 +204,24 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     )
                 }
 
-                val otherJsonTags = findThisTagsInDocComment<KphpDocTagJsonPsiImpl>(owner)
-                if (otherJsonTags.count { it.item()?.name() == property.name } > 1) {
-                    return holder.errTag(docTag, "@kphp-json '${property.name}' is duplicated")
-                }
+                checkDuplicated(owner, property, forName, holder, docTag)
             }
         }
+    }
+
+    private fun checkDuplicated(
+        owner: PhpNamedElement,
+        property: Property,
+        forName: String?,
+        holder: AnnotationHolder,
+        docTag: PhpDocTag
+    ): Boolean {
+        val otherJsonTags = findThisTagsInDocComment<KphpDocTagJsonPsiImpl>(owner)
+        if (otherJsonTags.count { it.item()?.name() == property.name && it.forElement()?.name() == forName } > 1) {
+            holder.errTag(docTag, "@kphp-json '${property.name}' is duplicated")
+            return false
+        }
+        return true
     }
 
     private fun checkPropertyValue(

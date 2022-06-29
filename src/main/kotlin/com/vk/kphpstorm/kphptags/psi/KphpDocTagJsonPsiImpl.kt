@@ -20,4 +20,13 @@ class KphpDocTagJsonPsiImpl : PhpDocTagImpl, KphpDocTagImpl {
 
         return psiElement as? KphpDocJsonPropertyPsiImpl
     }
+
+    fun forElement(): KphpDocJsonForEncoderPsiImpl? {
+        val item = PsiTreeUtil.skipWhitespacesForward(firstChild)
+        if (item is KphpDocJsonForEncoderPsiImpl) {
+            return item
+        }
+
+        return null
+    }
 }
