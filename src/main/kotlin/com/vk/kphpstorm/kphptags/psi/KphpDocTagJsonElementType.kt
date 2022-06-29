@@ -10,6 +10,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.parser.PhpParserErrors
 import com.jetbrains.php.lang.parser.PhpPsiBuilder
 import com.jetbrains.php.lang.psi.stubs.PhpStubElementType
+import com.vk.kphpstorm.exphptype.psi.TokensToExPhpTypePsiParsing
 
 object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>("@kphp-json"), KphpDocTagElementType {
     override fun createPsi(stub: PhpDocTagStub): PhpDocTag {
@@ -41,9 +42,8 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
                 if (builder.compare(DOC_IDENTIFIER) && builder.tokenText == "for") {
                     builder.advanceLexer()
 
-                    if (builder.compare(DOC_IDENTIFIER)) {
+                    if (TokensToExPhpTypePsiParsing.parseTypeExpression(builder)) {
                         forIdentifier = true
-                        builder.advanceLexer()
                     } else {
                         forMarker.drop()
                         builder.error(PhpParserErrors.expected("JsonEncoder name"))

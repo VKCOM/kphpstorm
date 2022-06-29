@@ -42,6 +42,8 @@ class KphpJsonPropertyCompletionProvider : CompletionProvider<CompletionParamete
                 val isField = owner is Field
                 val isClass = owner is PhpClass
 
+                result.addElement(LookupElementBuilder.create("for").appendTailText(" ViewName", true))
+
                 for (property in KphpJsonTag.properties) {
                     if (property.allowField != isField && property.allowClass != isClass) {
                         continue
