@@ -2,6 +2,7 @@ package com.vk.kphpstorm.kphptags
 
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.psi.elements.Field
@@ -12,10 +13,7 @@ import com.vk.kphpstorm.exphptype.ExPhpTypeNullable
 import com.vk.kphpstorm.exphptype.ExPhpTypePipe
 import com.vk.kphpstorm.helpers.parentDocComment
 import com.vk.kphpstorm.helpers.toExPhpType
-import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
-import com.vk.kphpstorm.kphptags.psi.KphpDocJsonPropertyPsiImpl
-import com.vk.kphpstorm.kphptags.psi.KphpDocTagElementType
-import com.vk.kphpstorm.kphptags.psi.KphpDocTagJsonPsiImpl
+import com.vk.kphpstorm.kphptags.psi.*
 
 object KphpJsonTag : KphpDocTag("@kphp-json") {
 
@@ -102,7 +100,13 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
             return
         }
 
-        val propertyPsi = rhs as? KphpDocJsonPropertyPsiImpl ?: return
+        val psiElement = if (rhs is KphpDocJsonForEncoderPsiImpl) {
+            PsiTreeUtil.skipWhitespacesForward(rhs)
+        } else {
+            rhs
+        }
+
+        val propertyPsi = psiElement as? KphpDocJsonPropertyPsiImpl ?: return
         val property = properties.firstOrNull { it.name == propertyPsi.name() }
 
         when (val owner = rhs.parentDocComment?.owner) {
