@@ -4,6 +4,7 @@ import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ProcessingContext
 import com.jetbrains.php.lang.psi.elements.Field
 import com.jetbrains.php.lang.psi.elements.PhpClass
@@ -21,10 +22,10 @@ class KphpJsonPropertyCompletionProvider : CompletionProvider<CompletionParamete
             return
         }
 
-        val elementBeforeCursor = position.prevSibling
-        when (elementBeforeCursor?.text) {
+        val elementBeforeCursor = PsiTreeUtil.skipWhitespacesBackward(position)
+        when (elementBeforeCursor?.text?.trim()) {
             "=" -> {
-                val elementName = elementBeforeCursor.prevSibling?.text ?: return
+                val elementName = PsiTreeUtil.skipWhitespacesBackward(elementBeforeCursor)?.text ?: return
 
                 val property = KphpJsonTag.properties.firstOrNull { it.name == elementName } ?: return
                 property.allowValues?.forEach { value ->
