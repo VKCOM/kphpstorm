@@ -97,9 +97,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
     }
 
     override fun annotate(docTag: PhpDocTag, rhs: PsiElement?, holder: AnnotationHolder) {
-        if (rhs == null) {
-            return
-        }
+        val owner = rhs?.parentDocComment?.owner as? PhpNamedElement ?: return
 
         var forName: String? = null
         val psiElement = if (rhs is KphpDocJsonForEncoderPsiImpl) {
@@ -111,7 +109,6 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
 
         val propertyPsi = psiElement as? KphpDocJsonPropertyPsiImpl ?: return
         val property = properties.firstOrNull { it.name == propertyPsi.name() }
-        val owner = rhs.parentDocComment?.owner as? PhpNamedElement ?: return
 
         when (owner) {
             is Field -> {
@@ -128,7 +125,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     )
                 }
 
-                if (!checkPropertyValue(propertyPsi, property, holder, docTag)) {
+                if (!checkPropertyValue(propertyPsi, property, docTag, holder)) {
                     return
                 }
 
@@ -147,7 +144,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     )
                 }
 
-                if (!checkFloatPrecision(propertyPsi, property, holder, docTag)) {
+                if (!checkFloatPrecision(propertyPsi, property, docTag, holder)) {
                     return
                 }
 
@@ -166,7 +163,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     return
                 }
 
-                checkDuplicated(owner, property, forName, holder, docTag)
+                checkDuplicated(forName, property, docTag, owner, holder)
             }
             is PhpClass -> {
                 val className = owner.name
@@ -178,7 +175,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     )
                 }
 
-                if (!checkPropertyValue(propertyPsi, property, holder, docTag)) {
+                if (!checkPropertyValue(propertyPsi, property, docTag, holder)) {
                     return
                 }
 
@@ -189,7 +186,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     )
                 }
 
-                if (!checkFloatPrecision(propertyPsi, property, holder, docTag)) {
+                if (!checkFloatPrecision(propertyPsi, property, docTag, holder)) {
                     return
                 }
 
@@ -204,17 +201,17 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     )
                 }
 
-                checkDuplicated(owner, property, forName, holder, docTag)
+                checkDuplicated(forName, property, docTag, owner, holder)
             }
         }
     }
 
     private fun checkDuplicated(
-        owner: PhpNamedElement,
-        property: Property,
         forName: String?,
-        holder: AnnotationHolder,
-        docTag: PhpDocTag
+        property: Property,
+        docTag: PhpDocTag,
+        owner: PhpNamedElement,
+        holder: AnnotationHolder
     ): Boolean {
         val otherJsonTags = findThisTagsInDocComment<KphpDocTagJsonPsiImpl>(owner)
         if (otherJsonTags.count { it.item()?.name() == property.name && it.forElement()?.name() == forName } > 1) {
@@ -227,8 +224,8 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
     private fun checkPropertyValue(
         propertyPsi: KphpDocJsonPropertyPsiImpl,
         property: Property,
-        holder: AnnotationHolder,
-        docTag: PhpDocTag
+        docTag: PhpDocTag,
+        holder: AnnotationHolder
     ): Boolean {
         val elementValue = propertyPsi.stringValue()
 
@@ -292,8 +289,8 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
     private fun checkFloatPrecision(
         propertyPsi: KphpDocJsonPropertyPsiImpl,
         property: Property,
-        holder: AnnotationHolder,
-        docTag: PhpDocTag
+        docTag: PhpDocTag,
+        holder: AnnotationHolder
     ): Boolean {
         val isUsedCorrectFloatPrecision = (propertyPsi.intValue() ?: -1) >= 0
         if (property.name == "float_precision" && !isUsedCorrectFloatPrecision) {
