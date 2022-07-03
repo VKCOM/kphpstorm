@@ -180,3 +180,15 @@ class I {
    */
   public $f1 = 1;
 }
+
+class J {
+  /**
+   * @kphp-json raw_string = false
+   */
+  public bool $f1 = true;
+
+  /**
+   * @kphp-json array_as_hashmap = false
+   */
+  public int $f2 = 0;
+}

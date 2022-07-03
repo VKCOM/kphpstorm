@@ -137,7 +137,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                 }
 
                 val isUsedCorrectType = property.ifType?.first?.invoke(owner.type.toExPhpType())
-                if (isUsedCorrectType == false) {
+                if (isUsedCorrectType == false && propertyPsi.booleanValue() == true) {
                     return holder.errTag(
                         docTag,
                         "@kphp-json ${property.name} tag is allowed only above ${property.ifType.second} type, got above $$fieldName field"
