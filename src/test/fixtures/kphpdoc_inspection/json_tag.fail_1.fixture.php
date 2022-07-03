@@ -85,19 +85,11 @@ class F {
   public $f2 = 2;
 }
 
-class G {
-  /**
-   * @kphp-json float_precision=1
-   * <error descr="@kphp-json 'skip' can't be used together with other @kphp-json tags">@kphp-json skip</error>
-   */
-  public $f1 = 1;
-}
-
 /**
  * <error descr="@kphp-json 'rename_policy' should be either none|snake_case|camelCase">@kphp-json rename_policy=unknown_value</error>
  * <error descr="@kphp-json 'visibility_policy' should be either all|public">@kphp-json visibility_policy=private</error>
  */
-class H {
+class G {
 }
 
 /**
@@ -105,7 +97,7 @@ class H {
  * @kphp-json flatten
  * <error descr="'visibility_policy' can't be used for a @kphp-json 'flatten' class">@kphp-json visibility_policy=all</error>
  */
-class I {
+class H {
   /**
    * <error descr="'skip' can't be used for a @kphp-json 'flatten' class">@kphp-json skip</error>
    */
@@ -117,7 +109,7 @@ class I {
  * <error descr="@kphp-json 'rename_policy' expected value">@kphp-json rename_policy</error>
  * <error descr="@kphp-json 'visibility_policy' expected value">@kphp-json visibility_policy</error>
  */
-class J {
+class I {
   /**
    * <error descr="@kphp-json 'float_precision' expected value">@kphp-json float_precision</error>
    */
@@ -130,11 +122,11 @@ class J {
 }
 
 /**
- * <error descr="@kphp-json tag 'skip' is not applicable for the class K">@kphp-json skip</error>
+ * <error descr="@kphp-json tag 'skip' is not applicable for the class J">@kphp-json skip</error>
  */
-class K {
+class J {
   /**
-   * <error descr="@kphp-json tag 'rename_policy' is not applicable for the field K::$f1">@kphp-json rename_policy=snake_case</error>
+   * <error descr="@kphp-json tag 'rename_policy' is not applicable for the field J::$f1">@kphp-json rename_policy=snake_case</error>
    */
   public $f1 = 0;
 }
@@ -142,7 +134,7 @@ class K {
 /**
  * <error descr="@kphp-json 'flatten' should be empty or true|false, got 'disable'">@kphp-json flatten=disable</error>
  */
-class L {
+class K {
   /**
    * <error descr="@kphp-json 'skip_if_default' should be empty or true|false, got 'enable'">@kphp-json skip_if_default=enable</error>
    */
@@ -164,7 +156,7 @@ class L {
  * @kphp-json float_precision= 2
  * <error descr="@kphp-json 'rename_policy' is duplicated">@kphp-json rename_policy=camelCase</error>
  */
-class M {
+class L {
   /**
    * @kphp-json rename = name1
    * <error descr="@kphp-json 'skip_if_default' is duplicated">@kphp-json skip_if_default = true</error>

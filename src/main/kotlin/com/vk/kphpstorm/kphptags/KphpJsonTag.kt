@@ -148,17 +148,6 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     return
                 }
 
-                if (property.name == "skip" && propertyPsi.booleanValue() == true) {
-                    val otherJsonTags = findThisTagsInDocComment<KphpDocTagJsonPsiImpl>(owner)
-
-                    if (otherJsonTags.size > 1) {
-                        return holder.errTag(
-                            docTag,
-                            "@kphp-json 'skip' can't be used together with other @kphp-json tags"
-                        )
-                    }
-                }
-
                 if (!checkFlatten(phpClass, property, docTag, holder)) {
                     return
                 }

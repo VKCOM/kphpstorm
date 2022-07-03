@@ -19,3 +19,25 @@ class A {
    */
   public $f1 = 123.4567;
 }
+
+class B {
+  /**
+   * @kphp-json skip = true
+   * @kphp-json for AdminEncoder skip=false
+   * @kphp-json for AdminEncoder rename=super_aa
+   */
+  public string $f1 = 'f1a';
+
+  /**
+   * @kphp-json for AdminEncoder skip
+   * @kphp-json for GuestEncoder rename=super_bb
+   */
+  public string $f2 = 'f2b';
+}
+
+class C {
+  /**
+   * @kphp-json for JsonEncoder skip = true
+   */
+  public string $f1 = 'aa';
+}

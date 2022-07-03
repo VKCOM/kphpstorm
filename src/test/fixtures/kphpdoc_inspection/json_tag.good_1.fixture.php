@@ -172,3 +172,11 @@ class H {
    */
   public $f2 = 0;
 }
+
+class I {
+  /**
+   * @kphp-json float_precision=1
+   * @kphp-json skip
+   */
+  public $f1 = 1;
+}
