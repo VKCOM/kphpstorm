@@ -43,7 +43,10 @@ class KphpJsonPropertyCompletionProvider : CompletionProvider<CompletionParamete
                 val isField = owner is Field
                 val isClass = owner is PhpClass
 
-                result.addElement(LookupElementBuilder.create("for").appendTailText(" ViewName", true))
+
+                val forElement = LookupElementBuilder.create("for").appendTailText(" ViewName", true)
+                    .withInsertHandler(KphpDocJsonForEncoderInsertHandler)
+                result.addElement(forElement)
 
                 for (property in KphpJsonTag.properties) {
                     if (property.allowField != isField && property.allowClass != isClass) {
@@ -59,7 +62,7 @@ class KphpJsonPropertyCompletionProvider : CompletionProvider<CompletionParamete
                     var element = LookupElementBuilder.create(property.name)
                     val allowValues = property.allowValues
                     if (allowValues != null) {
-                        element = element.appendTailText("=", true).withInsertHandler(KphpDocTagJsonInsertHandler)
+                        element = element.appendTailText("=", true).withInsertHandler(KphpDocJsonPropertyInsertHandler)
 
                         if (allowValues.isNotEmpty()) {
                             element = element.withTypeText(allowValues.joinToString("|"))
@@ -72,14 +75,25 @@ class KphpJsonPropertyCompletionProvider : CompletionProvider<CompletionParamete
         }
     }
 
-    private object KphpDocTagJsonInsertHandler : InsertHandler<LookupElement> {
+    private object KphpDocJsonPropertyInsertHandler : InsertHandler<LookupElement> {
         override fun handleInsert(context: InsertionContext, element: LookupElement) {
-            val caretOffset = context.editor.caretModel.offset
+            val editor = context.editor
+            val caretOffset = editor.caretModel.offset
 
             context.document.insertString(caretOffset, "=")
-            context.editor.caretModel.moveToOffset(caretOffset + 1)
+            editor.caretModel.moveToOffset(caretOffset + 1)
 
-            AutoPopupController.getInstance(context.project).scheduleAutoPopup(context.editor)
+            AutoPopupController.getInstance(context.project).scheduleAutoPopup(editor)
+        }
+    }
+
+    private object KphpDocJsonForEncoderInsertHandler : InsertHandler<LookupElement> {
+        override fun handleInsert(context: InsertionContext, element: LookupElement) {
+            val editor = context.editor
+            val caretOffset = editor.caretModel.offset
+
+            context.document.insertString(caretOffset, " ")
+            editor.caretModel.moveToOffset(caretOffset + 1)
         }
     }
 }
