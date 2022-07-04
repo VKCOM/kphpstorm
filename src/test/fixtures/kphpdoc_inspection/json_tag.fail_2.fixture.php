@@ -35,3 +35,10 @@ class B {
 
   public bool $f2 = true;
 }
+
+/**
+ * <error descr="@kphp-json 'flatten' can't be used with 'for', it's a global state">@kphp-json for AdminEncoder flatten</error>
+ */
+class C {
+  private float $f1 = 11.11;
+}

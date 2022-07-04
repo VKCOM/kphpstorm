@@ -56,3 +56,10 @@ class D {
 
   public bool $f2 = true;
 }
+
+/**
+ * @kphp-json for AdminEncoder flatten=0
+ */
+class E {
+  private float $f1 = 11.11;
+}

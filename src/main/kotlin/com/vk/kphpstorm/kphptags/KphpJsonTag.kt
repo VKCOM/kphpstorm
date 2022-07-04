@@ -203,12 +203,18 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     return
                 }
 
-                val classInstanceFields = owner.fields.filter { !it.modifier.isStatic }
-                if (property.name == "flatten" && classInstanceFields.size != 1 && propertyPsi.booleanValue() == true) {
-                    return holder.errTag(
-                        docTag,
-                        "@kphp-json 'flatten' tag is allowed only for class with a single field, class name $className"
-                    )
+                if (property.name == "flatten" && propertyPsi.booleanValue() == true) {
+                    if (forName != null) {
+                        return holder.errTag(docTag, "@kphp-json 'flatten' can't be used with 'for', it's a global state")
+                    }
+
+                    val classInstanceFields = owner.fields.filter { !it.modifier.isStatic }
+                    if (classInstanceFields.size != 1) {
+                        return holder.errTag(
+                            docTag,
+                            "@kphp-json 'flatten' tag is allowed only for class with a single field, class name $className"
+                        )
+                    }
                 }
 
                 checkDuplicated(forName, property, docTag, owner, holder)
