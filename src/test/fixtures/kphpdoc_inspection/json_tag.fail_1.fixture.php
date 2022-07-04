@@ -31,6 +31,11 @@ class A {
    * <error descr="@kphp-json raw_string tag is allowed only above string type, got above $f6 field">@kphp-json raw_string</error>
    */
   public $f6 = [1, 2, 3];
+
+  /**
+   * <error descr="@kphp-json raw_string tag is allowed only above string type, got above $f7 field">@kphp-json raw_string</error>
+   */
+  public ?string $f7 = "";
 }
 
 /**

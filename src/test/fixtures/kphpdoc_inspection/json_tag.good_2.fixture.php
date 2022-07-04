@@ -41,3 +41,18 @@ class C {
    */
   public string $f1 = 'aa';
 }
+
+/**
+ * @kphp-json fields = f1
+ * @kphp-json for AdminEncoder fields = f1
+ * @kphp-json for GuestEncoder fields = f2
+ *
+ * @kphp-json rename_policy=snake_case
+ *
+ * @property-read $f1
+ */
+class D {
+  public bool $f1 = true;
+
+  public bool $f2 = true;
+}

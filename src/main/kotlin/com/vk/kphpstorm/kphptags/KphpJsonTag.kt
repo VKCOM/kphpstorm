@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.psi.elements.Field
 import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement
+import com.jetbrains.php.lang.psi.elements.PhpPsiElement
 import com.vk.kphpstorm.exphptype.ExPhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeArray
 import com.vk.kphpstorm.exphptype.ExPhpTypeNullable
@@ -162,6 +163,25 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                         docTag,
                         "Unknown @kphp-json tag '${propertyPsi.name()}' above class $className"
                     )
+                }
+
+                if (property.name == "fields" && forName != null) {
+                    var tagJsonPsiElement = docTag as PhpPsiElement?
+                    while (tagJsonPsiElement != null) {
+                        if (tagJsonPsiElement !is KphpDocTagJsonPsiImpl) {
+                            tagJsonPsiElement = tagJsonPsiElement.nextPsiSibling
+                            continue
+                        }
+
+                        if (tagJsonPsiElement.item()?.name() == "fields" && tagJsonPsiElement.forElement() == null) {
+                            return holder.errTag(
+                                docTag,
+                                "@kphp-json for $forName 'fields' should be placed below @kphp-json 'fields' without for"
+                            )
+                        }
+
+                        tagJsonPsiElement = tagJsonPsiElement.nextPsiSibling
+                    }
                 }
 
                 if (!checkPropertyValue(propertyPsi, property, docTag, holder)) {
