@@ -38,19 +38,19 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
         override fun parseContents(builder: PhpPsiBuilder): Boolean {
             while (true) {
                 val forMarker = builder.mark()
-                var forIdentifier = false
+                var needForIdentifier = false
                 if (builder.compare(DOC_IDENTIFIER) && builder.tokenText == "for") {
                     builder.advanceLexer()
 
                     if (TokensToExPhpTypePsiParsing.parseTypeExpression(builder)) {
-                        forIdentifier = true
+                        needForIdentifier = true
                     } else {
                         forMarker.drop()
                         builder.error(PhpParserErrors.expected("JsonEncoder name"))
                         break
                     }
                 }
-                if (forIdentifier) {
+                if (needForIdentifier) {
                     forMarker.done(KphpDocJsonForEncoderPsiImpl.elementType)
                 } else {
                     forMarker.drop()

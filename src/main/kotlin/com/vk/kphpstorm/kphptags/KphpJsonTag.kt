@@ -234,6 +234,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
             holder.errTag(docTag, "@kphp-json '${property.name}' is duplicated")
             return false
         }
+
         return true
     }
 

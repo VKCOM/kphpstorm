@@ -43,7 +43,6 @@ class KphpJsonPropertyCompletionProvider : CompletionProvider<CompletionParamete
                 val isField = owner is Field
                 val isClass = owner is PhpClass
 
-
                 val forElement = LookupElementBuilder.create("for").appendTailText(" ViewName", true)
                     .withInsertHandler(KphpDocJsonForEncoderInsertHandler)
                 result.addElement(forElement)

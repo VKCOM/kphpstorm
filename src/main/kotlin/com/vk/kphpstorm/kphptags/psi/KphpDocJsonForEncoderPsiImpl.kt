@@ -9,7 +9,5 @@ class KphpDocJsonForEncoderPsiImpl(node: ASTNode) : PhpDocPsiElementImpl(node) {
         val elementType = PhpDocElementType("phpdocJsonFor")
     }
 
-    fun name(): String? {
-        return node.lastChildNode?.text
-    }
+    fun name() = node.lastChildNode?.text
 }

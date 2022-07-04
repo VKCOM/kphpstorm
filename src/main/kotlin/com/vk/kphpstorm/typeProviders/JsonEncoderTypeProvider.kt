@@ -59,5 +59,4 @@ class JsonEncoderTypeProvider : PhpTypeProvider4 {
     override fun complete(incompleteTypeStr: String, project: Project) = null
 
     override fun getBySignature(typeStr: String, visited: MutableSet<String>?, depth: Int, project: Project?) = null
-
 }

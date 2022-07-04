@@ -30,7 +30,7 @@ object KphpDocElementTypes {
     val kphpDocTagWarnPerformance = KphpDocTagWarnPerformanceElementType
 
     /**
-     * '@kphp-json property[= optional value]'
+     * '@kphp-json [for EncoderName] property[= optional value]'
      * They don't store stubs, but have a psi parser
      */
     val kphpDocTagJson = KphpDocTagJsonElementType
