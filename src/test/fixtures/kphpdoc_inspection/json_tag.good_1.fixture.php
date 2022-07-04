@@ -192,3 +192,15 @@ class J {
    */
   public int $f2 = 0;
 }
+
+/**
+ * @kphp-json flatten
+ */
+class K {
+  /** @var string[] */
+  public array $f1;
+
+  static public int $f2 = 0;
+
+  static private $f3 = "";
+}

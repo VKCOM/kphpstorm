@@ -203,7 +203,8 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     return
                 }
 
-                if (property.name == "flatten" && owner.fields.size != 1 && propertyPsi.booleanValue() == true) {
+                val classInstanceFields = owner.fields.filter { !it.modifier.isStatic }
+                if (property.name == "flatten" && classInstanceFields.size != 1 && propertyPsi.booleanValue() == true) {
                     return holder.errTag(
                         docTag,
                         "@kphp-json 'flatten' tag is allowed only for class with a single field, class name $className"
