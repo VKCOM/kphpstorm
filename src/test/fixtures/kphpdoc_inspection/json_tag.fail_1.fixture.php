@@ -185,7 +185,7 @@ class M2 {
 }
 
 /**
- * @kphp-json fields=$f1, <error descr="@kphp-json 'fields' specifies 'f1ы', but such field doesn't exist in class M3">f1</error>
+ * @kphp-json fields=$f1, <error descr="@kphp-json 'fields' specifies 'f1', but such field doesn't exist in class M3">f1</error>
  */
 class M3 {
   public int $f1 = 0;
