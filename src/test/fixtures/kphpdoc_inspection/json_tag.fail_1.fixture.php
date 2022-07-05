@@ -2,38 +2,38 @@
 
 class A {
   /**
-   * <error descr="@kphp-json raw_string tag is allowed only above string type, got above $f1 field">@kphp-json raw_string</error>
+   * <error descr="field A::$f1 is @kphp-json 'raw_string', but it's not a string">@kphp-json raw_string</error>
    */
   public $f1 = 0;
 
   /**
-   * <error descr="@kphp-json raw_string tag is allowed only above string type, got above $f2 field">@kphp-json raw_string</error>
+   * <error descr="field A::$f2 is @kphp-json 'raw_string', but it's not a string">@kphp-json raw_string</error>
    * <weak_warning descr="@var can be replaced with field hint 'float'">@var</weak_warning> float $f2
    */
   public $f2;
 
   /**
-   * <error descr="@kphp-json raw_string tag is allowed only above string type, got above $f3 field">@kphp-json raw_string</error>
+   * <error descr="field A::$f3 is @kphp-json 'raw_string', but it's not a string">@kphp-json raw_string</error>
    */
   public bool $f3;
 
   /**
-   * <error descr="@kphp-json array_as_hashmap tag is allowed only above array type, got above $f4 field">@kphp-json array_as_hashmap</error>
+   * <error descr="field A::$f4 is @kphp-json 'array_as_hashmap', but it's not a array">@kphp-json array_as_hashmap</error>
    */
   public $f4 = 0;
 
   /**
-   * <error descr="@kphp-json array_as_hashmap tag is allowed only above array type, got above $f5 field">@kphp-json array_as_hashmap</error>
+   * <error descr="field A::$f5 is @kphp-json 'array_as_hashmap', but it's not a array">@kphp-json array_as_hashmap</error>
    */
   public string $f5 = "";
 
   /**
-   * <error descr="@kphp-json raw_string tag is allowed only above string type, got above $f6 field">@kphp-json raw_string</error>
+   * <error descr="field A::$f6 is @kphp-json 'raw_string', but it's not a string">@kphp-json raw_string</error>
    */
   public $f6 = [1, 2, 3];
 
   /**
-   * <error descr="@kphp-json raw_string tag is allowed only above string type, got above $f7 field">@kphp-json raw_string</error>
+   * <error descr="field A::$f7 is @kphp-json 'raw_string', but it's not a string">@kphp-json raw_string</error>
    */
   public ?string $f7 = "";
 }
@@ -76,13 +76,13 @@ class D {
 }
 
 /**
- * <error descr="@kphp-json 'flatten' tag is allowed only for class with a single field, class name E">@kphp-json flatten</error>
+ * <error descr="@kphp-json 'flatten' class 'E' must have exactly one field">@kphp-json flatten</error>
  */
 class E {
 }
 
 /**
- * <error descr="@kphp-json 'flatten' tag is allowed only for class with a single field, class name F">@kphp-json flatten</error>
+ * <error descr="@kphp-json 'flatten' class 'F' must have exactly one field">@kphp-json flatten</error>
  */
 class F {
   public $f1 = 1;
@@ -91,20 +91,20 @@ class F {
 }
 
 /**
- * <error descr="@kphp-json 'rename_policy' should be either none|snake_case|camelCase">@kphp-json rename_policy=unknown_value</error>
- * <error descr="@kphp-json 'visibility_policy' should be either all|public">@kphp-json visibility_policy=private</error>
+ * <error descr="@kphp-json 'rename_policy' should be none|snake_case|camelCase, got 'unknown_value'">@kphp-json rename_policy=unknown_value</error>
+ * <error descr="@kphp-json 'visibility_policy' should be all|public, got 'private'">@kphp-json visibility_policy=private</error>
  */
 class G {
 }
 
 /**
- * <error descr="'rename_policy' can't be used for a @kphp-json 'flatten' class">@kphp-json rename_policy=camelCase</error>
+ * <error descr="@kphp-json 'rename_policy' over a field is disallowed for flatten class 'H'">@kphp-json rename_policy=camelCase</error>
  * @kphp-json flatten
- * <error descr="'visibility_policy' can't be used for a @kphp-json 'flatten' class">@kphp-json visibility_policy=all</error>
+ * <error descr="@kphp-json 'visibility_policy' over a field is disallowed for flatten class 'H'">@kphp-json visibility_policy=all</error>
  */
 class H {
   /**
-   * <error descr="'skip' can't be used for a @kphp-json 'flatten' class">@kphp-json skip</error>
+   * <error descr="@kphp-json 'skip' over a field is disallowed for flatten class 'H'">@kphp-json skip</error>
    */
   public $f1 = 0;
 }

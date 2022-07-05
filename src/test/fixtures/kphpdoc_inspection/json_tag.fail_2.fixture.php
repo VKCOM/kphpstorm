@@ -21,8 +21,8 @@ class A {
 }
 
 /**
- * <error descr="@kphp-json for AdminEncoder 'fields' should be placed below @kphp-json 'fields' without for">@kphp-json for AdminEncoder fields = f1</error>
- * <error descr="@kphp-json for GuestEncoder 'fields' should be placed below @kphp-json 'fields' without for">@kphp-json for GuestEncoder fields = f2</error>
+ * <error descr="@kphp-json for AdminJsonEncoder 'fields' should be placed below @kphp-json 'fields' without for">@kphp-json for AdminJsonEncoder fields = f1</error>
+ * <error descr="@kphp-json for GuestJsonEncoder 'fields' should be placed below @kphp-json 'fields' without for">@kphp-json for GuestJsonEncoder fields = f2</error>
  *
  * @property-read $f1
  *
@@ -37,7 +37,7 @@ class B {
 }
 
 /**
- * <error descr="@kphp-json 'flatten' can't be used with 'for', it's a global state">@kphp-json for AdminEncoder flatten</error>
+ * <error descr="@kphp-json 'flatten' can't be used with 'for', it's a global state">@kphp-json for AdminJsonEncoder flatten</error>
  */
 class C {
   private float $f1 = 11.11;

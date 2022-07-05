@@ -23,14 +23,14 @@ class A {
 class B {
   /**
    * @kphp-json skip = true
-   * @kphp-json for AdminEncoder skip=false
-   * @kphp-json for AdminEncoder rename=super_aa
+   * @kphp-json for AdminJsonEncoder skip=false
+   * @kphp-json for AdminJsonEncoder rename=super_aa
    */
   public string $f1 = 'f1a';
 
   /**
-   * @kphp-json for AdminEncoder skip
-   * @kphp-json for GuestEncoder rename=super_bb
+   * @kphp-json for AdminJsonEncoder skip
+   * @kphp-json for GuestJsonEncoder rename=super_bb
    */
   public string $f2 = 'f2b';
 }
@@ -44,8 +44,8 @@ class C {
 
 /**
  * @kphp-json fields = f1
- * @kphp-json for AdminEncoder fields = f1
- * @kphp-json for GuestEncoder fields = f2
+ * @kphp-json for AdminJsonEncoder fields = f1
+ * @kphp-json for GuestJsonEncoder fields = f2
  *
  * @kphp-json rename_policy=snake_case
  *
@@ -58,7 +58,7 @@ class D {
 }
 
 /**
- * @kphp-json for AdminEncoder flatten=0
+ * @kphp-json for AdminJsonEncoder flatten=0
  */
 class E {
   private float $f1 = 11.11;

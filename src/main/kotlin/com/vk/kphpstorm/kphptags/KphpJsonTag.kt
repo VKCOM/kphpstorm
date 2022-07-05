@@ -141,7 +141,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                 if (isUsedCorrectType == false && propertyPsi.booleanValue() == true) {
                     return holder.errTag(
                         docTag,
-                        "@kphp-json ${property.name} tag is allowed only above ${property.ifType.second} type, got above $$fieldName field"
+                        "field ${phpClass.name}::$$fieldName is @kphp-json '${property.name}', but it's not a ${property.ifType.second}"
                     )
                 }
 
@@ -212,7 +212,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     if (classInstanceFields.size != 1) {
                         return holder.errTag(
                             docTag,
-                            "@kphp-json 'flatten' tag is allowed only for class with a single field, class name $className"
+                            "@kphp-json 'flatten' class '$className' must have exactly one field"
                         )
                     }
                 }
@@ -276,7 +276,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
             }
 
             if (elementValue !in allowValues && allowValues.isNotEmpty()) {
-                holder.errTag(docTag, "@kphp-json '${property.name}' should be either ${allowValues.joinToString("|")}")
+                holder.errTag(docTag, "@kphp-json '${property.name}' should be ${allowValues.joinToString("|")}, got '$elementValue'")
                 return false
             }
         }
@@ -296,7 +296,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
 
         val useFlatten = otherJsonTags.any { it.item()?.name() == "flatten" && it.item()?.booleanValue() == true }
         if (useFlatten) {
-            holder.errTag(docTag, "'${property.name}' can't be used for a @kphp-json 'flatten' class")
+            holder.errTag(docTag, "@kphp-json '${property.name}' over a field is disallowed for flatten class '${phpClass.name}'")
             return false
         }
 
