@@ -44,8 +44,11 @@ class C {
 
 /**
  * @kphp-json fields = $f1
+ * @kphp-json skip_if_default = 1
+ *
  * @kphp-json for AdminJsonEncoder fields = $f1
  * @kphp-json for GuestJsonEncoder fields = $f2
+ * @kphp-json for GuestJsonEncoder skip_if_default = false
  *
  * @kphp-json rename_policy=snake_case
  *

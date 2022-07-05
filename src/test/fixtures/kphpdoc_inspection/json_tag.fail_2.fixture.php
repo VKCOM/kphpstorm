@@ -29,10 +29,18 @@ class A {
  * @kphp-json rename_policy=snake_case
  * @kphp-json fields = $f1
  */
-class B {
+class B1 {
   public string $f1 = "";
 
   public bool $f2 = true;
+}
+
+/**
+ * <error descr="@kphp-json for AdminJsonEncoder 'rename_policy' should be placed below @kphp-json 'rename_policy' without for">@kphp-json for AdminJsonEncoder rename_policy=none</error>
+ * @kphp-json rename_policy=camelCase
+ */
+class B2 {
+  public string $f1 = "";
 }
 
 /**

@@ -165,26 +165,27 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                     )
                 }
 
-                if (property.name == "fields") {
-                    if (forName != null) {
-                        var tagJsonPsiElement = docTag as PhpPsiElement?
-                        while (tagJsonPsiElement != null) {
-                            if (tagJsonPsiElement !is KphpDocTagJsonPsiImpl) {
-                                tagJsonPsiElement = tagJsonPsiElement.nextPsiSibling
-                                continue
-                            }
-
-                            if (tagJsonPsiElement.item()?.name() == "fields" && tagJsonPsiElement.forElement() == null) {
-                                return holder.errTag(
-                                    docTag,
-                                    "@kphp-json for $forName 'fields' should be placed below @kphp-json 'fields' without for"
-                                )
-                            }
-
+                if (forName != null) {
+                    val propertyName = property.name
+                    var tagJsonPsiElement = docTag as PhpPsiElement?
+                    while (tagJsonPsiElement != null) {
+                        if (tagJsonPsiElement !is KphpDocTagJsonPsiImpl) {
                             tagJsonPsiElement = tagJsonPsiElement.nextPsiSibling
+                            continue
                         }
-                    }
 
+                        if (tagJsonPsiElement.item()?.name() == propertyName && tagJsonPsiElement.forElement() == null) {
+                            return holder.errTag(
+                                docTag,
+                                "@kphp-json for $forName '$propertyName' should be placed below @kphp-json '$propertyName' without for"
+                            )
+                        }
+
+                        tagJsonPsiElement = tagJsonPsiElement.nextPsiSibling
+                    }
+                }
+
+                if (property.name == "fields") {
                     val classInstanceFields = owner.fields.filter { !it.modifier.isStatic }.map { "$${it.name}" }
                     for (item in psiElement.children) {
                         if (item.text !in classInstanceFields) {
