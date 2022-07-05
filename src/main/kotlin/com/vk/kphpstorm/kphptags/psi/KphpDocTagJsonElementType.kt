@@ -4,6 +4,7 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes
+import com.jetbrains.php.lang.documentation.phpdoc.parser.tags.PhpDocParamTagParser
 import com.jetbrains.php.lang.documentation.phpdoc.parser.tags.PhpDocTagParser
 import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStub
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
@@ -36,6 +37,8 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
         override fun getElementType() = KphpDocTagJsonElementType
 
         override fun parseContents(builder: PhpPsiBuilder): Boolean {
+            val paramsTagParser = PhpDocParamTagParser()
+
             while (true) {
                 val forMarker = builder.mark()
                 var needForIdentifier = false
@@ -56,8 +59,12 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
                     forMarker.drop()
                 }
 
+                val propertyName: String?
                 val marker = builder.mark()
-                if (!builder.compareAndEat(PhpDocTokenTypes.DOC_IDENTIFIER)) {
+                if (builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER)) {
+                    propertyName = builder.tokenText
+                    builder.advanceLexer()
+                } else {
                     marker.drop()
                     builder.error(PhpParserErrors.expected("Property name"))
                     break
@@ -74,13 +81,21 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
                     }
 
                     if (needNextIdentifier) {
-                        if (!builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) && !builder.compare(PhpDocTokenTypes.DOC_TEXT)) {
-                            marker.drop()
-                            builder.error(PhpParserErrors.expected("Property value"))
-                            break
-                        }
+                        if (propertyName == "fields") {
+                            while (true) {
+                                if (!builder.compareAndEat(DOC_COMMA) && !paramsTagParser.parseContents(builder)) {
+                                    break
+                                }
+                            }
+                        } else {
+                            if (!builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) && !builder.compare(PhpDocTokenTypes.DOC_TEXT)) {
+                                marker.drop()
+                                builder.error(PhpParserErrors.expected("Property value"))
+                                break
+                            }
 
-                        builder.advanceLexer()
+                            builder.advanceLexer()
+                        }
                     }
                 }
 
