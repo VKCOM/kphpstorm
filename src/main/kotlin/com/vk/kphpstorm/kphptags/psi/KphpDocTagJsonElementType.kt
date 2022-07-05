@@ -3,7 +3,6 @@ package com.vk.kphpstorm.kphptags.psi
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
-import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes
 import com.jetbrains.php.lang.documentation.phpdoc.parser.tags.PhpDocParamTagParser
 import com.jetbrains.php.lang.documentation.phpdoc.parser.tags.PhpDocTagParser
 import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStub
@@ -61,7 +60,7 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
 
                 val propertyName: String?
                 val marker = builder.mark()
-                if (builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER)) {
+                if (builder.compare(DOC_IDENTIFIER)) {
                     propertyName = builder.tokenText
                     builder.advanceLexer()
                 } else {
@@ -70,11 +69,11 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
                     break
                 }
 
-                if (builder.compare(PhpDocTokenTypes.DOC_TEXT) && builder.tokenText!!.startsWith("=")) {
+                if (builder.compare(DOC_TEXT) && builder.tokenText!!.startsWith("=")) {
                     var needNextIdentifier = true
 
                     if (builder.tokenText == "=") {
-                        builder.compareAndEat(PhpDocTokenTypes.DOC_TEXT)
+                        builder.compareAndEat(DOC_TEXT)
                     } else {
                         needNextIdentifier = false
                         builder.advanceLexer()
@@ -88,7 +87,7 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
                                 }
                             }
                         } else {
-                            if (!builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) && !builder.compare(PhpDocTokenTypes.DOC_TEXT)) {
+                            if (!builder.compare(DOC_IDENTIFIER) && !builder.compare(DOC_TEXT)) {
                                 marker.drop()
                                 builder.error(PhpParserErrors.expected("Property value"))
                                 break
