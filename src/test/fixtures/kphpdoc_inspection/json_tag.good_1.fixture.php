@@ -204,3 +204,12 @@ class K {
 
   static private $f3 = "";
 }
+
+/**
+ * @kphp-json fields=$f1, $f2
+ */
+class L {
+  public int $f1 = 0;
+
+  public string $f2 = "";
+}

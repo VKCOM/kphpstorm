@@ -43,9 +43,9 @@ class C {
 }
 
 /**
- * @kphp-json fields = f1
- * @kphp-json for AdminJsonEncoder fields = f1
- * @kphp-json for GuestJsonEncoder fields = f2
+ * @kphp-json fields = $f1
+ * @kphp-json for AdminJsonEncoder fields = $f1
+ * @kphp-json for GuestJsonEncoder fields = $f2
  *
  * @kphp-json rename_policy=snake_case
  *

@@ -27,8 +27,7 @@ class A {
  * @property-read $f1
  *
  * @kphp-json rename_policy=snake_case
-
- * @kphp-json fields = f1
+ * @kphp-json fields = $f1
  */
 class B {
   public string $f1 = "";

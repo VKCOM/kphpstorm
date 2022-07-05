@@ -169,3 +169,24 @@ class L {
    */
   public $f1 = 0;
 }
+
+/**
+ * @kphp-json fields=   <error descr="@kphp-json 'fields' specifies '$a', but such field doesn't exist in class M1">$a</error>
+ */
+class M1 {
+  public int $f1 = 0;
+}
+
+/**
+ * @kphp-json fields=<error descr="@kphp-json 'fields' specifies '$a', but such field doesn't exist in class M2">$a</error>, $f1
+ */
+class M2 {
+  public int $f1 = 0;
+}
+
+/**
+ * @kphp-json fields=$f1, <error descr="@kphp-json 'fields' specifies 'f1ы', but such field doesn't exist in class M3">f1</error>
+ */
+class M3 {
+  public int $f1 = 0;
+}
