@@ -9,7 +9,7 @@ import com.jetbrains.php.lang.psi.elements.ArrayCreationExpression
 import com.jetbrains.php.lang.psi.elements.ArrayIndex
 import com.jetbrains.php.lang.psi.elements.PhpReference
 import com.jetbrains.php.lang.psi.elements.StringLiteralExpression
-import com.vk.kphpstorm.kphptags.psi.KphpDocJsonPropertyPsiImpl
+import com.vk.kphpstorm.kphptags.psi.KphpDocJsonAttributePsiImpl
 import com.vk.kphpstorm.kphptags.psi.KphpDocWarnPerformanceItemPsiImpl
 
 /**
@@ -28,8 +28,8 @@ class KphpStormCompletionContributor : CompletionContributor() {
                 KphpWarnPerformanceItemCompletionProvider())
         // arguments of @kphp-json
         extend(CompletionType.BASIC,
-            PlatformPatterns.psiElement().withParent(KphpDocJsonPropertyPsiImpl::class.java),
-            KphpJsonPropertyCompletionProvider())
+            PlatformPatterns.psiElement().withParent(KphpDocJsonAttributePsiImpl::class.java),
+            KphpJsonAttributeCompletionProvider())
         // type inside @param/@var/@return and tested types
         extend(CompletionType.BASIC,
                 PlatformPatterns.psiElement().withParent(PhpReference::class.java),

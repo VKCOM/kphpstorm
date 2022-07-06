@@ -58,14 +58,14 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
                     forMarker.drop()
                 }
 
-                val propertyName: String?
+                val attributeName: String?
                 val marker = builder.mark()
                 if (builder.compare(DOC_IDENTIFIER)) {
-                    propertyName = builder.tokenText
+                    attributeName = builder.tokenText
                     builder.advanceLexer()
                 } else {
                     marker.drop()
-                    builder.error(PhpParserErrors.expected("Property name"))
+                    builder.error(PhpParserErrors.expected("Attribute name"))
                     break
                 }
 
@@ -80,7 +80,7 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
                     }
 
                     if (needNextIdentifier) {
-                        if (propertyName == "fields") {
+                        if (attributeName == "fields") {
                             while (true) {
                                 if (!builder.compareAndEat(DOC_COMMA) && !paramsTagParser.parseContents(builder)) {
                                     break
@@ -89,7 +89,7 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
                         } else {
                             if (!builder.compare(DOC_IDENTIFIER) && !builder.compare(DOC_TEXT)) {
                                 marker.drop()
-                                builder.error(PhpParserErrors.expected("Property value"))
+                                builder.error(PhpParserErrors.expected("Attribute value"))
                                 break
                             }
 
@@ -98,7 +98,7 @@ object KphpDocTagJsonElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>(
                     }
                 }
 
-                marker.done(KphpDocJsonPropertyPsiImpl.elementType)
+                marker.done(KphpDocJsonAttributePsiImpl.elementType)
                 return true
 
             }

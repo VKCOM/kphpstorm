@@ -10,7 +10,7 @@ class KphpDocTagJsonPsiImpl : PhpDocTagImpl, KphpDocTagImpl {
     constructor(node: ASTNode) : super(node)
     constructor(stub: PhpDocTagStub, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
-    fun item(): KphpDocJsonPropertyPsiImpl? {
+    fun item(): KphpDocJsonAttributePsiImpl? {
         val item = PsiTreeUtil.skipWhitespacesForward(firstChild)
         val psiElement = if (item is KphpDocJsonForEncoderPsiImpl) {
             PsiTreeUtil.skipWhitespacesForward(item)
@@ -18,7 +18,7 @@ class KphpDocTagJsonPsiImpl : PhpDocTagImpl, KphpDocTagImpl {
             item
         }
 
-        return psiElement as? KphpDocJsonPropertyPsiImpl
+        return psiElement as? KphpDocJsonAttributePsiImpl
     }
 
     fun forElement(): KphpDocJsonForEncoderPsiImpl? {

@@ -4,7 +4,7 @@ import com.intellij.lang.ASTNode
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocElementType
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocPsiElementImpl
 
-class KphpDocJsonPropertyPsiImpl(node: ASTNode) : PhpDocPsiElementImpl(node) {
+class KphpDocJsonAttributePsiImpl(node: ASTNode) : PhpDocPsiElementImpl(node) {
     companion object {
         val elementType = PhpDocElementType("phpdocJsonItem")
     }
