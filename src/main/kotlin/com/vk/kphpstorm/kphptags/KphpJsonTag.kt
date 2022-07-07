@@ -90,7 +90,7 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
             return false
         }
 
-        return true
+        return owner is Field || owner is PhpClass
     }
 
     override fun areDuplicatesAllowed(): Boolean {
@@ -233,6 +233,10 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                 checkDuplicated(forName, attribute, docTag, owner, holder)
             }
         }
+    }
+
+    override fun onAutoCompleted(docComment: PhpDocComment): String {
+        return ""
     }
 
     private fun checkDuplicated(
