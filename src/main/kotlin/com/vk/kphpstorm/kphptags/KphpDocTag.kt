@@ -100,14 +100,14 @@ abstract class KphpDocTag(
      * Helper for use inside annotate() on syntax error
      */
     protected fun AnnotationHolder.errTag(docTag: PhpDocTag, errorMessage: String) {
-        this.newAnnotation(HighlightSeverity.ERROR, errorMessage).range(docTag).create()
+        this.errElement(docTag, errorMessage)
     }
 
     /**
      * Helper for use inside annotate() on error
      */
-    protected fun AnnotationHolder.errElement(docTag: PsiElement, errorMessage: String) {
-        this.newAnnotation(HighlightSeverity.ERROR, errorMessage).range(docTag).create()
+    protected fun AnnotationHolder.errElement(element: PsiElement, errorMessage: String) {
+        this.newAnnotation(HighlightSeverity.ERROR, errorMessage).range(element).create()
     }
 
     /**
