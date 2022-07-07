@@ -5,13 +5,12 @@ class JsonEncoder {
   public static function decode(string $json_string, string $class_name): ?object {
     return null;
   }
-
-  public static function encode(?object $instance, int $flags = 0, array $more = []): string {
-    return "";
-  }
 }
 
-class ApiJsonEncoder extends JsonEncoder {
+class BaseJsonEncoder extends JsonEncoder {
+}
+
+class ApiJsonEncoder extends BaseJsonEncoder {
 }
 
 class FakeJsonEncoder {
@@ -24,13 +23,12 @@ class User {
   public string $name = "Petr";
 }
 
-$json = JsonEncoder::encode(new User());
-
 $user1 = JsonEncoder::decode("", User::class);
-$user2 = ApiJsonEncoder::decode("", User::class);
-$user3 = FakeJsonEncoder::decode("", User::class);
-
+$user2 = BaseJsonEncoder::decode("", User::class);
+$user3 = ApiJsonEncoder::decode("", User::class);
+$user4 = FakeJsonEncoder::decode("", User::class);
 
 expr_type($user1, "\User|null|object");
 expr_type($user2, "\User|null|object");
-expr_type($user3, "?object");
+expr_type($user3, "\User|null|object");
+expr_type($user4, "?object");

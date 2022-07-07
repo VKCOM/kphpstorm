@@ -64,7 +64,7 @@ class JsonEncoderTypeProvider : PhpTypeProvider4 {
 
         val extendElement = referenceElement.getOrNull(0) ?: return null
         if (extendElement.name != "JsonEncoder") {
-            return null
+            return PhpType().add("#" + key + extendElement.fqn + key + type)
         }
 
         return PhpType().add(type)
