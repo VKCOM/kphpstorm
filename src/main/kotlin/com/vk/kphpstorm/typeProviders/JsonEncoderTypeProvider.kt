@@ -2,6 +2,7 @@ package com.vk.kphpstorm.typeProviders
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.jetbrains.php.PhpIndex
 import com.jetbrains.php.lang.psi.elements.ClassConstantReference
 import com.jetbrains.php.lang.psi.elements.ClassReference
 import com.jetbrains.php.lang.psi.elements.MethodReference
@@ -34,29 +35,40 @@ class JsonEncoderTypeProvider : PhpTypeProvider4 {
             return null
         }
 
-        if (classRef.name != "JsonEncoder") {
-            val phpClass = classRef.resolve()
-            if (phpClass !is PhpClass) {
-                return null
-            }
-
-            val referenceElement = phpClass.extendsList.referenceElements
-
-            val extendElement = referenceElement.getOrNull(0) ?: return null
-            if (extendElement.name != "JsonEncoder") {
-                return null
-            }
-        }
-
         val classNameParameter = p.parameterList?.getParameter(1) ?: return null
         if (classNameParameter !is ClassConstantReference) {
             return null
         }
 
-        return classNameParameter.classReference?.type
+        val type = classNameParameter.classReference?.type
+
+        if (classRef.name != "JsonEncoder") {
+            return PhpType().add("#" + key + classRef.fqn + key + type)
+        }
+
+        return type
     }
 
-    override fun complete(incompleteTypeStr: String, project: Project) = null
+    override fun complete(incompleteTypeStr: String, project: Project): PhpType? {
+        val indexOfSign: Int = incompleteTypeStr.indexOf(key)
+        val indexOfDelimiter: Int = incompleteTypeStr.indexOf(key, indexOfSign + 1)
+        val classFqn: String = incompleteTypeStr.substring(indexOfSign + 1, indexOfDelimiter)
+        val type: String = incompleteTypeStr.substring(indexOfDelimiter + 1)
+
+        val phpClass = PhpIndex.getInstance(project).getClassesByFQN(classFqn).firstOrNull()
+        if (phpClass !is PhpClass) {
+            return null
+        }
+
+        val referenceElement = phpClass.extendsList.referenceElements
+
+        val extendElement = referenceElement.getOrNull(0) ?: return null
+        if (extendElement.name != "JsonEncoder") {
+            return null
+        }
+
+        return PhpType().add(type)
+    }
 
     override fun getBySignature(typeStr: String, visited: MutableSet<String>?, depth: Int, project: Project?) = null
 }
