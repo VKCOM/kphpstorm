@@ -50,10 +50,10 @@ class JsonEncoderTypeProvider : PhpTypeProvider4 {
     }
 
     override fun complete(incompleteTypeStr: String, project: Project): PhpType? {
-        val indexOfSign: Int = incompleteTypeStr.indexOf(key)
-        val indexOfDelimiter: Int = incompleteTypeStr.indexOf(key, indexOfSign + 1)
-        val classFqn: String = incompleteTypeStr.substring(indexOfSign + 1, indexOfDelimiter)
-        val type: String = incompleteTypeStr.substring(indexOfDelimiter + 1)
+        val indexOfSign = incompleteTypeStr.indexOf(key)
+        val indexOfDelimiter = incompleteTypeStr.indexOf(key, indexOfSign + 1)
+        val classFqn = incompleteTypeStr.substring(indexOfSign + 1, indexOfDelimiter)
+        val type = incompleteTypeStr.substring(indexOfDelimiter + 1)
 
         val phpClass = PhpIndex.getInstance(project).getClassesByFQN(classFqn).firstOrNull()
         if (phpClass !is PhpClass) {

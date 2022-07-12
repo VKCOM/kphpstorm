@@ -93,9 +93,9 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
         return owner is Field || owner is PhpClass
     }
 
-    override fun areDuplicatesAllowed(): Boolean {
-        return true
-    }
+    override fun areDuplicatesAllowed() = true
+
+    override fun onAutoCompleted(docComment: PhpDocComment) = ""
 
     override fun annotate(docTag: PhpDocTag, rhs: PsiElement?, holder: AnnotationHolder) {
         val owner = rhs?.parentDocComment?.owner as? PhpNamedElement ?: return
@@ -233,10 +233,6 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
                 checkDuplicated(forName, attribute, docTag, owner, holder)
             }
         }
-    }
-
-    override fun onAutoCompleted(docComment: PhpDocComment): String {
-        return ""
     }
 
     private fun checkDuplicated(
