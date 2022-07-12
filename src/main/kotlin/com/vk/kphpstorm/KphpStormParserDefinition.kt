@@ -35,6 +35,9 @@ class KphpStormParserDefinition() : PhpParserDefinition() {
             KphpDocTplParameterDeclPsiImpl.elementType    -> KphpDocTplParameterDeclPsiImpl(node)
             KphpDocElementTypes.kphpDocTagWarnPerformance -> KphpDocTagWarnPerformancePsiImpl(node)
             KphpDocWarnPerformanceItemPsiImpl.elementType -> KphpDocWarnPerformanceItemPsiImpl(node)
+            KphpDocElementTypes.kphpDocTagJson            -> KphpDocTagJsonPsiImpl(node)
+            KphpDocJsonAttributePsiImpl.elementType       -> KphpDocJsonAttributePsiImpl(node)
+            KphpDocJsonForEncoderPsiImpl.elementType      -> KphpDocJsonForEncoderPsiImpl(node)
 
             ExPhpTypePrimitivePsiImpl.elementType        -> ExPhpTypePrimitivePsiImpl(node)
             ExPhpTypeInstancePsiImpl.elementType         -> ExPhpTypeInstancePsiImpl(node)

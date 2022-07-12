@@ -8,4 +8,8 @@ class KphpTypeTest : TypeTestBase() {
         runFixture("kphp_type/ffi_tag.good.fixture.php")
     }
 
+    fun testJsonTag() {
+        runFixture("kphp_type/json_tag.good.fixture.php")
+    }
+
 }
