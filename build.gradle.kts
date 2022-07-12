@@ -33,6 +33,11 @@ intellij {
     plugins.set(properties("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
 }
 
+changelog {
+    version.set(properties("pluginVersion"))
+    groups.set(emptyList())
+}
+
 tasks {
     // Set the JVM compatibility versions
     properties("javaVersion").let {
