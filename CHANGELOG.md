@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.2.5]
+
+* support `@kphp-json` tags
+
 ## [1.2.4]
 
 * support `ffi_scope` and `ffi_cdata` in phpdoc
