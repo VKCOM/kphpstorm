@@ -81,11 +81,33 @@ abstract class KphpDocTag(
         return findThisTagInDocComment(docCommentOwner.docComment ?: return null)
     }
 
+    inline fun <reified T : PhpDocTag> findThisTagsInDocComment(docComment: PhpDocComment): List<T> {
+        val tags = mutableListOf<T>()
+        PhpDocUtil.processTagElementsByName(docComment, nameWithAt) {
+            if (it is T) {
+                tags.add(it)
+            }
+            true
+        }
+        return tags
+    }
+
+    inline fun <reified T : PhpDocTag> findThisTagsInDocComment(docCommentOwner: PhpNamedElement): List<T> {
+        return findThisTagsInDocComment(docCommentOwner.docComment ?: return listOf())
+    }
+
     /**
      * Helper for use inside annotate() on syntax error
      */
     protected fun AnnotationHolder.errTag(docTag: PhpDocTag, errorMessage: String) {
-        this.newAnnotation(HighlightSeverity.ERROR, errorMessage).range(docTag).create()
+        this.errElement(docTag, errorMessage)
+    }
+
+    /**
+     * Helper for use inside annotate() on error
+     */
+    protected fun AnnotationHolder.errElement(element: PsiElement, errorMessage: String) {
+        this.newAnnotation(HighlightSeverity.ERROR, errorMessage).range(element).create()
     }
 
     /**
