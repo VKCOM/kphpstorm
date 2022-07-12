@@ -84,7 +84,6 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
             "curl_init" to "int",
             "bindec" to "int",
             "mysqli_insert_id" to "int",
-            "unpack" to "array",
             "floor" to "float",
             "round" to "float",
 
@@ -109,7 +108,8 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
             "array_pop" to "^1[*]",
             "array_filter" to "^1",
             "array_pad" to "array",
-            "array_column" to "array"
+            "array_column" to "array",
+            "count" to "int",
     )
 
     private val FUNC_NAMES_INDEX = CUSTOM_HANDLED_FUNCTIONS.map { it.first }.toSortedSet()
