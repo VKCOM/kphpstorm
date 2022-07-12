@@ -84,7 +84,6 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
             "curl_init" to "int",
             "bindec" to "int",
             "mysqli_insert_id" to "int",
-            "unpack" to "array",
             "floor" to "float",
             "round" to "float",
 
