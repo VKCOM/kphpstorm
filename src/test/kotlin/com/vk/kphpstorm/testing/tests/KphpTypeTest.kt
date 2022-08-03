@@ -12,4 +12,8 @@ class KphpTypeTest : TypeTestBase() {
         runFixture("kphp_type/json_tag.good.fixture.php")
     }
 
+    fun testArrayForce() {
+        runFixture("kphp_type/json_tag.good.fixture.php")
+    }
+
 }
