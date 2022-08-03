@@ -44,12 +44,13 @@ function demo1() {
     foreach(<error descr="Invalid foreach on 'int'">getIntArr()[0]</error> as $v);
     foreach(getAnyArr() as $v);
     foreach(getAnyArr()[0] as $v);
+    foreach(<error descr="Invalid foreach on 'null'">null</error> as $v);
     foreach(<error descr="Invalid foreach on 'int'">5</error> as $v);
     foreach(<error descr="Invalid foreach on 'string'">getString()</error> as $v);
     foreach(<error descr="Invalid foreach on 'A'">getObject()</error> as $v);
     foreach(<error descr="Invalid foreach on 'Indexable'">getIndexable()</error> as $v);
     foreach(getAny() as $v);
-    foreach(<error descr="Invalid foreach on 'void'">getVoid()</error> as $v);
+    foreach(<error descr="Invalid foreach on 'null'">getVoid()</error> as $v);
     foreach(<error descr="Invalid foreach on 'tuple(int, A)'">getTuple()</error> as $v);
     foreach(<error descr="Invalid foreach on 'shape(i:int, a:A)'">getShape()</error> as $v);
     // not supported, even for plain php
