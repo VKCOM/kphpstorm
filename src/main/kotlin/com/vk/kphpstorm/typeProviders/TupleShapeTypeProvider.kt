@@ -18,6 +18,9 @@ import com.jetbrains.php.lang.psi.elements.impl.VariableImpl
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.jetbrains.php.lang.psi.resolve.types.PhpTypeProvider4
 import com.vk.kphpstorm.exphptype.ExPhpType
+import com.vk.kphpstorm.exphptype.ExPhpTypeArray
+import com.vk.kphpstorm.exphptype.ExPhpTypeForcing
+import com.vk.kphpstorm.exphptype.PhpTypeToExPhpTypeParsing
 import com.vk.kphpstorm.helpers.convertArrayIndexPsiToStringIndexKey
 import com.vk.kphpstorm.helpers.toExPhpType
 
@@ -76,15 +79,21 @@ class TupleShapeTypeProvider : PhpTypeProvider4 {
             // otherwise, save all info to be calculated in complete()
             // lhsType can be multiple (also separated by |), so create our own format for each of them
             val resultType = PhpType()
-            lhsType.types.forEach {
-                // PhpStorm native type providers also try to detect (with no lack, of course)
-                // they also have unique keys and incomplete type format
-                // BUT PhpType internals have a limit: only 50 subtypes (separated by |)
-                // so, in complex scenarios like get()[1][2]->... combinations increase geometrically
-                // to partially avoid this, use heruistics:
-                // filter out subtypes detected by PhpStorm native type providers that are 100% useless here
-                if (!it.contains("#π") && !it.contains("#E"))
-                    resultType.add("#Й.$indexKey $it")
+
+            val arrayType = forceArrayType(lhsType.types)
+            if (arrayType != null) {
+                resultType.add(arrayType)
+            } else {
+                lhsType.types.forEach {
+                    // PhpStorm native type providers also try to detect (with no lack, of course)
+                    // they also have unique keys and incomplete type format
+                    // BUT PhpType internals have a limit: only 50 subtypes (separated by |)
+                    // so, in complex scenarios like get()[1][2]->... combinations increase geometrically
+                    // to partially avoid this, use heruistics:
+                    // filter out subtypes detected by PhpStorm native type providers that are 100% useless here
+                    if (!it.contains("#π") && !it.contains("#E"))
+                        resultType.add("#Й.$indexKey $it")
+                }
             }
 //            println("type($lhs) = ${resultType.toString().replace("|", " | ")}")
 
@@ -112,6 +121,28 @@ class TupleShapeTypeProvider : PhpTypeProvider4 {
         }
 
         return null
+    }
+
+    /**
+     * After PhpStrong 2022.2 the 'array|T[]' type is sometimes output for arrays.
+     * This function-hack forcing 'array|T[]' into 'T[]'
+     */
+    private fun forceArrayType(types: Set<String>): PhpType? {
+        if (types.size != 3) {
+            return null
+        }
+
+        if (types.filter { it == "#㈲\\int" || it == "\\array" }.size != 2) {
+            return null
+        }
+        val phpFqnType = types.first { it != "#㈲\\int" && it != "\\array" }
+
+        val exPhpType = PhpTypeToExPhpTypeParsing.parseFromString(phpFqnType)
+        if (exPhpType !is ExPhpTypeArray) {
+            return null
+        }
+
+        return ExPhpTypeForcing(exPhpType.inner).toPhpType()
     }
 
     /**

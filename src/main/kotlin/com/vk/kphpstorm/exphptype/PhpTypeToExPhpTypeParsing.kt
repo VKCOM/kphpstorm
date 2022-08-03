@@ -96,8 +96,9 @@ object PhpTypeToExPhpTypeParsing {
             // some "forced" that can occur often, @see [ForcingTypeProvider], \\ not needed
             "force(string)" to ExPhpTypeForcing(ExPhpType.STRING),
             "force(int)" to ExPhpTypeForcing(ExPhpType.INT),
+            "force(bool)" to ExPhpTypeForcing(ExPhpType.BOOL),
             "force(kmixed)" to ExPhpTypeForcing(ExPhpType.KMIXED),
-            "force(any)" to ExPhpTypeForcing(ExPhpType.ANY)
+            "force(any)" to ExPhpTypeForcing(ExPhpType.ANY),
     )
 
     private class ExPhpTypeBuilder(private val type: String) {
