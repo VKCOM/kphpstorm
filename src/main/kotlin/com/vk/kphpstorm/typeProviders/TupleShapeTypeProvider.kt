@@ -132,11 +132,12 @@ class TupleShapeTypeProvider : PhpTypeProvider4 {
             return null
         }
 
-        if (types.filter { it == "#㈲\\int" || it == "\\array" }.size != 2) {
+        val arrayFqn = listOf("#㈲\\int", "\\array")
+        if (types.filter { it in arrayFqn }.size != 2) {
             return null
         }
-        val phpFqnType = types.first { it != "#㈲\\int" && it != "\\array" }
 
+        val phpFqnType = types.first { it !in arrayFqn }
         val exPhpType = PhpTypeToExPhpTypeParsing.parseFromString(phpFqnType)
         if (exPhpType !is ExPhpTypeArray) {
             return null
