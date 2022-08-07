@@ -1,5 +1,7 @@
 package com.vk.kphpstorm.configuration
 
+import com.intellij.codeHighlighting.HighlightDisplayLevel
+import com.intellij.codeInsight.daemon.HighlightDisplayKey
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.impl.AbstractColorsScheme
 import com.intellij.openapi.editor.colors.impl.EditorColorsManagerImpl
@@ -36,6 +38,11 @@ private val nativeInspectionsToDisable = listOf(
 
 )
 
+// The KPHPStorm plugin configuration includes overriding the warning level of standard inspections
+private val nativeInspectionCustomLevel = mapOf(
+    "PhpMethodOrClassCallIsNotCaseSensitiveInspection" to HighlightDisplayLevel.ERROR,
+)
+
 // setup KPHPStorm plugin includes "unchecking" some colors&fonts from "PHP" section
 // (this is already listed in colorSchemes/*.xml, but doing this also manually is more reliable)
 private val nativeTextAttributesToAnnulate = listOf(
@@ -60,6 +67,13 @@ internal fun setupKphpStormPluginForProject(project: Project) {
             curInspectionProfile.setToolEnabled(shortName, true, project, false)
         if (nativeInspectionsToDisable.contains(shortName))
             curInspectionProfile.setToolEnabled(shortName, false, project, false)
+
+        val level = nativeInspectionCustomLevel[shortName]
+        if (level != null) {
+            curInspectionProfile.setToolEnabled(shortName, true, project, false)
+
+            curInspectionProfile.setErrorLevel(HighlightDisplayKey.find(shortName), level, project)
+        }
     }
     // this line saves settings (without this, on/off inspections restore previous state after restart)
     ProjectInspectionProfileManager.getInstance(project).fireProfileChanged(curInspectionProfile)
