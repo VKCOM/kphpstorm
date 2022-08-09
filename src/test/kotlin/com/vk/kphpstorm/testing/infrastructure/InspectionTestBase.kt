@@ -9,7 +9,7 @@ import java.io.File
 
 
 abstract class InspectionTestBase(
-        private val inspectionToEnable: PhpInspection
+    private val inspectionToEnable: PhpInspection? = null,
 ) : BasePlatformTestCase() {
 
     open val languageLevel: PhpLanguageLevel = PhpLanguageLevel.PHP740
@@ -19,7 +19,9 @@ abstract class InspectionTestBase(
     override fun setUp() {
         super.setUp()
 
-        myFixture.enableInspections(inspectionToEnable)
+        if (inspectionToEnable != null) {
+            myFixture.enableInspections(inspectionToEnable)
+        }
     }
 
     private fun setupLanguageLevel() {
