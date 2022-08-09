@@ -39,7 +39,7 @@ private val nativeInspectionsToDisable = listOf(
 )
 
 // The KPHPStorm plugin configuration includes overriding the warning level of standard inspections
-internal val nativeInspectionCustomLevel = mapOf(
+private val nativeInspectionCustomLevel = mapOf(
     "PhpMethodOrClassCallIsNotCaseSensitiveInspection" to HighlightDisplayLevel.ERROR,
 )
 

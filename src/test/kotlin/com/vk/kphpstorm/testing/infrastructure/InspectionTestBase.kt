@@ -5,6 +5,7 @@ import com.jetbrains.php.config.PhpLanguageLevel
 import com.jetbrains.php.config.PhpProjectConfigurationFacade
 import com.jetbrains.php.lang.inspections.PhpInspection
 import com.vk.kphpstorm.configuration.KphpStormConfiguration
+import com.vk.kphpstorm.configuration.setupKphpStormPluginForProject
 import java.io.File
 
 
@@ -35,6 +36,7 @@ abstract class InspectionTestBase(
      */
     protected fun runFixture(fixtureFile: String) {
         setupLanguageLevel()
+        setupKphpStormPluginForProject(project)
 
         // Highlighting test
         KphpStormConfiguration.saveThatSetupForProjectDone(project)
