@@ -13,7 +13,7 @@ class KphpTypeTest : TypeTestBase() {
     }
 
     fun testArrayForce() {
-        runFixture("kphp_type/json_tag.good.fixture.php")
+        runFixture("kphp_type/array_force.good.fixture.php")
     }
 
 }

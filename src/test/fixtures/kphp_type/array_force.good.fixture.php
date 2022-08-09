@@ -11,7 +11,7 @@ $ints = [$t->i, $t->i];
 $_int = $ints[0];
 
 $bools = [$t->b, $t->b];
-$_bool = $ints[0];
+$_bool = $bools[0];
 
 expr_type($ints[0], "int");
 expr_type($_int, "int");
