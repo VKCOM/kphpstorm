@@ -8,7 +8,7 @@ class NativeInspectionTest : InspectionTestBase() {
     fun `test PhpMethodOrClassCallIsNotCaseSensitive inspection`() {
         myFixture.enableInspections(PhpMethodOrClassCallIsNotCaseSensitiveInspection())
 
-        runFixture("native_inspection/case_sensitive.good.fixture.php")
+        runFixture("native_inspection/case_sensitive.fail.fixture.php")
     }
 
 }
