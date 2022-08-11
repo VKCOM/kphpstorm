@@ -61,7 +61,7 @@ function demo1() {
     getIntArr()[1];
     <error descr="Invalid indexing of 'int'">getIntArr()[1][2]</error>;
     <error descr="Invalid indexing of 'int'">getIntArr()[1][2]</error>[3];
-    <error descr="Invalid indexing of 'void'">getVoid()[1]</error>;
+    <error descr="Invalid indexing of 'null'">getVoid()[1]</error>;
     getTuple()[0];
     getTuple()['ddd'];
     getTuple()[$unknown_idx];
