@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.2.6]
+
+- adapt code for 2022.2
+- enabled `PhpMethodOrClassCallIsNotCaseSensitiveInspection` by default
+- warning level for `PhpMethodOrClassCallIsNotCaseSensitiveInspection` - **error**
+
 ## [1.2.5]
 
 - support `@kphp-json` tags
