@@ -71,7 +71,6 @@ internal fun setupKphpStormPluginForProject(project: Project) {
         val level = nativeInspectionCustomLevel[shortName]
         if (level != null) {
             curInspectionProfile.setToolEnabled(shortName, true, project, false)
-
             curInspectionProfile.setErrorLevel(HighlightDisplayKey.find(shortName), level, project)
         }
     }
