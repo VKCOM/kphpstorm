@@ -39,4 +39,8 @@ class ExPhpTypeShape(val items: List<ShapeItem>) : ExPhpType {
         is ExPhpTypeShape -> true       // any shape is compatible with any other, for simplification (tuples are not)
         else              -> false
     }
+
+    override fun dropForce(): ExPhpType {
+        return ExPhpTypeShape(items.mapNotNull { ShapeItem(it.keyName, it.nullable, it.type.dropForce() ?: return@mapNotNull null ) })
+    }
 }

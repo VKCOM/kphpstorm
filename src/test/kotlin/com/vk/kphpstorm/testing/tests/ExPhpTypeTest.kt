@@ -48,9 +48,6 @@ class ExPhpTypeTest : TestCase() {
     }
 
     fun testParsingFromString() {
-        fun String.toExPhpType(): ExPhpType =
-                PhpTypeToExPhpTypeParsing.parseFromString(this) ?: throw RuntimeException("Couldnt parse $this")
-
         "int".toExPhpType().apply {
             Assert.assertTrue(this is ExPhpTypePrimitive)
             Assert.assertSame(this, ExPhpType.INT)
@@ -111,4 +108,25 @@ class ExPhpTypeTest : TestCase() {
         Assert.assertTrue(PhpType.STRING.toExPhpType()!!.isAssignableFrom(phpType.toExPhpType()!!, createMockProject()))
     }
 
+    fun testSupperForcing() {
+        checkDrop("int|string", "int|string")
+        checkDrop("force(force(int[])[])", "int[][]")
+        checkDrop("string|bool|force(int)", "int")
+        checkDrop("string|bool|force(int)|force(float)", "int|float")
+        checkDrop("force(force(int[])[])|force(null)", "int[][]|null")
+        checkDrop("tuple(force(int)|string, int|force(string), bool)", "tuple(int,string,bool)")
+        checkDrop("shape(key: int|force(string), key2:bool, key3: float|bool|force(int[][]))", "shape(key:string,key2:bool,key3:int[][])")
+        checkDrop("callable(string,force(int)|string):force(force(int[])[])|string", "callable(string,int):int[][]")
+        checkDrop("callable(int,force(?bool)|string)", "callable(int,?bool):void")
+    }
+
+    private fun String.toExPhpType(): ExPhpType =
+        PhpTypeToExPhpTypeParsing.parseFromString(this) ?: throw RuntimeException("Couldnt parse $this")
+
+    private fun checkDrop(forceType: String, expectedType: String) {
+        forceType.toExPhpType().apply {
+            Assert.assertEquals(expectedType, this.dropForce().toString())
+
+        }
+    }
 }

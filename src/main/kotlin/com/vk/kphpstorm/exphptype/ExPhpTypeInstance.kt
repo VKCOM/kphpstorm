@@ -52,4 +52,8 @@ class ExPhpTypeInstance(val fqn: String) : ExPhpType {
 
         else                  -> false
     }
+
+    override fun dropForce(): ExPhpType {
+        return this
+    }
 }

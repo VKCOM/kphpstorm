@@ -35,4 +35,8 @@ class ExPhpTypeArray(val inner: ExPhpType) : ExPhpType {
             else              -> false
         }
     }
+
+    override fun dropForce(): ExPhpType? {
+        return ExPhpTypeArray(inner.dropForce() ?: return null)
+    }
 }

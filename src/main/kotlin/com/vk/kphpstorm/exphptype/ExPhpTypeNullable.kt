@@ -31,4 +31,8 @@ class ExPhpTypeNullable(val inner: ExPhpType) : ExPhpType {
         is ExPhpTypePrimitive -> rhs === ExPhpType.NULL || inner.isAssignableFrom(rhs, project)
         else                  -> inner.isAssignableFrom(rhs, project)
     }
+
+    override fun dropForce(): ExPhpType? {
+        return ExPhpTypeNullable(inner.dropForce() ?: return null)
+    }
 }

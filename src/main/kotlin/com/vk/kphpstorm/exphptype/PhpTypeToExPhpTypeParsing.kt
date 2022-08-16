@@ -95,6 +95,7 @@ object PhpTypeToExPhpTypeParsing {
 
             // some "forced" that can occur often, @see [ForcingTypeProvider], \\ not needed
             "force(string)" to ExPhpTypeForcing(ExPhpType.STRING),
+            "force(float)" to ExPhpTypeForcing(ExPhpType.FLOAT),
             "force(int)" to ExPhpTypeForcing(ExPhpType.INT),
             "force(bool)" to ExPhpTypeForcing(ExPhpType.BOOL),
             "force(kmixed)" to ExPhpTypeForcing(ExPhpType.KMIXED),
@@ -285,7 +286,7 @@ object PhpTypeToExPhpTypeParsing {
         val lhs = parseTypeArray(builder) ?: return null
         // wrap with ExPhpTypePipe only 'T1|T2', leaving 'T' being as is
         if (!builder.compare('|') && !builder.compare('/'))
-            return if (lhs is ExPhpTypeForcing) lhs.inner else lhs
+            return lhs
 
         val pipeItems = mutableListOf(lhs)
         while (builder.compareAndEat('|') || builder.compareAndEat('/')) {
@@ -312,11 +313,6 @@ object PhpTypeToExPhpTypeParsing {
             return createNullableOrSimplified(pipeItems[1])
         if (size == 2 && pipeItems[1] === ExPhpType.NULL)
             return createNullableOrSimplified(pipeItems[0])
-
-        // T1|T2|...|force(T) will be just T
-        for (item in pipeItems)
-            if (item is ExPhpTypeForcing)
-                return item.inner
 
         return ExPhpTypePipe(pipeItems)
     }
@@ -347,7 +343,7 @@ object PhpTypeToExPhpTypeParsing {
                     else
                         FQN_PREPARSED[str] ?: parseTypeExpression(ExPhpTypeBuilder(str))
                 }
-                createPipeOrSimplified(items)
+                createPipeOrSimplified(items)?.dropForce()
             }
         }
     }

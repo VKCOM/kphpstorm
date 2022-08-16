@@ -39,6 +39,10 @@ class ExPhpTypePrimitive(val typeStr: String) : ExPhpType {
         else                  -> false
     }
 
+    override fun dropForce(): ExPhpType {
+        return this
+    }
+
     companion object {
         private fun canBeAssigned(l: ExPhpTypePrimitive, r: ExPhpTypePrimitive) = with(ExPhpType.Companion) {
             when {
