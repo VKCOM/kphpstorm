@@ -44,7 +44,7 @@ class KphpStormDocumentationProvider : DocumentationProvider {
     }
 
     // when just hovering — a bit more detailed (but still only most important) info
-    override fun generateHoverDoc(element: PsiElement, originalElement: PsiElement?): String? {
+    override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
         val generator = createHoverDocOverride(element, originalElement ?: element)
                 ?: return "Don't know what to hint, but can't disable :)"
         return "<pre>" + generator.getHoverDesc() + "</pre>"
