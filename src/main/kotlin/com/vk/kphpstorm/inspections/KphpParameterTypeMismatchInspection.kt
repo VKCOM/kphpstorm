@@ -116,7 +116,7 @@ class KphpParameterTypeMismatchInspection : PhpInspection() {
         // 2) allow passing everything to functions with @kphp-infer cast
         if (f.docComment != null) {
             val tag = KphpInferDocTag.findThisTagInDocComment(f)
-            if (tag != null && PhpDocUtil.getTagValue(tag).contains("cast"))
+            if (tag != null && PhpDocUtil.getTagValue(tag, false).contains("cast"))
                 return false
         }
 

@@ -25,6 +25,6 @@ object KphpInferDocTag : KphpDocTag("@kphp-infer") {
     }
 
     fun isKphpInferCast(tag: PhpDocTag): Boolean {
-        return tag.name == nameWithAt && PhpDocUtil.getTagValue(tag).trim() == "cast"
+        return tag.name == nameWithAt && PhpDocUtil.getTagValue(tag, false).trim() == "cast"
     }
 }

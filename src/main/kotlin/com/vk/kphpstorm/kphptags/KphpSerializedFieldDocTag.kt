@@ -51,7 +51,7 @@ object KphpSerializedFieldDocTag : KphpDocTag("@kphp-serialized-field") {
         // check that curIndex is not listed in @kphp-reserved-tags above class
         val kphpReservedTag = KphpReservedFieldsDocTag.findThisTagInDocComment(phpClass)
         if (kphpReservedTag != null) {
-            val reservedIndexes = KphpReservedFieldsDocTag.parseIndexes(PhpDocUtil.getTagValue(kphpReservedTag))
+            val reservedIndexes = KphpReservedFieldsDocTag.parseIndexes(PhpDocUtil.getTagValue(kphpReservedTag, false))
             if (reservedIndexes != null && reservedIndexes.contains(curIndex)) {
                 holder.errTag(docTag, "This index is listed in @kphp-reserved-fields")
             }
@@ -72,7 +72,7 @@ object KphpSerializedFieldDocTag : KphpDocTag("@kphp-serialized-field") {
         }
         val kphpReservedTag = KphpReservedFieldsDocTag.findThisTagInDocComment(phpClass)
         if (kphpReservedTag != null) {
-            val reservedIndexes = KphpReservedFieldsDocTag.parseIndexes(PhpDocUtil.getTagValue(kphpReservedTag))
+            val reservedIndexes = KphpReservedFieldsDocTag.parseIndexes(PhpDocUtil.getTagValue(kphpReservedTag, false))
             maxIndex = Integer.max(maxIndex, reservedIndexes?.maxOrNull() ?: 0)
         }
 
@@ -81,7 +81,7 @@ object KphpSerializedFieldDocTag : KphpDocTag("@kphp-serialized-field") {
 
     fun parseIndexFromFieldPhpdoc(field: Field): Int? {
         val ksfTag = findThisTagInDocComment(field) ?: return null
-        val value = PhpDocUtil.getTagValue(ksfTag)
+        val value = PhpDocUtil.getTagValue(ksfTag, false)
         return value.toIntOrNull()          // 'none' is just null, like any other text
     }
 }
