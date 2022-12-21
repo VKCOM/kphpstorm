@@ -408,3 +408,14 @@ footer .feature-inner a:hover, footer .feature-inner a:active {
         max-width: calc(100vw - 40px);
     }
 }
+
+.jb-ban-panel {
+    margin: 0 0 30px;
+    padding: 20px 30px 20px;
+    background: #c84d4d;
+    color: white;
+    border-top-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    font-size: 16px;
+    line-height: 1.6em;
+}
