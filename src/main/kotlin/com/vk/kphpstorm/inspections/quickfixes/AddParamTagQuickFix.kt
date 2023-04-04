@@ -20,7 +20,7 @@ class AddParamTagQuickFix(parameter: PsiElement) : LocalQuickFixAndIntentionActi
 
     override fun invoke(project: Project, file: PsiFile, editor: Editor?, startElement: PsiElement, endElement: PsiElement) {
         val parameter = startElement as Parameter
-        val function = PhpPsiUtil.getParentByCondition(parameter, Function.INSTANCEOF) as? Function ?: return
+        val function = PhpPsiUtil.getParentByCondition(parameter, true, Function.INSTANCEOF, null) as? Function ?: return
 
         val docTag = PhpDocPsiBuilder.addDocTagToParameter(parameter, function, project)
         val docType = PsiTreeUtil.getChildOfType(docTag, PhpDocType::class.java)
