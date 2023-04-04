@@ -33,15 +33,14 @@ class MorePointEx extends MorePoint {
 
 }
 
-// this seems failing since 2021.1, it's a PhpStorm bug
-/** @return MorePointEx */
+/** @return Point */
 function demo1() {
   return MorePointEx::getSelf();
 }
 
-/** <error descr="Actual return type is 'MorePoint'">@return</error> MorePointEx */
+/** <error descr="Actual return type is 'Point'">@return</error> MorePointEx */
 function demo2() {
-  <error descr="Can't return 'MorePoint', expected 'MorePointEx'">return MorePoint::getSelf();</error>
+  <error descr="Can't return 'Point', expected 'MorePointEx'">return MorePoint::getSelf();</error>
 }
 
 /** @return MorePointEx */

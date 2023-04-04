@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.2.8] - 2022-04-04
+
+- adapt code for 2023.1
+
 ## [1.2.7] - 2022-12-12
 
 - adapt code for 2022.3

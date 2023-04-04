@@ -28,7 +28,7 @@ $user2 = BaseJsonEncoder::decode("", User::class);
 $user3 = ApiJsonEncoder::decode("", User::class);
 $user4 = FakeJsonEncoder::decode("", User::class);
 
-expr_type($user1, "\User|null|object");
-expr_type($user2, "\User|null|object");
-expr_type($user3, "\User|null|object");
-expr_type($user4, "?object");
+expr_type($user1, "?\User");
+expr_type($user2, "?\User");
+expr_type($user3, "?\User");
+expr_type($user4, "null");
