@@ -119,12 +119,13 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
     }
 
     override fun getType(p: PsiElement): PhpType? {
-        val isCustomHandledFunc = p is FunctionReference && p !is MethodReference && FUNC_NAMES_INDEX.contains(p.name)
-        if (!isCustomHandledFunc)
+        if (p !is FunctionReference || p is MethodReference)
             return null
-        p as FunctionReference
 
-        val funcName = p.name
+        val funcName = p.name ?: return null
+        if (!FUNC_NAMES_INDEX.contains(funcName))
+            return null
+
         val parameters = p.parameters
         val format = CUSTOM_HANDLED_FUNCTIONS.find { it.first == funcName }!!.second
 
