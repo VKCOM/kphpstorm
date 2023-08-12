@@ -70,8 +70,11 @@ internal fun setupKphpStormPluginForProject(project: Project) {
 
         val level = nativeInspectionCustomLevel[shortName]
         if (level != null) {
-            curInspectionProfile.setToolEnabled(shortName, true, project, false)
-            curInspectionProfile.setErrorLevel(HighlightDisplayKey.find(shortName), level, project)
+            val overriderInspection = HighlightDisplayKey.find(shortName)
+            if (overriderInspection != null) {
+                curInspectionProfile.setToolEnabled(shortName, true, project, false)
+                curInspectionProfile.setErrorLevel(overriderInspection, level, project)
+            }
         }
     }
     // this line saves settings (without this, on/off inspections restore previous state after restart)
