@@ -131,7 +131,7 @@ class KphpStormAnnotator : Annotator {
      * Any func call (plain function, not method, cause static/instance methods are MethodReferenceImpl)
      */
     private fun onFuncCall(element: FunctionReferenceImpl, holder: AnnotationHolder) {
-        val funcName = element.name
+        val funcName = element.name ?: return
         val funcNameE = element.firstChild ?: return
 
         holder.textAttributes(funcNameE, when {

@@ -17,7 +17,7 @@ import com.vk.kphpstorm.kphptags.psi.KphpDocTagElementType
  * When adding new tags (objects extending this class), also add them to list [ALL_KPHPDOC_TAGS]
  */
 abstract class KphpDocTag(
-        val nameWithAt: String
+    val nameWithAt: String,
 ) {
     val nameWithoutAt
         get() = nameWithAt.substring(1)
@@ -61,19 +61,18 @@ abstract class KphpDocTag(
         return null
     }
 
-
     fun existsInDocComment(docComment: PhpDocComment): Boolean {
-        return !PhpDocUtil.processTagElementsByName(docComment, nameWithAt) { false }
+        return findThisTagInDocComment(docComment) != null
     }
 
     fun existsInDocComment(docCommentOwner: PhpNamedElement): Boolean {
         val docComment = docCommentOwner.docComment ?: return false
-        return !PhpDocUtil.processTagElementsByName(docComment, nameWithAt) { false }
+        return existsInDocComment(docComment)
     }
 
     fun findThisTagInDocComment(docComment: PhpDocComment): PhpDocTag? {
         var tag: PhpDocTag? = null
-        PhpDocUtil.processTagElementsByName(docComment, nameWithAt) { tag = it; false }
+        PhpDocUtil.consumeTagElementsByName(docComment, nameWithAt) { tag = it }
         return tag
     }
 
@@ -83,11 +82,10 @@ abstract class KphpDocTag(
 
     inline fun <reified T : PhpDocTag> findThisTagsInDocComment(docComment: PhpDocComment): List<T> {
         val tags = mutableListOf<T>()
-        PhpDocUtil.processTagElementsByName(docComment, nameWithAt) {
+        PhpDocUtil.consumeTagElementsByName(docComment, nameWithAt) {
             if (it is T) {
                 tags.add(it)
             }
-            true
         }
         return tags
     }
