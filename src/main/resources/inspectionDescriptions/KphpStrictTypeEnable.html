@@ -1,0 +1,24 @@
+<html lang="en">
+<body>
+Reports missing @kphp-strict-types-enabled comment above the strict_types=1 declaration in a PHP file. This inspection ensures that the necessary KPHP annotation is in place when strict typing is enabled.
+
+<p>
+    In KPHP, it's a best practice to annotate the strict typing feature with a @kphp-strict-types-enabled comment. This provides clarity for developers, helping them understand that strict typing is actively enforced in the current file.
+</p>
+
+<p>
+    For instance, a correct setup would look like:
+</p>
+<pre><code>
+/** @kphp-strict-types-enabled */
+declare(strict_types=1);
+</code></pre>
+
+<!— tooltip end —>
+
+<p>This inspection will highlight the declare(strict_types=1) directive if the corresponding KPHP comment is missing. A quick fix option will be provided to automatically insert the necessary comment.</p>
+
+<p>To adjust the inspection settings or for more details, navigate to settings://$ in the IDE.</p>
+
+</body>
+</html>
