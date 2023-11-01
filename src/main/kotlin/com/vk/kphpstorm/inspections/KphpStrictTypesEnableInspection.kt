@@ -12,17 +12,19 @@ import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.vk.kphpstorm.inspections.quickfixes.AddStrictTypesCommentQuickFix
 
 class KphpStrictTypesEnableInspection : PhpInspection() {
-    val kphpTagStrictTypeEnable: String = "@kphp-strict-types-enable"
+    val kphpTagStrictTypeEnable = "@kphp-strict-types-enable"
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : PhpElementVisitor() {
-            override fun visitPhpElement(element: PhpPsiElement?) {
-                if (element is Declare && PhpCodeInsightUtil.getStrictTypeDirectiveValue(element)?.text.equals("1")) {
+            override fun visitPhpElement(element: PhpPsiElement) {
+                if (element !is Declare) return
 
-                    val comment = element.prevPsiSibling
-                    if (comment is PhpDocComment) {
-                        val value = comment.getTagElementsByName(kphpTagStrictTypeEnable).isNotEmpty()
-                        if (value) return
+                if (PhpCodeInsightUtil.getStrictTypeDirectiveValue(element)?.text == "1") {
+
+                    val docComment = element.prevPsiSibling
+                    if (docComment is PhpDocComment &&
+                        docComment.getTagElementsByName(kphpTagStrictTypeEnable).isNotEmpty()) {
+                        return
                     }
 
                     holder.registerProblem(

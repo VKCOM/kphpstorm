@@ -7,12 +7,11 @@ import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory
 
 class AddStrictTypesCommentQuickFix : LocalQuickFix {
-
     override fun getFamilyName() = "Add @kphp-strict-types-enable tag"
-    override fun applyFix(p0: Project, p1: ProblemDescriptor) {
-        val declareElement = p1.startElement
+    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        val declareElement = descriptor.startElement
         val docComment = PhpPsiElementFactory.createFromText(
-            p0, PhpDocElementTypes.DOC_COMMENT,
+            project, PhpDocElementTypes.DOC_COMMENT,
             "/** @kphp-strict-types-enable */"
         )
 
