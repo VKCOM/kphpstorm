@@ -1,30 +1,19 @@
 package com.vk.kphpstorm.inspections.quickfixes
 
-import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement
-import com.intellij.openapi.editor.Editor
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocElementTypes
 import com.jetbrains.php.lang.psi.PhpPsiElementFactory
-import com.jetbrains.php.lang.psi.elements.Declare
 
-class AddStrictTypesCommentQuickFix(declare: PsiElement) : LocalQuickFixAndIntentionActionOnPsiElement(declare) {
+class AddStrictTypesCommentQuickFix : LocalQuickFix {
 
-    override fun getFamilyName() = "Add @kphp-strict-types-enabled tag"
-    override fun getText() = "Add @kphp-strict-types-enabled tag"
-
-    override fun invoke(
-        project: Project,
-        file: PsiFile,
-        editor: Editor?,
-        startElement: PsiElement,
-        endElement: PsiElement
-    ) {
-        val declareElement = startElement as Declare
+    override fun getFamilyName() = "Add @kphp-strict-types-enable tag"
+    override fun applyFix(p0: Project, p1: ProblemDescriptor) {
+        val declareElement = p1.startElement
         val docComment = PhpPsiElementFactory.createFromText(
-            project, PhpDocElementTypes.DOC_COMMENT,
-            "/** @kphp-strict-types-enabled */"
+            p0, PhpDocElementTypes.DOC_COMMENT,
+            "/** @kphp-strict-types-enable */"
         )
 
         declareElement.parent.addBefore(docComment, declareElement)

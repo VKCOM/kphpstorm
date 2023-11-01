@@ -5,10 +5,18 @@ import com.vk.kphpstorm.testing.infrastructure.InspectionTestBase
 
 class KphpStrictTypeEnableTagTest : InspectionTestBase(KphpStrictTypesEnableInspection()) {
     fun `test strict type with tag`() {
-        runFixture("strict_typing/declare_strict_type_enable.fixture.php")
+        runFixture("kphpdoc_inspection/declare_strict_type_enable.fixture.php")
     }
 
     fun `test strict type without tag`() {
-        runFixture("strict_typing/declare_strict_type_enable_miss.fixture.php")
+        runFixture("kphpdoc_inspection/declare_strict_type_enable_miss.fixture.php")
+    }
+
+    fun `test strict type tag not near above declare`() {
+        runFixture("kphpdoc_inspection/declare_strict_type_enable_not_near.fixture.php")
+    }
+
+    fun `test strict type with tag and comment above tag`() {
+        runFixture("kphpdoc_inspection/declare_strict_type_enable_with_comment.fixture.php")
     }
 }
