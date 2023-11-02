@@ -19,4 +19,12 @@ class KphpStrictTypeEnableTagTest : InspectionTestBase(KphpStrictTypesEnableInsp
     fun `test strict type with tag and comment above tag`() {
         runFixture("kphpdoc_inspection/declare_strict_type_enable_with_comment.fixture.php")
     }
+
+    fun `test declare another argument`(){
+        runFixture("kphpdoc_inspection/declare_another_argument.fixture.php")
+    }
+
+    fun `test strict type another value`(){
+        runFixture("kphpdoc_inspection/declare_strict_type_another_value.fixture.php")
+    }
 }
