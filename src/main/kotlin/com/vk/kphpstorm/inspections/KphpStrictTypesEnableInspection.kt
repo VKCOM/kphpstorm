@@ -17,23 +17,27 @@ class KphpStrictTypesEnableInspection : PhpInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : PhpElementVisitor() {
             override fun visitPhpElement(element: PhpPsiElement) {
-                if (element !is Declare) return
+                if (element !is Declare) {
+                    return
+                }
 
-                if (PhpCodeInsightUtil.getStrictTypeDirectiveValue(element)?.text == "1") {
+                if (PhpCodeInsightUtil.getStrictTypeDirectiveValue(element)?.text != "1") {
+                    return
+                }
 
-                    val docComment = element.prevPsiSibling
-                    if (docComment is PhpDocComment &&
-                        docComment.getTagElementsByName(kphpTagStrictTypeEnable).isNotEmpty()) {
+                val docComment = element.prevPsiSibling
+                if (docComment is PhpDocComment) {
+                    if (docComment.getTagElementsByName(kphpTagStrictTypeEnable).isNotEmpty()) {
                         return
                     }
-
-                    holder.registerProblem(
-                        element,
-                        "Missing @kphp-strict-types-enable tag",
-                        ProblemHighlightType.WEAK_WARNING,
-                        AddStrictTypesCommentQuickFix()
-                    )
                 }
+
+                holder.registerProblem(
+                    element,
+                    "Missing $kphpTagStrictTypeEnable tag",
+                    ProblemHighlightType.WEAK_WARNING,
+                    AddStrictTypesCommentQuickFix()
+                )
             }
         }
     }

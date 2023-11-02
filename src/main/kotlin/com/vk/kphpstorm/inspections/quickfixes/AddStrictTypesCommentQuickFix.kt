@@ -8,6 +8,7 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory
 
 class AddStrictTypesCommentQuickFix : LocalQuickFix {
     override fun getFamilyName() = "Add @kphp-strict-types-enable tag"
+
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val declareElement = descriptor.startElement
         val docComment = PhpPsiElementFactory.createFromText(
