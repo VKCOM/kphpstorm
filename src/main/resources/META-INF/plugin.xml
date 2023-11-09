@@ -106,6 +106,10 @@
     <docTagParserExtension tagName="type" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocVarTagParserEx" order="first" />
   </extensions>
 
+  <extensions defaultExtensionNs="com.intellij">
+    <notificationGroup id="kphpstorm.plugin.setup.notification" displayType="BALLOON" toolWindowId="kphp configuration notification"/>
+  </extensions>
+
   <actions>
     <group id="com.vk.kphpstorm" text="KPHPStorm" popup="true" icon="/icons/kphp_logo.svg">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
