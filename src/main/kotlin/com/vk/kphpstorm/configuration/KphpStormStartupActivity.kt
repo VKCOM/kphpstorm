@@ -33,14 +33,17 @@ class KphpStormStartupActivity : ProjectActivity {
     private fun showNotification(project: Project) {
         val notification = NotificationGroupManager.getInstance()
             .getNotificationGroup("kphpstorm.plugin.setup.notification")
-            .createNotification("Prototype notification", NotificationType.INFORMATION)
+            .createNotification("Transforming to kPHP", NotificationType.INFORMATION)
+
+        val dntShow = "DoNotShowAgain"
+        val isKphp = "isKphpProject"
 
         val propertiesComponent = PropertiesComponent.getInstance(project)
-        if (propertiesComponent.getBoolean("DoNotShowAgain", false)) {
+        if (propertiesComponent.getBoolean(dntShow, false)) {
             return
         }
 
-        if (propertiesComponent.getBoolean("isKphpProject", false)) {
+        if (propertiesComponent.getBoolean(isKphp, false)) {
             return
         }
 
@@ -48,7 +51,7 @@ class KphpStormStartupActivity : ProjectActivity {
 
         notification.addAction(object : NotificationAction("Setup project as kPHP") {
             override fun actionPerformed(e: AnActionEvent, notification: Notification) {
-                propertiesComponent.setValue("isKphpProject", true)
+                propertiesComponent.setValue(isKphp, true)
                 SetupPluginForProjectDialog(project).show()
                 notification.expire()
             }
@@ -57,7 +60,7 @@ class KphpStormStartupActivity : ProjectActivity {
         // Turn-off notifications
         notification.addAction(object : NotificationAction("Don`t show it again") {
             override fun actionPerformed(e: AnActionEvent, notification: Notification) {
-                propertiesComponent.setValue("DoNotShowAgain", true)
+                propertiesComponent.setValue(dntShow, true)
                 notification.expire()
             }
         })
