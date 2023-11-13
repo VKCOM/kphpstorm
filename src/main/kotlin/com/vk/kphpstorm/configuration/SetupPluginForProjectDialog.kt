@@ -5,12 +5,10 @@ import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.playback.commands.ActionCommand
+import com.intellij.ui.dsl.builder.panel
 import java.awt.Dimension
-import java.awt.FlowLayout
 import javax.swing.JComponent
 import javax.swing.JLabel
-import javax.swing.JPanel
-import javax.swing.SwingConstants
 
 /**
  * Dialog with "OK" button that performs auto-setup KPHPStorm plugin for current project.
@@ -23,7 +21,7 @@ class SetupPluginForProjectDialog(private val project: Project) : DialogWrapper(
     init {
         title = "Setup KPHPStorm for Project"
         okAction.putValue("Name", "Setup KPHPStorm, then 'Invalidate and Restart'")
-        setResizable(false)
+        isResizable = false
         init()
     }
 
@@ -32,22 +30,31 @@ class SetupPluginForProjectDialog(private val project: Project) : DialogWrapper(
             else arrayOf(okAction, cancelAction)
 
     override fun createCenterPanel(): JComponent {
-        return JPanel(FlowLayout(FlowLayout.LEFT)).apply {
-            val textMarkup = when {
-                isAlreadySetup -> """
+        return panel {
+            row {
+                cell(JLabel(getLabelText()))
+            }
+        }.apply {
+            preferredSize = Dimension(400, 120)
+        }
+    }
+
+    private fun getLabelText(): String {
+        return when {
+            isAlreadySetup -> """
                     <html>
                     <p>It seems that KPHPStorm plugin was <b>already configured</b><br>for project ${project.name}</p><br>
                     <p>But if you made some changes to KPHPStorm inspections<br>or something doesn't work as expected,</p>
                     </html>
                 """.trimIndent()
-                !isKphpProject -> """
+            !isKphpProject -> """
                     <html>
                     <p>It seems that your project uses <b>regular PHP</b>, not KPHP.</p>
                     <p>But even though you can enjoy strict typing inspections.</p><br>
                     <p>Just press this button to disable some native inspections<br>and enable new ones.</p>
                     </html>
                 """.trimIndent()
-                else             -> """
+            else             -> """
                     <html>
                     <p>With <b>KPHPStorm plugin</b> coding will be much easier!</p>
                     <ul>
@@ -58,10 +65,6 @@ class SetupPluginForProjectDialog(private val project: Project) : DialogWrapper(
                     </ul>
                     </html>
                 """.trimIndent()
-            }
-
-            preferredSize = Dimension(400, 120)
-            add(JLabel(textMarkup, SwingConstants.LEFT))
         }
     }
 
