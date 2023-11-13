@@ -43,7 +43,7 @@ class SetupPluginForProjectDialog(private val project: Project) : DialogWrapper(
         return when {
             isAlreadySetup -> """
                     <html>
-                    <p>It seems that KPHPStorm plugin was <b>already configured</b><br>for project ${project.name}</p><br>
+                    <p>It seems that KPHPStorm plugin was <b>already configured</b><br>for project <b>${project.name}</b></p><br>
                     <p>But if you made some changes to KPHPStorm inspections<br>or something doesn't work as expected,</p>
                     </html>
                 """.trimIndent()
