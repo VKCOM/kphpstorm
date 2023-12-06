@@ -34,6 +34,12 @@
                      displayName="PHPDoc checks and simplification"
                      enabledByDefault="false" level="WEAK WARNING"
                      implementationClass="com.vk.kphpstorm.inspections.KphpDocInspection"/>
+
+    <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="KphpStrictTypesEnableInspection"
+                     displayName="Strict type enable checking"
+                     enabledByDefault="false" level="WEAK WARNING"
+                     implementationClass="com.vk.kphpstorm.inspections.KphpStrictTypesEnableInspection"/>
+
     <localInspection language="PHP" groupName="KPHPStorm plugin" shortName="NoTypeDeclarationInspection"
                      displayName="No type declaration"
                      enabledByDefault="false" level="ERROR"
