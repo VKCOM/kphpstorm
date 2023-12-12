@@ -7,7 +7,6 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.PhpDocPsiElementImpl
 /**
  * Inside '@kphp-warn-performance all !implicit-array-cast' — there are two elements of this impl
  * Same for '@kphp-analyze-performance'
- * @see KphpDocTagWarnPerformanceElementType.getTagParser
  */
 class KphpDocWarnPerformanceItemPsiImpl(node: ASTNode) : PhpDocPsiElementImpl(node) {
     companion object {

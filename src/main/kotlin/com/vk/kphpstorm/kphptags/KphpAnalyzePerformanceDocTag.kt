@@ -6,15 +6,10 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.psi.elements.Function
 import com.vk.kphpstorm.helpers.parentDocComment
-import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
-import com.vk.kphpstorm.kphptags.psi.KphpDocTagElementType
 
 object KphpAnalyzePerformanceDocTag : KphpDocTag("@kphp-analyze-performance") {
     override val description: String
         get() = "Generates a report with potential optimizations, such as computing a constant value outside a loop or implicit arrays casting."
-
-    override val elementType: KphpDocTagElementType
-        get() = KphpDocElementTypes.kphpDocTagWarnPerformance
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function

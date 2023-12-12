@@ -78,9 +78,6 @@ object KphpJsonTag : KphpDocTag("@kphp-json") {
     override val description: String
         get() = "Used to change the decoding and encoding behavior of JSON"
 
-    override val elementType: KphpDocTagElementType
-        get() = KphpDocElementTypes.kphpDocTagJson
-
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Field || owner is PhpClass
     }

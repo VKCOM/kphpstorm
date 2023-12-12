@@ -7,8 +7,6 @@ import com.jetbrains.php.lang.documentation.phpdoc.PhpDocUtil
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement
-import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
-import com.vk.kphpstorm.kphptags.psi.KphpDocTagElementType
 
 /**
  * All '@kphp-...' tags instances are objects extending this class.
@@ -21,9 +19,6 @@ abstract class KphpDocTag(
 ) {
     val nameWithoutAt
         get() = nameWithAt.substring(1)
-
-    open val elementType: KphpDocTagElementType
-        get() = KphpDocElementTypes.kphpDocTagSimple
 
     abstract val description: String
 

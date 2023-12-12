@@ -3,10 +3,8 @@ package com.vk.kphpstorm.kphptags.psi
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
-import com.jetbrains.php.lang.documentation.phpdoc.parser.tags.PhpDocTagParser
 import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStub
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
-import com.jetbrains.php.lang.parser.PhpPsiBuilder
 import com.jetbrains.php.lang.psi.stubs.PhpStubElementType
 
 /**
@@ -16,7 +14,7 @@ import com.jetbrains.php.lang.psi.stubs.PhpStubElementType
  * This is ok for annotators etc, but not ok for something influencing declarations for example.
  * @see KphpDocElementTypes.kphpDocTagSimple
  */
-object KphpDocTagSimpleElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>("@kphp-..."), KphpDocTagElementType {
+object KphpDocTagSimpleElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>("@kphp-...") {
     override fun createPsi(stub: PhpDocTagStub): PhpDocTag {
         return KphpDocTagSimplePsiImpl(stub, stub.stubType)
     }
@@ -34,12 +32,5 @@ object KphpDocTagSimpleElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag
         val name = dataStream.readName()?.toString() ?: throw NullPointerException()
         val stubValue = dataStream.readName()?.toString()
         return KphpDocTagStubImpl(parentStub, this, name, stubValue)
-    }
-
-
-    override fun getTagParser() = object : PhpDocTagParser() {
-        override fun getElementType() = KphpDocTagSimpleElementType
-
-        override fun parseContents(builder: PhpPsiBuilder) = true
     }
 }
