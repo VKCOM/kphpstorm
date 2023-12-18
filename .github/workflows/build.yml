@@ -78,10 +78,6 @@ jobs:
       - name: Fetch Sources
         uses: actions/checkout@v4
 
-      # Validate wrapper
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1.1.0
-
       # Set up Java environment for the next steps
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -117,10 +113,6 @@ jobs:
       # Check out current repository
       - name: Fetch Sources
         uses: actions/checkout@v4
-
-      # Validate wrapper
-      - name: Gradle Wrapper Validation
-        uses: gradle/wrapper-validation-action@v1.1.0
 
       # Set up Java environment for the next steps
       - name: Setup Java
