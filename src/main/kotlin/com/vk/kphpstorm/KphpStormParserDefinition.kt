@@ -46,6 +46,7 @@ class KphpStormParserDefinition() : PhpParserDefinition() {
             ExPhpTypeArrayPsiImpl.elementType            -> ExPhpTypeArrayPsiImpl(node)
             ExPhpTypeTuplePsiImpl.elementType            -> ExPhpTypeTuplePsiImpl(node)
             ExPhpTypeShapePsiImpl.elementType            -> ExPhpTypeShapePsiImpl(node)
+            ExPhpTypeArrayShapePsiImpl.elementType       -> ExPhpTypeArrayShapePsiImpl(node)
             ExPhpTypeNullablePsiImpl.elementType         -> ExPhpTypeNullablePsiImpl(node)
             ExPhpTypeTplInstantiationPsiImpl.elementType -> ExPhpTypeTplInstantiationPsiImpl(node)
             ExPhpTypeCallablePsiImpl.elementType         -> ExPhpTypeCallablePsiImpl(node)

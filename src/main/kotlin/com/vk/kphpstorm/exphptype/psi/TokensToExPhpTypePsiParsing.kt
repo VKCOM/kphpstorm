@@ -73,6 +73,45 @@ internal object TokensToExPhpTypePsiParsing {
         }
     }
 
+
+    // example: array{x:int, y?:\A}
+    private fun parseArrayShapeContents(builder: PhpPsiBuilder): Boolean {
+        if (!builder.compareAndEat(PhpDocTokenTypes.DOC_LBRACE) && !builder.compareAndEat(PhpDocTokenTypes.DOC_LAB))
+            return !builder.expected("{")
+
+        while (true) {
+            if (!builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) && !builder.compare(PhpDocTokenTypes.DOC_STRING))
+                return builder.expected("key name")
+            // val keyName = builder.tokenText
+            builder.advanceLexer()
+
+            val sepOk = builder.compare(PhpDocTokenTypes.DOC_TEXT) && builder.tokenText.let {
+                it == ":" || it == "?:"
+            }
+
+            if (sepOk)
+                builder.advanceLexer()
+            else
+                return builder.expected(":")
+
+            if (!parseTypeExpression(builder))
+                return builder.expected("expression")
+            if (builder.compareAndEat(PhpDocTokenTypes.DOC_RBRACE) || builder.compareAndEat(PhpDocTokenTypes.DOC_RAB))
+                return true
+
+            if (builder.compareAndEat(PhpDocTokenTypes.DOC_COMMA)) {
+                if (builder.compare(PhpDocTokenTypes.DOC_TEXT) && builder.tokenText == "...") {
+                    builder.advanceLexer()
+                    if (!builder.compareAndEat(PhpDocTokenTypes.DOC_RBRACE) && !builder.compareAndEat(PhpDocTokenTypes.DOC_RAB))
+                        return builder.expected("}")
+                    return true
+                }
+                continue
+            }
+            return builder.expected(", or }")
+        }
+    }
+
     private fun parseTemplateSpecialization(builder: PhpPsiBuilder): Boolean {
         if (!builder.compareAndEat(PhpDocTokenTypes.DOC_LAB))
             return !builder.expected("<")
@@ -231,6 +270,17 @@ internal object TokensToExPhpTypePsiParsing {
                 return false
             }
             marker.done(ExPhpTypeForcingPsiImpl.elementType)
+            return true
+        }
+
+        if (builder.compare(PhpDocTokenTypes.DOC_IDENTIFIER) && builder.tokenText == "array" && builder.rawLookup(1) == PhpDocTokenTypes.DOC_LBRACE) {
+            val marker = builder.mark()
+            builder.advanceLexer()
+            if (!parseArrayShapeContents(builder)) {
+                marker.drop()
+                return false
+            }
+            marker.done(ExPhpTypeArrayShapePsiImpl.elementType)
             return true
         }
 

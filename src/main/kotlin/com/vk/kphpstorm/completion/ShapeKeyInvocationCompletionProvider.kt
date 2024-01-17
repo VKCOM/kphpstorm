@@ -12,6 +12,7 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.ExPhpTypeNullable
 import com.vk.kphpstorm.exphptype.ExPhpTypePipe
 import com.vk.kphpstorm.exphptype.ExPhpTypeShape
+import com.vk.kphpstorm.exphptype.ExPhpTypeArrayShape
 import com.vk.kphpstorm.helpers.toExPhpType
 
 /**
@@ -54,12 +55,16 @@ class ShapeKeyInvocationCompletionProvider : CompletionProvider<CompletionParame
         fun detectPossibleKeysOfShape(type: PhpType): List<ExPhpTypeShape.ShapeItem>? {
             val parsed = type.toExPhpType()
             val shapeInType = when (parsed) {
-                is ExPhpTypePipe     -> parsed.items.firstOrNull { it is ExPhpTypeShape }
+                is ExPhpTypePipe -> parsed.items.firstOrNull { it is ExPhpTypeShape }
                 is ExPhpTypeNullable -> parsed.inner
-                else                 -> parsed
-            } as? ExPhpTypeShape ?: return null
+                else -> parsed
+            }
 
-            return shapeInType.items
+            return when (shapeInType) {
+                is ExPhpTypeShape -> shapeInType.items
+                is ExPhpTypeArrayShape -> shapeInType.items
+                else -> null
+            }
         }
     }
 }
