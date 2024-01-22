@@ -16,6 +16,7 @@ class ShapeKeyUsageCompletionProvider : CompletionProvider<CompletionParameters>
         val shapeItems = ShapeKeyInvocationCompletionProvider.detectPossibleKeysOfShape(lhs.type) ?: return
 
         for (item in shapeItems)
+            // TODO: if completion has escape sequences, we need to change single quotes to double quotes
             result.addElement(LookupElementBuilder.create(item.keyName).withTypeText(item.type.toString()).withInsertHandler(ArrayKeyInsertHandler))
 
         // PhpStorm also tries to suggest keys based on usage (not on type, of course)

@@ -3,13 +3,25 @@ package com.vk.kphpstorm.exphptype
 import com.intellij.openapi.project.Project
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
+import com.vk.kphpstorm.exphptype.psi.ArrayShapeItem
 
 /**
  * shape(x:int, y:?A, ...) — shape is a list of shape items
  * vararg flag is not stored here: does not influence any behavior
  */
-// TODO: generalize ShapeItem for both ArrayShape and regular Shape
-class ExPhpTypeArrayShape(val items: List<ExPhpTypeShape.ShapeItem>) : ExPhpType {
+class ExPhpTypeArrayShape(val items: List<ShapeItem>) : ExPhpType {
+    class ShapeItem(
+        override val keyName: String,
+        val isString: Boolean,
+        val nullable: Boolean,
+        override val type: ExPhpType
+    ) :
+        ArrayShapeItem {
+        override fun toString() = "$keyName${if (nullable) "?" else ""}:$type"
+        fun toHumanReadable(file: PhpPsiElement) =
+            "${if (isString) "\"$keyName\"" else keyName}${if (nullable) "?" else ""}:${type.toHumanReadable(file)}"
+    }
+
     override fun toString() = "array{${items.joinToString(",")}}"
 
     override fun toHumanReadable(expr: PhpPsiElement) = "array{${items.joinToString { it.toHumanReadable(expr) }}}"
@@ -29,8 +41,9 @@ class ExPhpTypeArrayShape(val items: List<ExPhpTypeShape.ShapeItem>) : ExPhpType
 
     override fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType {
         return ExPhpTypeArrayShape(items.map {
-            ExPhpTypeShape.ShapeItem(
+            ShapeItem(
                 it.keyName,
+                it.isString,
                 it.nullable,
                 it.type.instantiateTemplate(nameMap)
             )

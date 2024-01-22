@@ -151,25 +151,17 @@ object PhpTypeToExPhpTypeParsing {
 
                 // "..."
                 // ^
-                if (type[offset] == '"' || type[offset] == '\'') {
-                    offset++
+                when (type[offset]) {
+                    '\'' -> offset++
+                    '\"' -> offset++
+                    else -> return null
                 }
+
 
                 // "..."
                 //  ^
                 while (type[offset] != '\'' && type[offset] != '"') {
-                    if (type[offset] == '\\') {
-                        offset++
-                        when (type[offset]) {
-                            'n' -> append('\n')
-                            '"' -> append('"')
-                            '\'' -> append('\'')
-                            else -> append('\\')
-                        }
-                        offset++
-                    } else {
-                        append(type[offset++])
-                    }
+                    append(type[offset++])
                 }
 
                 // "..."
@@ -352,16 +344,16 @@ object PhpTypeToExPhpTypeParsing {
         return createPipeOrSimplified(pipeItems)
     }
 
-    private fun parseArrayShapeContents(builder: ExPhpTypeBuilder): List<ExPhpTypeShape.ShapeItem>? {
+    private fun parseArrayShapeContents(builder: ExPhpTypeBuilder): List<ExPhpTypeArrayShape.ShapeItem>? {
         if (!builder.compareAndEat('{'))
             return null
         if (builder.compareAndEat('}'))
             return listOf()
 
-        val items = mutableListOf<ExPhpTypeShape.ShapeItem>()
+        val items = mutableListOf<ExPhpTypeArrayShape.ShapeItem>()
 
         while (true) {
-            var isString = false // TODO: if it be useful to know where it is string or not, then store it
+            var isString = false
 
             val keyName = builder.rollbackOnNull {
                 builder.parseFQN()
@@ -374,7 +366,7 @@ object PhpTypeToExPhpTypeParsing {
             builder.compareAndEat(':')
             val type = parseTypeExpression(builder) ?: return null
 
-            items.add(ExPhpTypeShape.ShapeItem(keyName, nullable, type))
+            items.add(ExPhpTypeArrayShape.ShapeItem(keyName, isString, nullable, type))
             if (builder.compareAndEat('}'))
                 return items
 

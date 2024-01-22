@@ -13,6 +13,7 @@ import com.vk.kphpstorm.exphptype.ExPhpTypeNullable
 import com.vk.kphpstorm.exphptype.ExPhpTypePipe
 import com.vk.kphpstorm.exphptype.ExPhpTypeShape
 import com.vk.kphpstorm.exphptype.ExPhpTypeArrayShape
+import com.vk.kphpstorm.exphptype.psi.ArrayShapeItem
 import com.vk.kphpstorm.helpers.toExPhpType
 
 /**
@@ -52,9 +53,8 @@ class ShapeKeyInvocationCompletionProvider : CompletionProvider<CompletionParame
         /**
          * Having PhpType e.g. "shape(...)|null" — get items of that shape
          */
-        fun detectPossibleKeysOfShape(type: PhpType): List<ExPhpTypeShape.ShapeItem>? {
-            val parsed = type.toExPhpType()
-            val shapeInType = when (parsed) {
+        fun detectPossibleKeysOfShape(type: PhpType): List<ArrayShapeItem>? {
+            val shapeInType = when (val parsed = type.toExPhpType()) {
                 is ExPhpTypePipe -> parsed.items.firstOrNull { it is ExPhpTypeShape }
                 is ExPhpTypeNullable -> parsed.inner
                 else -> parsed
