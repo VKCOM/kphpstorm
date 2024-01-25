@@ -26,14 +26,16 @@ class KphpStormStartupActivity : ProjectActivity {
         if (!KphpStormConfiguration.wasSetupForProject(project) && KphpStormConfiguration.seemsLikeProjectIsKphpBased(project)){
             SetupPluginForProjectDialog(project).show()
         }else{
-            showNotification(project)
+            if(!KphpStormConfiguration.seemsLikeProjectIsKphpBased(project)){
+                showNotification(project)
+            }
         }
     }
 
     private fun showNotification(project: Project) {
         val notification = NotificationGroupManager.getInstance()
             .getNotificationGroup("kphpstorm.plugin.setup.notification")
-            .createNotification("Transforming to kPHP", NotificationType.INFORMATION)
+            .createNotification("Transforming to KPHP", NotificationType.INFORMATION)
 
         val dntShow = "DoNotShowAgain"
         val isKphp = "isKphpProject"
