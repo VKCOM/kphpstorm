@@ -5,10 +5,10 @@ import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.playback.commands.ActionCommand
+import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.panel
 import java.awt.Dimension
 import javax.swing.JComponent
-import javax.swing.JLabel
 
 /**
  * Dialog with "OK" button that performs auto-setup KPHPStorm plugin for current project.
@@ -31,40 +31,44 @@ class SetupPluginForProjectDialog(private val project: Project) : DialogWrapper(
 
     override fun createCenterPanel(): JComponent {
         return panel {
-            row {
-                cell(JLabel(getLabelText()))
+            when {
+                isAlreadySetup -> {
+                    row {
+                        label("It seems that KPHPStorm plugin was already configured for project ${project.name}")
+                    }
+                    row {
+                        label("But if you made some changes to KPHPStorm inspections or something doesn't work as expected,")
+                    }
+                }
+                !isKphpProject -> {
+                    row {
+                        label("It seems that your project uses regular PHP, not KPHP.")
+                    }
+                    row {
+                        label("But even though you can enjoy strict typing inspections.")
+                    }
+                    row {
+                        label("Just press this button to disable some native inspections and enable new ones.")
+                    }
+                }
+                else -> {
+                    row {
+                        label("With KPHPStorm plugin coding will be much easier!")
+                    }
+                    bulletPointRow("tuples and shapes support")
+                    bulletPointRow("@kphp- tags autocomplete")
+                    bulletPointRow("strict typing and better type inferring")
+                    bulletPointRow("... and much more!")
+                }
             }
         }.apply {
             preferredSize = Dimension(400, 120)
         }
     }
 
-    private fun getLabelText(): String {
-        return when {
-            isAlreadySetup -> """
-                    <html>
-                    <p>It seems that KPHPStorm plugin was <b>already configured</b><br>for project <b>${project.name}</b></p><br>
-                    <p>But if you made some changes to KPHPStorm inspections<br>or something doesn't work as expected,</p>
-                    </html>
-                """.trimIndent()
-            !isKphpProject -> """
-                    <html>
-                    <p>It seems that your project uses <b>regular PHP</b>, not KPHP.</p>
-                    <p>But even though you can enjoy strict typing inspections.</p><br>
-                    <p>Just press this button to disable some native inspections<br>and enable new ones.</p>
-                    </html>
-                """.trimIndent()
-            else             -> """
-                    <html>
-                    <p>With <b>KPHPStorm plugin</b> coding will be much easier!</p>
-                    <ul>
-                    <li>tuples and shapes support</li>
-                    <li>@kphp- tags autocomplete</li>
-                    <li>strict typing and better type inferring</li>
-                    <li>... and much more!</li>
-                    </ul>
-                    </html>
-                """.trimIndent()
+    private fun Panel.bulletPointRow(text: String) {
+        row {
+            label("• $text")
         }
     }
 
