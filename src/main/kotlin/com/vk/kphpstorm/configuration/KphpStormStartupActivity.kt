@@ -23,10 +23,10 @@ class KphpStormStartupActivity : ProjectActivity {
     }
 
     private fun showSetupDialog(project: Project) {
-        if (!KphpStormConfiguration.wasSetupForProject(project) && KphpStormConfiguration.seemsLikeProjectIsKphpBased(project)){
+        if (!KphpStormConfiguration.wasSetupForProject(project) && KphpStormConfiguration.seemsLikeProjectIsKphpBased(project)) {
             SetupPluginForProjectDialog(project).show()
-        }else{
-            if(!KphpStormConfiguration.seemsLikeProjectIsKphpBased(project)){
+        } else {
+            if (!KphpStormConfiguration.seemsLikeProjectIsKphpBased(project)) {
                 showNotification(project)
             }
         }
