@@ -37,7 +37,7 @@ class SetupPluginForProjectDialog(private val project: Project) : DialogWrapper(
                         label("It seems that KPHPStorm plugin was already configured for project ${project.name}")
                     }
                     row {
-                        label("But if you made some changes to KPHPStorm inspections or something doesn't work as expected,")
+                        label("But if you made some changes to KPHPStorm inspections or something doesn't work as expected")
                     }
                 }
                 !isKphpProject -> {
@@ -62,7 +62,7 @@ class SetupPluginForProjectDialog(private val project: Project) : DialogWrapper(
                 }
             }
         }.apply {
-            preferredSize = Dimension(400, 120)
+            size = Dimension(400,120)
         }
     }
 
