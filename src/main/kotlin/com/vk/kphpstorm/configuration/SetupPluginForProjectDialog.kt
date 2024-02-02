@@ -7,7 +7,6 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.playback.commands.ActionCommand
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.ui.dsl.builder.panel
-import java.awt.Dimension
 import javax.swing.JComponent
 
 /**
@@ -26,23 +25,24 @@ class SetupPluginForProjectDialog(private val project: Project) : DialogWrapper(
     }
 
     override fun createActions() =
-            if (isKphpProject && !isAlreadySetup) arrayOf(okAction)
-            else arrayOf(okAction, cancelAction)
+        if (isKphpProject && !isAlreadySetup) arrayOf(okAction)
+        else arrayOf(okAction, cancelAction)
 
     override fun createCenterPanel(): JComponent {
         return panel {
             when {
                 isAlreadySetup -> {
                     row {
-                        label("It seems that KPHPStorm plugin was already configured for project ${project.name}")
+                        text("It seems that KPHPStorm plugin was <b>already configured</b> for project ${project.name}.")
                     }
                     row {
-                        label("But if you made some changes to KPHPStorm inspections or something doesn't work as expected")
+                        label("But if you made some changes to KPHPStorm inspections or something doesn't work as expected.")
                     }
                 }
+
                 !isKphpProject -> {
                     row {
-                        label("It seems that your project uses regular PHP, not KPHP.")
+                        text("It seems that your project uses <b>regular PHP</b>, not KPHP.")
                     }
                     row {
                         label("But even though you can enjoy strict typing inspections.")
@@ -51,9 +51,10 @@ class SetupPluginForProjectDialog(private val project: Project) : DialogWrapper(
                         label("Just press this button to disable some native inspections and enable new ones.")
                     }
                 }
+
                 else -> {
                     row {
-                        label("With KPHPStorm plugin coding will be much easier!")
+                        text("With <b>KPHPStorm plugin</b> coding will be much easier!")
                     }
                     bulletPointRow("tuples and shapes support")
                     bulletPointRow("@kphp- tags autocomplete")
@@ -61,14 +62,12 @@ class SetupPluginForProjectDialog(private val project: Project) : DialogWrapper(
                     bulletPointRow("... and much more!")
                 }
             }
-        }.apply {
-            size = Dimension(400,120)
         }
     }
 
     private fun Panel.bulletPointRow(text: String) {
         row {
-            label("• $text")
+            label(" • $text")
         }
     }
 
@@ -80,6 +79,7 @@ class SetupPluginForProjectDialog(private val project: Project) : DialogWrapper(
     private fun showInvalidateCachesWindow() {
         val actionId = "InvalidateCaches"
         val action = ActionManager.getInstance().getAction(actionId)
-        ActionManager.getInstance().tryToExecute(action, ActionCommand.getInputEvent(actionId), null, ActionPlaces.UNKNOWN, true)
+        ActionManager.getInstance()
+            .tryToExecute(action, ActionCommand.getInputEvent(actionId), null, ActionPlaces.UNKNOWN, true)
     }
 }
