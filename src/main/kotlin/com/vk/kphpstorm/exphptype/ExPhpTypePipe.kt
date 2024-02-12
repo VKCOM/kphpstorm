@@ -98,6 +98,20 @@ class ExPhpTypePipe(val items: List<ExPhpType>) : ExPhpType {
         }
     }
 
+    override fun dropForce(): ExPhpType {
+        val typePipe = if (items.count { it is ExPhpTypeForcing } == 0) {
+            ExPhpTypePipe(items.mapNotNull { it.dropForce() })
+        } else {
+            ExPhpTypePipe(items.filterIsInstance<ExPhpTypeForcing>().mapNotNull { it.dropForce() })
+        }
+
+        if (typePipe.items.size == 1) {
+            return typePipe.items.first()
+        }
+
+        return typePipe
+    }
+
     /**
      * Heruistics: let this == "string|int", where can this be assigned to?
      * To "string" — no, "int" not compatible. To "string|float" — yes. To "string|int|A" — yes.

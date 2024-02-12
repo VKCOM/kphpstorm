@@ -31,4 +31,11 @@ class ExPhpTypeCallable(val argTypes: List<ExPhpType>, val returnType: ExPhpType
         is ExPhpTypeNullable -> isAssignableFrom(rhs.inner, project)
         else                 -> false
     }
+
+    override fun dropForce(): ExPhpType {
+        val newArgTypes = argTypes.mapNotNull { it.dropForce() }
+        val newReturnType = returnType?.dropForce()
+
+        return ExPhpTypeCallable(newArgTypes, newReturnType)
+    }
 }

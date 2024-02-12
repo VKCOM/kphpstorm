@@ -32,4 +32,8 @@ class ExPhpTypeTplInstantiation(val classFqn: String, val specializationList: Li
         is ExPhpTypeTplInstantiation -> classFqn == rhs.classFqn && specializationList.size == rhs.specializationList.size
         else                         -> false
     }
+
+    override fun dropForce(): ExPhpType {
+        return this
+    }
 }

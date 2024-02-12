@@ -39,4 +39,8 @@ class ExPhpTypeAny : ExPhpType {
         // anything can be assigned to any
         return true
     }
+
+    override fun dropForce(): ExPhpType {
+        return this
+    }
 }

@@ -51,6 +51,8 @@ interface ExPhpType {
     fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType
     fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean
 
+    fun dropForce(): ExPhpType?
+
     companion object {
         val INT = ExPhpTypePrimitive(KphpPrimitiveTypes.INT)
         val FLOAT = ExPhpTypePrimitive(KphpPrimitiveTypes.FLOAT)

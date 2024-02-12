@@ -36,4 +36,8 @@ class ExPhpTypeForcing(val inner: ExPhpType) : ExPhpType {
         // that's why everything is assignable to forcing type, making stricy typing inspections assume all is ok
         return true
     }
+
+    override fun dropForce(): ExPhpType? {
+        return inner.dropForce()
+    }
 }

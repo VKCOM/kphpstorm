@@ -35,4 +35,8 @@ class ExPhpTypeTuple(val items: List<ExPhpType>) : ExPhpType {
         is ExPhpTypeTuple    -> items.size == rhs.items.size && items.indices.all { items[it].isAssignableFrom(rhs.items[it], project) }
         else                 -> false
     }
+
+    override fun dropForce(): ExPhpType {
+        return ExPhpTypeTuple(items.mapNotNull { it.dropForce() })
+    }
 }
