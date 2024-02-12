@@ -1,87 +1,86 @@
 package com.vk.kphpstorm.testing.tests
 
 import com.intellij.mock.MockProject
+import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
 import com.vk.kphpstorm.exphptype.*
 import com.vk.kphpstorm.helpers.toExPhpType
-import junit.framework.TestCase
-import org.junit.Assert
 
-class ExPhpTypeTest : TestCase() {
+class ExPhpTypeTest : BasePlatformTestCase() {
 
     private fun createMockProject() = MockProject(null) {}
 
     fun testParsingFromPhpType() {
         val shouldBeEq = listOf(
-                PhpType.INT,
-                PhpType.CALLABLE,
-                PhpType.VOID,
-                PhpType().add("SomeClass"),
-                PhpType().add("\\asdf\\NestedItem"),
-                PhpType().add("false"),
-                PhpType().add("\\false"),
-                PhpType().add("float").add("int"),
-                PhpType().add("\\any"),
-                PhpType().add("int").add("false").pluralise()
+            PhpType.INT,
+            PhpType.CALLABLE,
+            PhpType.VOID,
+            PhpType().add("SomeClass"),
+            PhpType().add("\\asdf\\NestedItem"),
+            PhpType().add("false"),
+            PhpType().add("\\false"),
+            PhpType().add("float").add("int"),
+            PhpType().add("\\any"),
+            PhpType().add("int").add("false").pluralise()
         )
 
         shouldBeEq.forEach {
-            Assert.assertEquals(it.toExPhpType()?.toPhpType(), it)
+            assertEquals(it.toExPhpType()?.toPhpType(), it)
         }
 
-        Assert.assertEquals(PhpType().add("\\kmixed").toExPhpType(), ExPhpType.KMIXED)
-        Assert.assertEquals(PhpType().add("\\mixed").toExPhpType(), ExPhpType.ANY)
+        assertEquals(PhpType().add("\\kmixed").toExPhpType(), ExPhpType.KMIXED)
+        assertEquals(PhpType().add("\\mixed").toExPhpType(), ExPhpType.ANY)
 
         PhpType().add("tuple(int, A)").toExPhpType().run {
-            Assert.assertTrue(this is ExPhpTypeTuple)
-            Assert.assertTrue((this as ExPhpTypeTuple).getSubkeyByIndex("1") is ExPhpTypeInstance)
-            Assert.assertTrue((this.getSubkeyByIndex("1") as ExPhpTypeInstance).fqn == "A")
+            assertTrue(this is ExPhpTypeTuple)
+            assertTrue((this as ExPhpTypeTuple).getSubkeyByIndex("1") is ExPhpTypeInstance)
+            assertTrue((this.getSubkeyByIndex("1") as ExPhpTypeInstance).fqn == "A")
         }
     }
 
     fun testMixedIsAny() {
-        Assert.assertEquals(PhpType.MIXED.toExPhpType(), ExPhpTypeAny())
-        Assert.assertSame(PhpType.MIXED.toExPhpType(), ExPhpType.ANY)
+        assertEquals(PhpType.MIXED.toExPhpType(), ExPhpTypeAny())
+        assertSame(PhpType.MIXED.toExPhpType(), ExPhpType.ANY)
 
-        Assert.assertEquals(PhpType.MIXED.toExPhpType()?.toPhpType(), ExPhpTypeAny().toPhpType())
-        Assert.assertSame(PhpType.MIXED.toExPhpType()?.toPhpType(), KphpPrimitiveTypes.PHP_TYPE_ANY)
+        assertEquals(PhpType.MIXED.toExPhpType()?.toPhpType(), ExPhpTypeAny().toPhpType())
+        assertSame(PhpType.MIXED.toExPhpType()?.toPhpType(), KphpPrimitiveTypes.PHP_TYPE_ANY)
     }
 
     fun testParsingFromString() {
         fun String.toExPhpType(): ExPhpType =
-                PhpTypeToExPhpTypeParsing.parseFromString(this) ?: throw RuntimeException("Couldnt parse $this")
+            PhpTypeToExPhpTypeParsing.parseFromString(this) ?: throw RuntimeException("Couldn't parse $this")
 
         "int".toExPhpType().apply {
-            Assert.assertTrue(this is ExPhpTypePrimitive)
-            Assert.assertSame(this, ExPhpType.INT)
+            assertTrue(this is ExPhpTypePrimitive)
+            assertSame(this, ExPhpType.INT)
         }
         "int|false".toExPhpType().apply {
-            Assert.assertTrue(this is ExPhpTypePipe)
+            assertTrue(this is ExPhpTypePipe)
         }
         "int/null".toExPhpType().apply {
-            Assert.assertTrue(this is ExPhpTypeNullable)
+            assertTrue(this is ExPhpTypeNullable)
         }
         "?int".toExPhpType().apply {
-            Assert.assertTrue(this is ExPhpTypeNullable)
+            assertTrue(this is ExPhpTypeNullable)
         }
         "(int|false)[]".toExPhpType().apply {
-            Assert.assertTrue(this is ExPhpTypeArray)
-            Assert.assertTrue((this as ExPhpTypeArray).inner is ExPhpTypePipe)
+            assertTrue(this is ExPhpTypeArray)
+            assertTrue((this as ExPhpTypeArray).inner is ExPhpTypePipe)
         }
         "tuple|tuple(int, A)".toExPhpType().apply {
-            Assert.assertTrue(this is ExPhpTypePipe)
-            Assert.assertSame(getSubkeyByIndex("0"), ExPhpType.INT)
-            Assert.assertTrue(getSubkeyByIndex("1") is ExPhpTypeInstance)
+            assertTrue(this is ExPhpTypePipe)
+            assertSame(getSubkeyByIndex("0"), ExPhpType.INT)
+            assertTrue(getSubkeyByIndex("1") is ExPhpTypeInstance)
         }
         "int|tuple(int, A|null)".toExPhpType().apply {
             val i1 = getSubkeyByIndex("1")
-            Assert.assertTrue(i1 is ExPhpTypeNullable)
-            Assert.assertTrue((i1 as ExPhpTypeNullable).inner is ExPhpTypeInstance)
+            assertTrue(i1 is ExPhpTypeNullable)
+            assertTrue((i1 as ExPhpTypeNullable).inner is ExPhpTypeInstance)
         }
         "int|tuple(int, A/int)".toExPhpType().apply {
             val i1 = getSubkeyByIndex("1")
-            Assert.assertTrue(i1 is ExPhpTypePipe)
-            Assert.assertTrue((i1 as ExPhpTypePipe).items[0] is ExPhpTypeInstance)
+            assertTrue(i1 is ExPhpTypePipe)
+            assertTrue((i1 as ExPhpTypePipe).items[0] is ExPhpTypeInstance)
         }
 
     }
@@ -92,23 +91,23 @@ class ExPhpTypeTest : TestCase() {
         val phpType = PhpType().add("int").add("false").pluralise()
         val intFalseArr = phpType.toExPhpType()
 
-        Assert.assertTrue(intFalseArr is ExPhpTypePipe)
-        Assert.assertSame(((intFalseArr as ExPhpTypePipe).items[0] as ExPhpTypeArray).inner, ExPhpType.INT)
-        Assert.assertSame((intFalseArr.items[1] as ExPhpTypeArray).inner, ExPhpType.FALSE)
+        assertTrue(intFalseArr is ExPhpTypePipe)
+        assertSame(((intFalseArr as ExPhpTypePipe).items[0] as ExPhpTypeArray).inner, ExPhpType.INT)
+        assertSame((intFalseArr.items[1] as ExPhpTypeArray).inner, ExPhpType.FALSE)
 
         // since 2020.2, we can't assign 'int|false' to 'int': PhpStorm handles 'false' not as 'bool' now
         val intFalse = PhpType().add("int").add("false").toExPhpType()!!
         val intBare = PhpType.INT.toExPhpType()!!
-        Assert.assertFalse(intBare.isAssignableFrom(intFalse, createMockProject()))
+        assertFalse(intBare.isAssignableFrom(intFalse, createMockProject()))
 
         val intArr = PhpType.INT.pluralise().toExPhpType()!!
-        Assert.assertFalse(intArr.isAssignableFrom(intFalseArr, createMockProject()))
+        assertFalse(intArr.isAssignableFrom(intFalseArr, createMockProject()))
     }
 
     fun testForcing() {
         val phpType = PhpType().add("string").add("int").add("force(string)")
 
-        Assert.assertTrue(PhpType.STRING.toExPhpType()!!.isAssignableFrom(phpType.toExPhpType()!!, createMockProject()))
+        assertTrue(PhpType.STRING.toExPhpType()!!.isAssignableFrom(phpType.toExPhpType()!!, createMockProject()))
     }
 
 }
