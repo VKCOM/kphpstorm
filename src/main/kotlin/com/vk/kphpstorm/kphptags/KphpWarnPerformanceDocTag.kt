@@ -7,8 +7,6 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.psi.elements.Function
 import com.vk.kphpstorm.inspections.quickfixes.RemoveWarnPerformanceItemQuickFix
-import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
-import com.vk.kphpstorm.kphptags.psi.KphpDocTagElementType
 import com.vk.kphpstorm.kphptags.psi.KphpDocWarnPerformanceItemPsiImpl
 
 object KphpWarnPerformanceDocTag : KphpDocTag("@kphp-warn-performance") {
@@ -22,9 +20,6 @@ object KphpWarnPerformanceDocTag : KphpDocTag("@kphp-warn-performance") {
 
     override val description: String
         get() = "Same as @kphp-analyze-performance, but it doesn't generate a report: instead, it gives a compilation error if potential optimizations are available."
-
-    override val elementType: KphpDocTagElementType
-        get() = KphpDocElementTypes.kphpDocTagWarnPerformance
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is Function

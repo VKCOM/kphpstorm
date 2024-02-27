@@ -5,15 +5,10 @@ import com.intellij.psi.PsiElement
 import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.psi.elements.PhpClass
-import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
-import com.vk.kphpstorm.kphptags.psi.KphpDocTagElementType
 
 object KphpTemplateClassDocTag : KphpDocTag("@kphp-template-class") {
     override val description: String
         get() = "Experiments for future, try to implement concept of template classes in php"
-
-    override val elementType: KphpDocTagElementType
-        get() = KphpDocElementTypes.kphpDocTagTemplateClass
 
     override fun isApplicableFor(owner: PsiElement): Boolean {
         return owner is PhpClass

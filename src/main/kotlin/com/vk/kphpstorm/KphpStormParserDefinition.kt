@@ -2,27 +2,15 @@ package com.vk.kphpstorm
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
-import com.jetbrains.php.lang.documentation.phpdoc.parser.tags.PhpDocTagParserRegistry
 import com.jetbrains.php.lang.parser.PhpParserDefinition
 import com.jetbrains.php.lang.parser.PhpPsiElementCreator
 import com.vk.kphpstorm.exphptype.psi.*
-import com.vk.kphpstorm.kphptags.ALL_KPHPDOC_TAGS
 import com.vk.kphpstorm.kphptags.psi.*
 
 /**
  * Main class that overrides php parsing PSI creation
  */
-class KphpStormParserDefinition() : PhpParserDefinition() {
-    init {
-        // PhpDocTagParserRegistry.register() became deprecated in 2020.3
-        // (the current suggestion is to use <docTagParserExtension> in plugin.xml)
-        // custom @var/@param/@return handling is already done via xml description
-        // but still use this for @kphp-tags: it's more handy, because we don't need to duplicate tag names to xml
-        // when register() method is dropped, it won't compile and should be rewritten :(
-        @Suppress("DEPRECATION")
-        for (kphpDocTag in ALL_KPHPDOC_TAGS)
-            PhpDocTagParserRegistry.register(kphpDocTag.nameWithAt, kphpDocTag.elementType.getTagParser())
-    }
+class KphpStormParserDefinition : PhpParserDefinition() {
 
     /**
      * We have custom elementTypes, PhpStorm doesn't know how to create them.

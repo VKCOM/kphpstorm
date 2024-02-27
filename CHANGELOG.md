@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [1.2.10] - 14.02.2024
+
+- adapt code for 2023.3
+- new inspection `KphpStrictTypesEnableInspection`
+
 ## [1.2.9] - 21.08.2023
 
 - adapt code for 2023.2

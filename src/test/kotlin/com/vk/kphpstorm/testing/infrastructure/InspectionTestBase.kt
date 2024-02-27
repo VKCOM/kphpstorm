@@ -46,7 +46,13 @@ abstract class InspectionTestBase(
         // Quick-fix test
         val qfFile = fixtureFile.replace(".fixture.php", ".qf.php")
         if (File(myFixture.testDataPath + "/" + qfFile).exists()) {
-            myFixture.getAllQuickFixes().forEach { myFixture.launchAction(it) }
+            myFixture.getAllQuickFixes().forEach { action ->
+                val available = action.isAvailable(project, myFixture.editor, myFixture.file)
+                if (available) {
+                    myFixture.launchAction(action.asIntention())
+                }
+            }
+
             myFixture.checkResultByFile(qfFile)
         }
     }
