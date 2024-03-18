@@ -156,8 +156,6 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
             "array_diff_assoc" to "^1",
             "array_reverse" to "^1",
             "array_shift" to "^1[*]",
-            "max" to "^1[*]",
-            "abs" to "^1|int",
             "array_values" to "^1",
             "array_unique" to "^1",
             "array_fill" to "^3[]",
