@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.2.11] - 20.03.2024
+
+- fixed crash when forcing types of functions
+
 ## [1.2.10] - 14.02.2024
 
 - adapt code for 2023.3
