@@ -70,7 +70,6 @@ class FunctionsTypeProvider : PhpTypeProvider4 {
             "headers_list" to "string[]",
             "hash_algos" to "string[]",
             "hash_hmac_algos" to "string[]",
-            "ini_set" to "bool",
             "bcdiv" to "string",
             "bcmod" to "string",
             "get_class" to "string",
