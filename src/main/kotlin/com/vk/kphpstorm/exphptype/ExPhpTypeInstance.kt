@@ -14,8 +14,11 @@ class ExPhpTypeInstance(val fqn: String) : ExPhpType {
     override fun toString() = fqn
 
     override fun toHumanReadable(expr: PhpPsiElement) =
-            if (fqn.startsWith('\\')) PhpCodeInsightUtil.createQualifiedName(PhpCodeInsightUtil.findScopeForUseOperator(expr)!!, fqn)
-            else fqn
+        if (fqn.startsWith('\\')) PhpCodeInsightUtil.createQualifiedName(
+            PhpCodeInsightUtil.findScopeForUseOperator(expr)!!,
+            fqn
+        )
+        else fqn
 
     override fun toPhpType(): PhpType {
         return PhpType().add(fqn)
@@ -32,7 +35,14 @@ class ExPhpTypeInstance(val fqn: String) : ExPhpType {
     override fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean = when (rhs) {
         is ExPhpTypeAny       -> true
         is ExPhpTypePipe      -> rhs.isAssignableTo(this, project)
-        is ExPhpTypeNullable  -> isAssignableFrom(rhs.inner, project)
+        is ExPhpTypeNullable -> {
+            if (rhs.toString() != fqn) {
+                false
+            } else {
+                isAssignableFrom(rhs.inner, project)
+            }
+        }
+
         is ExPhpTypePrimitive -> rhs === ExPhpType.NULL || rhs === ExPhpType.OBJECT
 
         // rhs can be assigned if: rhs == lhs or rhs is child of lhs (no matter, lhs is interface or class)
