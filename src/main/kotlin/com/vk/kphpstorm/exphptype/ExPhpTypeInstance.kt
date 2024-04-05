@@ -31,16 +31,41 @@ class ExPhpTypeInstance(val fqn: String) : ExPhpType {
     override fun instantiateTemplate(nameMap: Map<String, ExPhpType>): ExPhpType {
         return nameMap[fqn] ?: this
     }
+    private fun canBeAssigned(l: ExPhpTypeInstance, r: ExPhpTypeInstance) = with(ExPhpType.Companion) {
+        when {
+            l === ExPhpTypeInstance(KphpPrimitiveTypes.OBJECT)   -> r === ExPhpTypeInstance(KphpPrimitiveTypes.OBJECT)
+            else           -> false       // not supposed to happen
+        }
+    }
 
     override fun isAssignableFrom(rhs: ExPhpType, project: Project): Boolean = when (rhs) {
         is ExPhpTypeAny       -> true
         is ExPhpTypePipe      -> rhs.isAssignableTo(this, project)
         is ExPhpTypeNullable -> {
+         /*   if(this === ExPhpType.OBJECT){
+
+            }
+            rhs === ExPhpType.OBJECT || rhs === ExPhpType.NULL*/
+            /*ExPhpType.OBJECT
+            val OBJECT = ExPhpTypeInstance(KphpPrimitiveTypes.OBJECT)
+            rhs === OBJECT || rhs === ExPhpType.NULL*/
+            /*if(this as ExPhpTypeNullable && rhs is ExPhpTypeNullable){
+                false
+            }*/
+            false
+            /*val t = canBeAssigned(this, ExPhpTypeInstance(KphpPrimitiveTypes.NULL))
+           if( this === ExPhpTypeInstance(KphpPrimitiveTypes.OBJECT)){
+               rhs === ExPhpTypeInstance(KphpPrimitiveTypes.NULL)
+           }else{
+               isAssignableFrom(rhs.inner, project)
+           }*/
+           /* canBeAssigned(this, ExPhpTypeInstance(KphpPrimitiveTypes.NULL))
+          val t =  this.fqn
             if (rhs.toString() != fqn) {
                 false
             } else {
                 isAssignableFrom(rhs.inner, project)
-            }
+            }*/
         }
 
         is ExPhpTypePrimitive -> rhs === ExPhpType.NULL || rhs === ExPhpType.OBJECT
