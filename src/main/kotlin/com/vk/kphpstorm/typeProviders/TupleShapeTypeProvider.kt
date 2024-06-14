@@ -245,10 +245,11 @@ class TupleShapeTypeProvider : PhpTypeProvider4 {
     private fun inferTypeOfTupleShapeByIndex(wholeType: PhpType, indexKey: String): PhpType? {
         // optimization: parse wholeType from string only if tuple/shape exist in it
         val needsCustomIndexing = wholeType.types.any {
-            it.length > 7 && it[5] == '('           // tuple(, shape(, force(
+            (it.length > 7 && it[5] == '('           // tuple(, shape(, force(
                     || it == "\\kmixed"             // kmixed[*] is kmixed, not PhpStorm 'mixed' meaning uninferred
                     || it == "\\any"                // any[*] is any, not undefined
-                    || it == "\\array"              // array[*] is any (untyped arrays)
+                    || it == "\\array")              // array[*] is any (untyped arrays)
+                    || it.slice(0..5) == "array{" // array{ - phpstan-like array shape, similar to shape(
         }
         if (!needsCustomIndexing)
             return null
