@@ -98,6 +98,15 @@
 
     <postStartupActivity implementation="com.vk.kphpstorm.configuration.KphpStormStartupActivity"/>
   </extensions>
+
+  <extensions defaultExtensionNs="com.jetbrains.php">
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.TupleShapeTypeProvider"/>
+<!--    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.TemplateObjectAccessTypeProvider"/>-->
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.FunctionsTypeProvider"/>
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.ForeachTypeProvider"/>
+    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.JsonEncoderTypeProvider"/>
+  </extensions>
+
   <extensions defaultExtensionNs="com.intellij">
     <php.docTagParserExtension tagName="return" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />
     <php.docTagParserExtension tagName="return" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />
@@ -138,15 +147,6 @@
     <php.docTagParserExtension tagName="kphp-const" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
 
     <php.docTagParserExtension tagName="kphp-json" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagJsonParser"/>
-  </extensions>
-
-
-  <extensions defaultExtensionNs="com.jetbrains.php">
-    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.TupleShapeTypeProvider"/>
-<!--    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.TemplateObjectAccessTypeProvider"/>-->
-    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.FunctionsTypeProvider"/>
-    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.ForeachTypeProvider"/>
-    <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.JsonEncoderTypeProvider"/>
   </extensions>
 
   <actions>

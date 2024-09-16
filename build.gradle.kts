@@ -50,10 +50,6 @@ dependencies {
 
 // Configure IntelliJ Platform Gradle Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-extension.html
 intellijPlatform {
-    pluginVerification {
-        freeArgs = listOf("-mute", "TemplateWordInPluginName")
-    }
-
     pluginConfiguration {
         version = providers.gradleProperty("pluginVersion")
 
@@ -77,6 +73,8 @@ intellijPlatform {
     }
 
     pluginVerification {
+        freeArgs = listOf("-mute", "TemplateWordInPluginName")
+
         ides {
             recommended()
         }
