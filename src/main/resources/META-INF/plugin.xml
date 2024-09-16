@@ -98,6 +98,48 @@
 
     <postStartupActivity implementation="com.vk.kphpstorm.configuration.KphpStormStartupActivity"/>
   </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <php.docTagParserExtension tagName="return" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />
+    <php.docTagParserExtension tagName="return" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />
+    <php.docTagParserExtension tagName="returns" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />
+    <php.docTagParserExtension tagName="param" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocParamTagParserEx" order="first" />
+    <php.docTagParserExtension tagName="var" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocVarTagParserEx" order="first" />
+    <php.docTagParserExtension tagName="type" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocVarTagParserEx" order="first" />
+
+    <php.docTagParserExtension tagName="kphp-color" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-inline" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-infer" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-pure-function" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-flatten" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-required" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-sync" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-template" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-return" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-should-not-throw" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-throws" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-disable-warnings" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-no-return" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-runtime-check" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-warn-unused-result" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-profile" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-profile-allow-inline" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-analyze-performance" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-warn-performance" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagWarnPerformanceParser"/>
+
+    <php.docTagParserExtension tagName="kphp-serializable" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-reserved-fields" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-template-class" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagTemplateClassParser"/>
+    <php.docTagParserExtension tagName="kphp-memcache-class" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-immutable-class" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-tl-class" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+
+    <php.docTagParserExtension tagName="kphp-serialized-field" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-serialized-float32" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+    <php.docTagParserExtension tagName="kphp-const" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
+
+    <php.docTagParserExtension tagName="kphp-json" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagJsonParser"/>
+  </extensions>
+
 
   <extensions defaultExtensionNs="com.jetbrains.php">
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.TupleShapeTypeProvider"/>
@@ -105,45 +147,6 @@
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.FunctionsTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.ForeachTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.JsonEncoderTypeProvider"/>
-
-    <docTagParserExtension tagName="return" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />
-    <docTagParserExtension tagName="returns" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocReturnTagParserEx" order="first" />
-    <docTagParserExtension tagName="param" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocParamTagParserEx" order="first" />
-    <docTagParserExtension tagName="var" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocVarTagParserEx" order="first" />
-    <docTagParserExtension tagName="type" implementationClass="com.vk.kphpstorm.exphptype.psi.PhpDocVarTagParserEx" order="first" />
-
-    <docTagParserExtension tagName="kphp-color" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-inline" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-infer" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-pure-function" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-flatten" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-required" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-sync" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-template" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-return" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-should-not-throw" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-throws" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-disable-warnings" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-no-return" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-runtime-check" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-warn-unused-result" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-profile" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-profile-allow-inline" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-analyze-performance" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-warn-performance" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagWarnPerformanceParser"/>
-
-    <docTagParserExtension tagName="kphp-serializable" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-reserved-fields" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-template-class" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagTemplateClassParser"/>
-    <docTagParserExtension tagName="kphp-memcache-class" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-immutable-class" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-tl-class" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-
-    <docTagParserExtension tagName="kphp-serialized-field" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-serialized-float32" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-    <docTagParserExtension tagName="kphp-const" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagSimpleParser"/>
-
-    <docTagParserExtension tagName="kphp-json" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagJsonParser"/>
   </extensions>
 
   <actions>
