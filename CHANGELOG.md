@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.2.13] - 16.09.2024
+
+- adapt code for 2024.2
+
 ## [1.2.12] - 02.05.2024
 
 - adapt code for 2024.1
