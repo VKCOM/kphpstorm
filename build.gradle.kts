@@ -70,6 +70,14 @@ intellijPlatform {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
             untilBuild = providers.gradleProperty("pluginUntilBuild")
         }
+
+        sourceSets {
+            test {
+                resources {
+                    srcDir(listOf("src/test/fixtures"))
+                }
+            }
+        }
     }
 
     pluginVerification {
