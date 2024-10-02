@@ -70,11 +70,18 @@ intellijPlatform {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
             untilBuild = providers.gradleProperty("pluginUntilBuild")
         }
+
+        sourceSets {
+            test {
+                resources {
+                    srcDir(listOf("src/test/fixtures"))
+                }
+            }
+        }
     }
 
     pluginVerification {
         freeArgs = listOf("-mute", "TemplateWordInPluginName")
-
         ides {
             recommended()
         }
@@ -89,6 +96,12 @@ changelog {
 
 
 tasks {
+    test {
+        exclude("com/vk/kphpstorm/testing/infrastructure/**")
+        include("**/*Test.class")
+        isScanForTestClasses = false
+    }
+
     wrapper {
         gradleVersion = providers.gradleProperty("gradleVersion").get()
     }
