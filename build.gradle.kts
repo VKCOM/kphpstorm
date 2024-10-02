@@ -82,7 +82,6 @@ intellijPlatform {
 
     pluginVerification {
         freeArgs = listOf("-mute", "TemplateWordInPluginName")
-
         ides {
             recommended()
         }
@@ -97,6 +96,12 @@ changelog {
 
 
 tasks {
+    test {
+        exclude("com/vk/kphpstorm/testing/infrastructure/**")
+        include("**/*Test.class")
+        isScanForTestClasses = false
+    }
+
     wrapper {
         gradleVersion = providers.gradleProperty("gradleVersion").get()
     }
