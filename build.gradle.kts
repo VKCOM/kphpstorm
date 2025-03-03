@@ -86,7 +86,6 @@ changelog {
     repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
 }
 
-
 tasks {
     wrapper {
         gradleVersion = providers.gradleProperty("gradleVersion").get()
