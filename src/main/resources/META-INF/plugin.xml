@@ -92,6 +92,9 @@
     <stubElementTypeHolder class="com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes"/>
     <stubElementFactory
             implementation="com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagSimpleElementTypeStubFactory"/>
+    <stubElementFactory
+            implementation="com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagJsonElementTypeStubFactory"/>
+
 
     <annotator language="PHP" implementationClass="com.vk.kphpstorm.highlighting.KphpStormAnnotator"/>
 
@@ -111,6 +114,8 @@
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.JsonEncoderTypeProvider"/>
     <php.docTagStubSerializer
             implementation="com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagSimpleElementTypeStubSerializer"/>
+    <php.docTagStubSerializer
+            implementation="com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagJsonElementTypeStubFactorySerializer"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
