@@ -29,7 +29,7 @@ object KphpDocElementTypes {
      * '@kphp-warn-performance ...' and '@kphp-analyze-performance ...'
      * They don't store stubs, but have a psi parser
      */
-    val kphpDocTagWarnPerformance = KphpDocTagWarnPerformanceElementType
+    val kphpDocTagWarnPerformance = IElementType("@kphp-warn-performance", PhpLanguage.INSTANCE)
 
     /**
      * '@kphp-json [for EncoderName] attribute[= optional value]'

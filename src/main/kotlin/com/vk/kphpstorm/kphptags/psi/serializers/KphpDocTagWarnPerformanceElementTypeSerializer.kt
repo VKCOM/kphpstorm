@@ -1,19 +1,20 @@
-package com.vk.kphpstorm.kphptags.psi
+package com.vk.kphpstorm.kphptags.psi.serializers
 
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStub
+import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStubSerializer
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
-import com.jetbrains.php.lang.psi.stubs.PhpStubElementType
+import com.vk.kphpstorm.kphptags.psi.*
 
-object KphpDocTagWarnPerformanceElementType : PhpStubElementType<PhpDocTagStub, PhpDocTag>("@kphp-warn-performance") {
-    override fun createPsi(stub: PhpDocTagStub): PhpDocTag {
+class KphpDocTagWarnPerformanceElementTypeSerializer : PhpDocTagStubSerializer(KphpDocElementTypes.kphpDocTagWarnPerformance){
+     fun createPsi(stub: PhpDocTagStub): PhpDocTag {
         return KphpDocTagWarnPerformancePsiImpl(stub, stub.stubType)
     }
 
-    override fun createStub(psi: PhpDocTag, parentStub: StubElement<*>?): PhpDocTagStub {
-        return KphpDocTagStubImpl(parentStub, this, psi.name, null)
+    fun createStub(psi: PhpDocTag, parentStub: StubElement<*>?): PhpDocTagStub {
+        return KphpDocTagStubImpl(parentStub, type, psi.name, null)
     }
 
     override fun serialize(stub: PhpDocTagStub, dataStream: StubOutputStream) {
@@ -24,7 +25,6 @@ object KphpDocTagWarnPerformanceElementType : PhpStubElementType<PhpDocTagStub, 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): PhpDocTagStub {
         val name = dataStream.readName()?.toString() ?: throw NullPointerException()
         val stubValue = dataStream.readName()?.toString()
-        return KphpDocTagStubImpl(parentStub, this, name, stubValue)
+        return KphpDocTagStubImpl(parentStub, type, name, stubValue)
     }
 }
-
