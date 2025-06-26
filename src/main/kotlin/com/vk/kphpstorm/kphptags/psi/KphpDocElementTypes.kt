@@ -1,5 +1,7 @@
 package com.vk.kphpstorm.kphptags.psi
 
+import com.intellij.psi.tree.IElementType
+import com.jetbrains.php.lang.PhpLanguage
 import com.vk.kphpstorm.KphpStormParserDefinition
 
 
@@ -21,7 +23,7 @@ object KphpDocElementTypes {
      * * do not store anything in stubs, so their contents is unaccessible from other files
      * Such doc tags are 'simple'
      */
-    val kphpDocTagSimple = KphpDocTagSimpleElementType
+    val kphpDocTagSimple = IElementType("@kphp-simple", PhpLanguage.INSTANCE) //KphpDocTagSimpleElementType
 
     /**
      * '@kphp-warn-performance ...' and '@kphp-analyze-performance ...'

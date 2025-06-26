@@ -3,6 +3,7 @@ package com.vk.kphpstorm.kphptags.psi
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubBase
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.tree.IElementType
 import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStub
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.jetbrains.php.lang.psi.resolve.types.PhpType
@@ -13,13 +14,13 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType
  * Similar to [com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStubImpl]
  */
 class KphpDocTagStubImpl(
-        parent: StubElement<*>?,
-        elementType: IStubElementType<*, *>,
-        private val name: String,
-        private val value: String?
+    parent: StubElement<*>?,
+    elementType: IElementType,
+    private val name: String,
+    private val value: String?
 ) : StubBase<PhpDocTag>(parent, elementType), PhpDocTagStub {
 
-    override fun getType() = PhpType()
+    fun getType() = PhpType()
     override fun getName() = name
     override fun getValue() = value
 }

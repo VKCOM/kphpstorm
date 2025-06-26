@@ -88,7 +88,11 @@
                             implementationClass="com.vk.kphpstorm.completion.KphpStormCompletionContributor"/>
     <lang.parserDefinition language="PHP" order="first"
                            implementationClass="com.vk.kphpstorm.KphpStormParserDefinition"/>
+
     <stubElementTypeHolder class="com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes"/>
+    <stubElementFactory
+            implementation="com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagSimpleElementTypeStubFactory"/>
+
     <annotator language="PHP" implementationClass="com.vk.kphpstorm.highlighting.KphpStormAnnotator"/>
 
     <lang.documentationProvider language="PHP" order="first"
@@ -105,6 +109,8 @@
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.FunctionsTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.ForeachTypeProvider"/>
     <typeProvider4 implementation="com.vk.kphpstorm.typeProviders.JsonEncoderTypeProvider"/>
+    <php.docTagStubSerializer
+            implementation="com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagSimpleElementTypeStubSerializer"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
