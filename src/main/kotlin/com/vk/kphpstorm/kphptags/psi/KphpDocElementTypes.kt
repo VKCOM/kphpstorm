@@ -35,7 +35,7 @@ object KphpDocElementTypes {
      * '@kphp-json [for EncoderName] attribute[= optional value]'
      * They don't store stubs, but have a psi parser
      */
-    val kphpDocTagJson = KphpDocTagJsonElementType
+    val kphpDocTagJson = IElementType("@kphp-json", PhpLanguage.INSTANCE)
 
     /**
      * '@kphp-template-class T1, T2'
