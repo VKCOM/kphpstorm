@@ -7,7 +7,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStub
 import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStubSerializer
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
-import com.vk.kphpstorm.kphptags.psi.KphpDocTagSimplePsiImpl
+import com.vk.kphpstorm.kphptags.psi.KphpDocTagJsonPsiImpl
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagStubImpl
 
 class KphpDocTagJsonElementTypeStubFactorySerializer : PhpDocTagStubSerializer(KphpDocElementTypes.kphpDocTagJson) {
@@ -23,7 +23,7 @@ class KphpDocTagJsonElementTypeStubFactorySerializer : PhpDocTagStubSerializer(K
     }
 
     fun createPsi(stub: PhpDocTagStub): PhpDocTag {
-        return KphpDocTagSimplePsiImpl(stub, stub.stubType)
+        return KphpDocTagJsonPsiImpl(stub, stub.stubType)
     }
 
     fun createStub(psi: PhpDocTag, parentStub: StubElement<*>?): PhpDocTagStub {
