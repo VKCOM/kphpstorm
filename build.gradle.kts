@@ -104,3 +104,9 @@ tasks {
         gradleVersion = providers.gradleProperty("gradleVersion").get()
     }
 }
+
+sourceSets {
+    test {
+        resources.srcDir("src/test/")
+    }
+}
