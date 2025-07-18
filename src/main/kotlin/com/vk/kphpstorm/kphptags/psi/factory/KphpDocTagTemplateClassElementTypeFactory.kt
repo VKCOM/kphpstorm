@@ -20,6 +20,4 @@ object KphpDocTagTemplateClassElementTypeFactory : StubElementFactory<PhpDocTagS
 
     override fun shouldCreateStub(node: ASTNode): Boolean =
         node.elementType == KphpDocElementTypes.kphpDocTagTemplateClass
-
-
 }
