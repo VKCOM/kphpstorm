@@ -1,10 +1,12 @@
 package com.vk.kphpstorm.testing.infrastructure
 
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.php.config.PhpLanguageLevel
 import com.jetbrains.php.config.PhpProjectConfigurationFacade
 import com.vk.kphpstorm.configuration.KphpStormConfiguration
+import java.nio.file.Paths
 
 
 abstract class IntentionTestBase(
@@ -14,6 +16,12 @@ abstract class IntentionTestBase(
     open val languageLevel: PhpLanguageLevel = PhpLanguageLevel.PHP740
 
     override fun getTestDataPath() = "src/test/fixtures"
+
+
+    override fun setUp() {
+        super.setUp()
+        VfsRootAccess.allowRootAccess(testRootDisposable, Paths.get(testDataPath).toAbsolutePath().toString())
+    }
 
     private fun setupLanguageLevel() {
         val projectConfigurationFacade = PhpProjectConfigurationFacade.getInstance(project)
