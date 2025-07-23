@@ -1,0 +1,22 @@
+package com.vk.kphpstorm.testing.tests
+
+import com.vk.kphpstorm.intentions.AddImmutableClassAnnotationIntention
+import com.vk.kphpstorm.testing.infrastructure.IntentionTestBase
+
+class AddImmutableAnnoIntentionTest : IntentionTestBase(AddImmutableClassAnnotationIntention()) {
+    fun testAddImmutableAnno1() {
+        runIntention("kphp_intentions/immutable_class_intention-1.fixture.php")
+    }
+
+    fun testAddImmutableAnno2() {
+        assertNoIntention("kphp_intentions/immutable_class_intention-2.nointention.php")
+    }
+
+    fun testAddImmutableAnno3() {
+        assertNoIntention("kphp_intentions/immutable_class_intention-3.nointention.php")
+    }
+
+    fun testAddImmutableAnno4() {
+        assertNoIntention("kphp_intentions/immutable_class_intention-4.nointention.php")
+    }
+}
