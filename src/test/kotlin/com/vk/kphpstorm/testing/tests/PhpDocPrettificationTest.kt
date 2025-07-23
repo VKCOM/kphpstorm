@@ -1,6 +1,6 @@
 package com.vk.kphpstorm.testing.tests
 
-import com.vk.kphpstorm.inspections.PrettifyPhpdocBlockIntention
+import com.vk.kphpstorm.intentions.PrettifyPhpdocBlockIntention
 import com.vk.kphpstorm.testing.infrastructure.IntentionTestBase
 
 class PhpDocPrettificationTest : IntentionTestBase(PrettifyPhpdocBlockIntention()) {

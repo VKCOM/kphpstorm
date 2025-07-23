@@ -10,7 +10,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection
 import com.jetbrains.php.lang.psi.elements.Field
 import com.jetbrains.php.lang.psi.visitors.PhpElementVisitor
 import com.vk.kphpstorm.exphptype.psi.ExPhpTypePrimitivePsiImpl
-import com.vk.kphpstorm.inspections.prettifier.findAllPhpDocPrettifications
+import com.vk.kphpstorm.intentions.prettifier.findAllPhpDocPrettifications
 import com.vk.kphpstorm.inspections.quickfixes.AddKphpSerializedFieldQuickFix
 import com.vk.kphpstorm.inspections.quickfixes.PrettifySomethingInDocBlockQuickFix
 import com.vk.kphpstorm.kphptags.KphpSerializableDocTag

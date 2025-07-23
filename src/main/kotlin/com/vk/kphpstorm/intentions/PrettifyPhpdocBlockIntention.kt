@@ -1,4 +1,4 @@
-package com.vk.kphpstorm.inspections
+package com.vk.kphpstorm.intentions
 
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.openapi.editor.Editor
@@ -8,7 +8,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.PhpDocComment
 import com.jetbrains.php.lang.psi.elements.PhpModifierList
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement
 import com.vk.kphpstorm.helpers.parentDocComment
-import com.vk.kphpstorm.inspections.prettifier.findFirstPhpDocPrettification
+import com.vk.kphpstorm.intentions.prettifier.findFirstPhpDocPrettification
 
 class PrettifyPhpdocBlockIntention : PsiElementBaseIntentionAction() {
 
