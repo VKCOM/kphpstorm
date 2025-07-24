@@ -11,5 +11,5 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStub
  */
 class KphpDocTagSimplePsiImpl : PhpDocTagImpl, KphpDocTagImpl {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: PhpDocTagStub, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
+    constructor(stub: PhpDocTagStub, nodeType: IStubElementType<*, *>) : super(stub, nodeType) // TODO: exp: change IStubElementType -> IElementType
 }
