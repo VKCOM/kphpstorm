@@ -1,4 +1,4 @@
-package com.vk.kphpstorm.inspections.prettifier
+package com.vk.kphpstorm.intentions.prettifier
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.psi.util.PsiTreeUtil

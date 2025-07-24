@@ -75,7 +75,7 @@
 
     <intentionAction>
       <language>PHP</language>
-      <className>com.vk.kphpstorm.inspections.PrettifyPhpdocBlockIntention</className>
+      <className>com.vk.kphpstorm.intentions.PrettifyPhpdocBlockIntention</className>
       <category>PHP</category>
       <descriptionDirectoryName>PrettifyPhpdocBlockIntention</descriptionDirectoryName>
     </intentionAction>
