@@ -1,6 +1,6 @@
 <?php
 
-class C1 extends C2 {
+class C1 extends <caret>C2 {
     // ...
 }
 
