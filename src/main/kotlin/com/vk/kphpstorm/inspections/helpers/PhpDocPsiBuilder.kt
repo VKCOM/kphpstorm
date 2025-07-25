@@ -13,8 +13,10 @@ import com.jetbrains.php.lang.psi.PhpPsiElementFactory
 import com.jetbrains.php.lang.psi.elements.Field
 import com.jetbrains.php.lang.psi.elements.Function
 import com.jetbrains.php.lang.psi.elements.Parameter
+import com.jetbrains.php.lang.psi.elements.PhpClass
 import com.jetbrains.php.lang.psi.elements.PhpNamedElement
 import com.vk.kphpstorm.helpers.parentDocComment
+import com.vk.kphpstorm.kphptags.KphpDocTag
 import com.vk.kphpstorm.kphptags.KphpSerializedFieldDocTag
 
 /**
@@ -66,6 +68,13 @@ object PhpDocPsiBuilder {
         if (field.docComment == null)
             return createDocComment(project, field, " @var type ").varTag!!
         return field.docComment!!.addTag(project, "@var", "type")
+    }
+
+    fun addTagToClass(klass: PhpClass, annotation: KphpDocTag): PhpDocTag {
+        val project = klass.project
+        val docComment = klass.docComment ?: createDocComment(project, klass)
+
+        return docComment.transformToMultiline(project).addTag(project, annotation.nameWithAt)
     }
 
 

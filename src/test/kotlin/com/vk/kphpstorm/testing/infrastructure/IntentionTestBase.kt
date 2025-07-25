@@ -34,4 +34,19 @@ abstract class IntentionTestBase(
         val qfFile = fixtureFile.replace(".fixture.php", ".qf.php")
         myFixture.checkResultByFile(qfFile)
     }
+
+    /**
+     * Assert there are no intention [intentionToExecute] in file [fixtureFile]
+     */
+    protected fun assertNoIntention(fixtureFile: String) {
+        setupLanguageLevel()
+
+        KphpStormConfiguration.saveThatSetupForProjectDone(project)
+        myFixture.configureByFile(fixtureFile)
+        val availableIntentions = myFixture
+            .availableIntentions
+            .filter { intentionAction -> intentionAction.familyName == intentionToExecute.familyName }
+
+        assertEmpty(availableIntentions)
+    }
 }
