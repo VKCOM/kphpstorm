@@ -1,8 +1,6 @@
 package com.vk.kphpstorm.intentions
 
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
-import com.intellij.codeInspection.util.IntentionFamilyName
-import com.intellij.codeInspection.util.IntentionName
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -15,14 +13,10 @@ import com.vk.kphpstorm.inspections.helpers.PhpDocPsiBuilder
 import com.vk.kphpstorm.kphptags.KphpImmutableClassDocTag
 
 class AddImmutableClassAnnotationIntention : PsiElementBaseIntentionAction() {
-    override fun getText(): @IntentionName String = "Add @kphp-immutable-class"
-    override fun getFamilyName(): @IntentionFamilyName String = getText()
+    override fun getText(): String = "Add @kphp-immutable-class"
+    override fun getFamilyName(): String = getText()
 
-    override fun isAvailable(
-        project: Project,
-        editor: Editor?,
-        element: PsiElement
-    ): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
         if (!element.isClassNameNode()) {
             return false
         }
@@ -70,11 +64,7 @@ class AddImmutableClassAnnotationIntention : PsiElementBaseIntentionAction() {
         return classConstructor != null && psiElement.findParentInFile { e -> e == classConstructor } != null
     }
 
-    override fun invoke(
-        project: Project,
-        editor: Editor?,
-        element: PsiElement
-    ) {
+    override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
         val klass = element.parent as PhpClass
         PhpDocPsiBuilder.addTagToClass(klass, KphpImmutableClassDocTag)
     }
