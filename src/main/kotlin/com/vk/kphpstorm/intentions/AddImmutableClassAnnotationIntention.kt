@@ -56,7 +56,7 @@ class AddImmutableClassAnnotationIntention : PsiElementBaseIntentionAction() {
     private fun isMutatingOp(psiElement: PsiElement): Boolean {
         val parent = psiElement.parent
 
-        return parent is AssignmentExpression
+        return parent is AssignmentExpression && parent.variable == psiElement
     }
 
     private fun isInClassConstructor(klass: PhpClass, psiElement: PsiElement): Boolean {
