@@ -90,6 +90,7 @@
                            implementationClass="com.vk.kphpstorm.KphpStormParserDefinition"/>
 
     <stubElementTypeHolder class="com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes"/>
+    <stubElementRegistryExtension implementation="com.vk.kphpstorm.kphptags.psi.stubs.KphpStubRegistryExtension"/>
     <stubElementFactory
             implementation="com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagSimpleElementTypeStubFactory"/>
     <stubElementFactory
@@ -98,7 +99,6 @@
             implementation="com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagWarnPerformanceElementTypeFactory"/>
     <stubElementFactory
             implementation="com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagTemplateClassElementTypeFactory"/>
-
 
     <annotator language="PHP" implementationClass="com.vk.kphpstorm.highlighting.KphpStormAnnotator"/>
 
