@@ -22,6 +22,10 @@ class AddImmutableClassAnnotationIntention : PsiElementBaseIntentionAction() {
         }
 
         val klass = element.parent as PhpClass
+        if (klass.isAbstract || klass.isInterface) {
+            return false
+        }
+
         val klassDocNode = klass.docComment
 
         // do not suggest if already present
