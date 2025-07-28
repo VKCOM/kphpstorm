@@ -1,5 +1,6 @@
 package com.vk.kphpstorm.testing.infrastructure
 
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.php.config.PhpLanguageLevel
 import com.jetbrains.php.config.PhpProjectConfigurationFacade
@@ -7,6 +8,7 @@ import com.jetbrains.php.lang.inspections.PhpInspection
 import com.vk.kphpstorm.configuration.KphpStormConfiguration
 import com.vk.kphpstorm.configuration.setupKphpStormPluginForProject
 import java.io.File
+import java.nio.file.Paths
 
 
 abstract class InspectionTestBase(
@@ -19,6 +21,7 @@ abstract class InspectionTestBase(
 
     override fun setUp() {
         super.setUp()
+        VfsRootAccess.allowRootAccess(testRootDisposable, Paths.get(testDataPath).toAbsolutePath().toString())
 
         if (inspectionToEnable != null) {
             myFixture.enableInspections(inspectionToEnable)
