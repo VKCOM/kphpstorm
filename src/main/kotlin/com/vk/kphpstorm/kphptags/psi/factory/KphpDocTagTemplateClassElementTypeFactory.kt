@@ -7,15 +7,18 @@ import com.intellij.psi.stubs.StubElementFactory
 import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStub
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
-import com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagTemplateClassElementTypeSerializer
+import com.vk.kphpstorm.kphptags.psi.KphpDocTagStubImpl
+import com.vk.kphpstorm.kphptags.psi.KphpDocTagTemplateClassPsiImpl
 
 object KphpDocTagTemplateClassElementTypeFactory : StubElementFactory<PhpDocTagStub, PhpDocTag> {
     override fun createPsi(stub: PhpDocTagStub): PhpDocTag {
-        return KphpDocTagTemplateClassElementTypeSerializer().createPsi(stub)
+        return KphpDocTagTemplateClassPsiImpl(stub, KphpDocElementTypes.kphpDocTagTemplateClass)
     }
 
     override fun createStub(psi: PhpDocTag, parentStub: StubElement<out PsiElement>?): PhpDocTagStub {
-        return KphpDocTagTemplateClassElementTypeSerializer().createStub(psi, parentStub)
+        // stub value is 'T1,T2' — without spaces
+        val stubValue = (psi as KphpDocTagTemplateClassPsiImpl).getTemplateArguments().joinToString(",")
+        return KphpDocTagStubImpl(parentStub, KphpDocElementTypes.kphpDocTagTemplateClass, psi.name, stubValue)
     }
 
     override fun shouldCreateStub(node: ASTNode): Boolean =

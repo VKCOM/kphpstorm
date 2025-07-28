@@ -2,94 +2,64 @@ package com.vk.kphpstorm.kphptags.psi.stubs
 
 import com.intellij.psi.stubs.StubRegistry
 import com.intellij.psi.stubs.StubRegistryExtension
-import com.jetbrains.php.lang.documentation.phpdoc.parser.PhpDocStubElementTypes
-import com.jetbrains.php.lang.psi.stubs.stub_factories.PhpDocTagStubFactory
-import com.vk.kphpstorm.exphptype.psi.ExPhpTypeAnyPsiImpl
-import com.vk.kphpstorm.exphptype.psi.ExPhpTypeArrayPsiImpl
-import com.vk.kphpstorm.exphptype.psi.ExPhpTypeCallablePsiImpl
-import com.vk.kphpstorm.exphptype.psi.ExPhpTypeForcingPsiImpl
-import com.vk.kphpstorm.exphptype.psi.ExPhpTypeInstancePsiImpl
-import com.vk.kphpstorm.exphptype.psi.ExPhpTypeNullablePsiImpl
-import com.vk.kphpstorm.exphptype.psi.ExPhpTypePipePsiImpl
-import com.vk.kphpstorm.exphptype.psi.ExPhpTypePrimitivePsiImpl
-import com.vk.kphpstorm.exphptype.psi.ExPhpTypeShapePsiImpl
-import com.vk.kphpstorm.exphptype.psi.ExPhpTypeTplInstantiationPsiImpl
-import com.vk.kphpstorm.exphptype.psi.ExPhpTypeTuplePsiImpl
-import com.vk.kphpstorm.kphptags.psi.KphpDocJsonAttributePsiImpl
-import com.vk.kphpstorm.kphptags.psi.KphpDocJsonForEncoderPsiImpl
-import com.vk.kphpstorm.kphptags.psi.KphpDocTplParameterDeclPsiImpl
-import com.vk.kphpstorm.kphptags.psi.KphpDocWarnPerformanceItemPsiImpl
+import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
+import com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagJsonElementTypeStubFactory
+import com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagSimpleElementTypeStubFactory
+import com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagTemplateClassElementTypeFactory
+import com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagWarnPerformanceElementTypeFactory
+import com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagJsonElementTypeStubSerializer
+import com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagSimpleElementTypeStubSerializer
+import com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagTemplateClassElementTypeSerializer
+import com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagWarnPerformanceElementTypeSerializer
 
+@Suppress("UnstableApiUsage")
 class KphpStubRegistryExtension : StubRegistryExtension {
     override fun register(registry: StubRegistry) {
         registerSerializers(registry)
+        registerFactories(registry)
     }
 
     private fun registerSerializers(registry: StubRegistry) {
-        val docComment = PhpDocStubElementTypes.DOC_COMMENT
+        registry.registerStubSerializer(
+            KphpDocElementTypes.kphpDocTagSimple,
+            KphpDocTagSimpleElementTypeStubSerializer()
+        )
 
-        // com.vk.kphpstorm.exphptype.psi
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(ExPhpTypeAnyPsiImpl.elementType)
-//        )
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(ExPhpTypeArrayPsiImpl.elementType)
-//        )
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(ExPhpTypeCallablePsiImpl.elementType)
-//        )
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(ExPhpTypeForcingPsiImpl.elementType)
-//        )
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(ExPhpTypeInstancePsiImpl.elementType)
-//        )
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(ExPhpTypeNullablePsiImpl.elementType)
-//        )
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(ExPhpTypePipePsiImpl.elementType)
-//        )
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(ExPhpTypePrimitivePsiImpl.elementType)
-//        )
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(ExPhpTypeShapePsiImpl.elementType)
-//        )
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(ExPhpTypeTplInstantiationPsiImpl.elementType)
-//        )
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(ExPhpTypeTuplePsiImpl.elementType)
-//        )
+        registry.registerStubSerializer(
+            KphpDocElementTypes.kphpDocTagJson,
+            KphpDocTagJsonElementTypeStubSerializer()
+        )
 
-        // com.vk.kphpstorm.kphptags.psi
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(KphpDocJsonAttributePsiImpl.elementType)
-//        )
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(KphpDocJsonForEncoderPsiImpl.elementType)
-//        )
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(KphpDocTplParameterDeclPsiImpl.elementType)
-//        )
-//        registry.registerStubFactory(
-//            docComment,
-//            PhpDocTagStubFactory(KphpDocWarnPerformanceItemPsiImpl.elementType)
-//        )
+        registry.registerStubSerializer(
+            KphpDocElementTypes.kphpDocTagTemplateClass,
+            KphpDocTagTemplateClassElementTypeSerializer()
+        )
+
+        registry.registerStubSerializer(
+            KphpDocElementTypes.kphpDocTagWarnPerformance,
+            KphpDocTagWarnPerformanceElementTypeSerializer()
+        )
+    }
+
+    private fun registerFactories(registry: StubRegistry) {
+        registry.registerStubFactory(
+            KphpDocElementTypes.kphpDocTagSimple,
+            KphpDocTagSimpleElementTypeStubFactory
+        )
+
+        registry.registerStubFactory(
+            KphpDocElementTypes.kphpDocTagJson,
+            KphpDocTagJsonElementTypeStubFactory
+        )
+
+        registry.registerStubFactory(
+            KphpDocElementTypes.kphpDocTagTemplateClass,
+            KphpDocTagTemplateClassElementTypeFactory
+        )
+
+        registry.registerStubFactory(
+            KphpDocElementTypes.kphpDocTagWarnPerformance,
+            KphpDocTagWarnPerformanceElementTypeFactory
+        )
     }
 }
