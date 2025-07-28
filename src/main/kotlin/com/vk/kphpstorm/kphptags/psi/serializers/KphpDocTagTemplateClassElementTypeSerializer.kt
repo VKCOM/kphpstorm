@@ -8,6 +8,10 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStubSerial
 import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
 import com.vk.kphpstorm.kphptags.psi.KphpDocTagStubImpl
 
+/**
+ * '@kphp-template-class T1, T2' has a separate elementType, psi for 'T1' and 'T2' and stub contents
+ * @see KphpDocElementTypes.kphpDocTagTemplateClass
+ */
 class KphpDocTagTemplateClassElementTypeSerializer :
     PhpDocTagStubSerializer(KphpDocElementTypes.kphpDocTagTemplateClass) {
     override fun serialize(stub: PhpDocTagStub, dataStream: StubOutputStream) {
