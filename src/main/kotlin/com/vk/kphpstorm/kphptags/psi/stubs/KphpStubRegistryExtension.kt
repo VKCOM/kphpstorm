@@ -3,14 +3,10 @@ package com.vk.kphpstorm.kphptags.psi.stubs
 import com.intellij.psi.stubs.StubRegistry
 import com.intellij.psi.stubs.StubRegistryExtension
 import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
-import com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagJsonElementTypeStubFactory
 import com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagSimpleElementTypeStubFactory
 import com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagTemplateClassElementTypeFactory
-import com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagWarnPerformanceElementTypeFactory
-import com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagJsonElementTypeStubSerializer
 import com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagSimpleElementTypeStubSerializer
 import com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagTemplateClassElementTypeSerializer
-import com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagWarnPerformanceElementTypeSerializer
 
 @Suppress("UnstableApiUsage")
 class KphpStubRegistryExtension : StubRegistryExtension {
@@ -26,18 +22,8 @@ class KphpStubRegistryExtension : StubRegistryExtension {
         )
 
         registry.registerStubSerializer(
-            KphpDocElementTypes.kphpDocTagJson,
-            KphpDocTagJsonElementTypeStubSerializer()
-        )
-
-        registry.registerStubSerializer(
             KphpDocElementTypes.kphpDocTagTemplateClass,
             KphpDocTagTemplateClassElementTypeSerializer()
-        )
-
-        registry.registerStubSerializer(
-            KphpDocElementTypes.kphpDocTagWarnPerformance,
-            KphpDocTagWarnPerformanceElementTypeSerializer()
         )
     }
 
@@ -48,18 +34,8 @@ class KphpStubRegistryExtension : StubRegistryExtension {
         )
 
         registry.registerStubFactory(
-            KphpDocElementTypes.kphpDocTagJson,
-            KphpDocTagJsonElementTypeStubFactory
-        )
-
-        registry.registerStubFactory(
             KphpDocElementTypes.kphpDocTagTemplateClass,
             KphpDocTagTemplateClassElementTypeFactory
-        )
-
-        registry.registerStubFactory(
-            KphpDocElementTypes.kphpDocTagWarnPerformance,
-            KphpDocTagWarnPerformanceElementTypeFactory
         )
     }
 }
