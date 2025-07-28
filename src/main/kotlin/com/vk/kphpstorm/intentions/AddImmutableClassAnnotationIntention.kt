@@ -22,7 +22,7 @@ class AddImmutableClassAnnotationIntention : PsiElementBaseIntentionAction() {
         }
 
         val klass = element.parent as PhpClass
-        if (klass.isAbstract || klass.isInterface) {
+        if (klass.isAbstract || klass.isInterface || klass.isTrait || klass.isAnonymous) {
             return false
         }
 

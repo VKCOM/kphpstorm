@@ -51,4 +51,8 @@ class AddImmutableAnnoIntentionTest : IntentionTestBase(AddImmutableClassAnnotat
     fun testAddImmutableAnno12() {
         assertNoIntention("kphp_intentions/immutable_class_intention-12.nointent.php")
     }
+
+    fun testAddImmutableAnno13() {
+        assertNoIntention("kphp_intentions/immutable_class_intention-13.nointent.php")
+    }
 }
