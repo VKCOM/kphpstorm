@@ -7,11 +7,10 @@ import com.intellij.psi.stubs.StubElementFactory
 import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStub
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
-import com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagSimpleElementTypeStubSerializer
+import com.vk.kphpstorm.kphptags.psi.KphpDocTagSimplePsiImpl
+import com.vk.kphpstorm.kphptags.psi.KphpDocTagStubImpl
 
-object KphpDocTagSimpleElementTypeStubFactory
-    : StubElementFactory<PhpDocTagStub, PhpDocTag> {
-
+object KphpDocTagSimpleElementTypeStubFactory : StubElementFactory<PhpDocTagStub, PhpDocTag> {
     override fun shouldCreateStub(node: ASTNode): Boolean =
         node.elementType == KphpDocElementTypes.kphpDocTagSimple
 
@@ -19,8 +18,8 @@ object KphpDocTagSimpleElementTypeStubFactory
         psi: PhpDocTag,
         parentStub: StubElement<out PsiElement>?
     ): PhpDocTagStub =
-        KphpDocTagSimpleElementTypeStubSerializer().createStub(psi, parentStub)
+        KphpDocTagStubImpl(parentStub, KphpDocElementTypes.kphpDocTagSimple, psi.name, null)
 
     override fun createPsi(stub: PhpDocTagStub): PhpDocTag =
-        KphpDocTagSimpleElementTypeStubSerializer().createPsi(stub)
+        KphpDocTagSimplePsiImpl(stub, KphpDocElementTypes.kphpDocTagSimple)
 }

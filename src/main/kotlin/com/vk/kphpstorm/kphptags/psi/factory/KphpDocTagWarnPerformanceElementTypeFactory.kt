@@ -7,7 +7,8 @@ import com.intellij.psi.stubs.StubElementFactory
 import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStub
 import com.jetbrains.php.lang.documentation.phpdoc.psi.tags.PhpDocTag
 import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
-import com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagWarnPerformanceElementTypeSerializer
+import com.vk.kphpstorm.kphptags.psi.KphpDocTagStubImpl
+import com.vk.kphpstorm.kphptags.psi.KphpDocTagWarnPerformancePsiImpl
 
 object KphpDocTagWarnPerformanceElementTypeFactory : StubElementFactory<PhpDocTagStub, PhpDocTag> {
     override fun shouldCreateStub(node: ASTNode): Boolean =
@@ -15,10 +16,10 @@ object KphpDocTagWarnPerformanceElementTypeFactory : StubElementFactory<PhpDocTa
 
 
     override fun createStub(psi: PhpDocTag, parentStub: StubElement<out PsiElement>?): PhpDocTagStub{
-        return KphpDocTagWarnPerformanceElementTypeSerializer().createStub(psi, parentStub)
+        return KphpDocTagStubImpl(parentStub, KphpDocElementTypes.kphpDocTagWarnPerformance, psi.name, null)
     }
 
     override fun createPsi(stub: PhpDocTagStub): PhpDocTag? {
-        return KphpDocTagWarnPerformanceElementTypeSerializer().createPsi(stub)
+        return KphpDocTagWarnPerformancePsiImpl(stub, KphpDocElementTypes.kphpDocTagWarnPerformance)
     }
 }

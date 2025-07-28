@@ -43,5 +43,3 @@ object KphpDocElementTypes {
      */
     val kphpDocTagTemplateClass = PhpElementType("@kphp-template-class")
 }
-
-
