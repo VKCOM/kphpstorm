@@ -2,11 +2,9 @@ package com.vk.kphpstorm.kphptags.psi.stubs
 
 import com.intellij.psi.stubs.StubRegistry
 import com.intellij.psi.stubs.StubRegistryExtension
+import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStubSerializer
+import com.jetbrains.php.lang.psi.stubs.stub_factories.PhpDocTagStubFactory
 import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
-import com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagSimpleElementTypeStubFactory
-import com.vk.kphpstorm.kphptags.psi.factory.KphpDocTagTemplateClassElementTypeFactory
-import com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagSimpleElementTypeStubSerializer
-import com.vk.kphpstorm.kphptags.psi.serializers.KphpDocTagTemplateClassElementTypeSerializer
 
 @Suppress("UnstableApiUsage")
 class KphpStubRegistryExtension : StubRegistryExtension {
@@ -18,19 +16,19 @@ class KphpStubRegistryExtension : StubRegistryExtension {
     private fun registerSerializers(registry: StubRegistry) {
         registry.registerStubSerializer(
             KphpDocElementTypes.kphpDocTagSimple,
-            KphpDocTagSimpleElementTypeStubSerializer()
+            PhpDocTagStubSerializer(KphpDocElementTypes.kphpDocTagSimple)
         )
 
         registry.registerStubSerializer(
             KphpDocElementTypes.kphpDocTagTemplateClass,
-            KphpDocTagTemplateClassElementTypeSerializer()
+            PhpDocTagStubSerializer(KphpDocElementTypes.kphpDocTagTemplateClass)
         )
     }
 
     private fun registerFactories(registry: StubRegistry) {
         registry.registerStubFactory(
             KphpDocElementTypes.kphpDocTagSimple,
-            KphpDocTagSimpleElementTypeStubFactory
+            PhpDocTagStubFactory(KphpDocElementTypes.kphpDocTagSimple)
         )
 
         registry.registerStubFactory(
