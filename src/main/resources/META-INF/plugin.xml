@@ -77,7 +77,12 @@
       <language>PHP</language>
       <className>com.vk.kphpstorm.intentions.PrettifyPhpdocBlockIntention</className>
       <category>PHP</category>
-      <descriptionDirectoryName>PrettifyPhpdocBlockIntention</descriptionDirectoryName>
+    </intentionAction>
+
+    <intentionAction>
+      <language>PHP</language>
+      <className>com.vk.kphpstorm.intentions.AddImmutableClassAnnotationIntention</className>
+      <category>PHP</category>
     </intentionAction>
 
     <additionalTextAttributes scheme="Default" file="colorSchemes/KphpAddonsDefault.xml"/>

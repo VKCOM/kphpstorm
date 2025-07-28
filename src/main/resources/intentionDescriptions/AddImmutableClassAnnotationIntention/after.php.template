@@ -1,0 +1,7 @@
+/**
+ * My favorite class
+ * <spot>@kphp-immutable-class</spot>
+ */
+class MyClass {
+    // ...
+}
