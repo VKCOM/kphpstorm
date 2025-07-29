@@ -22,4 +22,6 @@ class KphpDocTagStubImpl(
     override fun getType() = PhpType()
     override fun getName() = name
     override fun getValue() = value
+
+    override fun toString(): String = "$name${if (value != null) ": $value" else ""}"
 }

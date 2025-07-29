@@ -1,0 +1,10 @@
+PhpFileStubImpl
+  DOC_COMMENT:PhpDocCommentStubImpl
+    @kphp-...:@kphp-throws
+    @kphp-...:@kphp-color
+    @kphp-...:@kphp-required
+    @kphp-...:@kphp-inline
+    @kphp-...:@kphp-profile
+  FUNCTION:PhpFunctionStubImpl
+    NOT_PROMOTED_PARAMETER:PhpParameterStubImpl
+    NOT_PROMOTED_PARAMETER:PhpParameterStubImpl
