@@ -11,6 +11,8 @@ import com.jetbrains.php.lang.psi.resolve.types.PhpType
  * When @kphp-... tags (regardless of elementType) are stored as stubs,
  * they hold only name and optional arbitrary string value.
  * Similar to [com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStubImpl]
+ *
+ * TODO: make a research to check are we really need stubs?
  */
 class KphpDocTagStubImpl(
         parent: StubElement<*>?,
