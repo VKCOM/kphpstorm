@@ -2,7 +2,6 @@ package com.vk.kphpstorm.testing.infrastructure
 
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.php.lang.psi.elements.FunctionReference
 import com.jetbrains.php.lang.psi.elements.PhpPsiElement
 import com.jetbrains.php.lang.psi.elements.PhpTypedElement
@@ -12,8 +11,7 @@ import com.vk.kphpstorm.configuration.KphpStormConfiguration
 import com.vk.kphpstorm.exphptype.ExPhpTypePipe
 import com.vk.kphpstorm.helpers.toExPhpType
 
-abstract class TypeTestBase : BasePlatformTestCase() {
-    override fun getTestDataPath() = "src/test/fixtures"
+abstract class TypeTestBase : KphpStormTestBase() {
 
     protected open fun runFixture(vararg fixtureFiles: String) {
         KphpStormConfiguration.saveThatSetupForProjectDone(project)
