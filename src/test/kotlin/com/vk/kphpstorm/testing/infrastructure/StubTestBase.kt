@@ -47,7 +47,6 @@ abstract class StubTestBase : KphpStormTestBase() {
         return buffer.toString()
     }
 
-    @Suppress("UnstableApiUsage")
     private fun dumpToString(node: StubElement<*>, buffer: StringBuilder, indent: Int) {
         StringUtil.repeatSymbol(buffer, ' ', indent)
 
