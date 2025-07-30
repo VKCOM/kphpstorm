@@ -1,6 +1,10 @@
 package com.vk.kphpstorm.testing.infrastructure
 
-import com.intellij.psi.impl.DebugUtil
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.stubs.PsiFileStubImpl
+import com.intellij.psi.stubs.Stub
+import com.intellij.psi.stubs.StubElement
+import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStub
 import com.jetbrains.php.lang.psi.stubs.PhpFileStubBuilder
 import com.vk.kphpstorm.configuration.KphpStormConfiguration
 import java.io.File
@@ -19,7 +23,7 @@ abstract class StubTestBase : KphpStormTestBase() {
         myFixture.configureByFile(fixtureFile)
 
         val stubTree = stubBuilder.buildStubTree(myFixture.file)
-        val stubTreeString = DebugUtil.stubTreeToString(stubTree)
+        val stubTreeString = dumpToString(stubTree)
 
         val expectedFileRelPath = fixtureFile.replace(".fixture.php", ".stub.php")
         if (fixtureFile == expectedFileRelPath) {
@@ -34,5 +38,44 @@ abstract class StubTestBase : KphpStormTestBase() {
         }
 
         assertSameLinesWithFile(expectedFile.absolutePath, stubTreeString)
+    }
+
+
+    private fun dumpToString(node: StubElement<*>): String {
+        val buffer = StringBuilder()
+        dumpToString(node, buffer, 0)
+
+        return buffer.toString()
+    }
+
+    private fun dumpToString(node: StubElement<*>, buffer: StringBuilder, indent: Int) {
+        StringUtil.repeatSymbol(buffer, ' ', indent)
+
+        val presentable = getPresentable(node)
+
+        if (presentable != null) {
+            buffer.append(presentable.toString()).append(':')
+        }
+
+        buffer.append(node.toString()).append('\n')
+
+        for (child in node.childrenStubs) {
+            dumpToString(child, buffer, indent + 2)
+        }
+    }
+
+    @Suppress("UnstableApiUsage")
+    private fun getPresentable(node: Stub): Any? {
+        return when (node) {
+            is PsiFileStubImpl<*> -> {
+                null
+            }
+
+            is PhpDocTagStub -> {
+                "${node.stubType} {name: ${node.name}${if (node.value != null) ", value: " + node.value else ""}}"
+            }
+
+            else -> node.stubType
+        }
     }
 }
