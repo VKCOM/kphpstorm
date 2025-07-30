@@ -18,4 +18,8 @@ class KphpStubTest : StubTestBase() {
     fun testKphpWarnPerformance() {
         doStubTest("kphp_stub/kphp-warn-performance.fixture.php")
     }
+
+    fun testKphpSerialize() {
+        doStubTest("kphp_stub/kphp-serialize.fixture.php")
+    }
 }

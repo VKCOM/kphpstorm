@@ -1,0 +1,17 @@
+PhpFileStubImpl
+  DOC_COMMENT:PhpDocCommentStubImpl
+    @kphp-...:@kphp-serializable
+    @kphp-...:@kphp-reserved-fields
+  CLASS:PhpClassStubImpl{C}
+    DOC_COMMENT:PhpDocCommentStubImpl
+      @kphp-...:@kphp-serialized-float32
+    CLASS_FIELDS:PhpClassFieldListStubImpl
+      CLASS_FIELD:PhpFieldStubImpl
+    DOC_COMMENT:PhpDocCommentStubImpl
+      @kphp-...:@kphp-serialized-field
+    CLASS_FIELDS:PhpClassFieldListStubImpl
+      CLASS_FIELD:PhpFieldStubImpl
+    DOC_COMMENT:PhpDocCommentStubImpl
+      @kphp-...:@kphp-serialized-field
+    CLASS_FIELDS:PhpClassFieldListStubImpl
+      CLASS_FIELD:PhpFieldStubImpl
