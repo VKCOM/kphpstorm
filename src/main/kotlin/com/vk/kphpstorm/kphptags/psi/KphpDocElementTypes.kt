@@ -22,7 +22,7 @@ object KphpDocElementTypes {
      * * do not store anything in stubs, so their contents is unaccessible from other files
      * Such doc tags are 'simple'
      */
-    val kphpDocTagSimple = PhpElementType("@kphp-simple")
+    val kphpDocTagSimple = PhpElementType("<kphp-simple-tag>")
 
     /**
      * '@kphp-warn-performance ...' and '@kphp-analyze-performance ...'
