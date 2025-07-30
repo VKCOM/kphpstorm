@@ -1,5 +1,5 @@
 <?php
 /**
-* @kphp-template template
+* @kphp-template-class int,string
 */
-function test($template) { }
+class C { }
