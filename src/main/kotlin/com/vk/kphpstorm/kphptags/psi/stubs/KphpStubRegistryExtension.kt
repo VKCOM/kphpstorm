@@ -23,6 +23,16 @@ class KphpStubRegistryExtension : StubRegistryExtension {
             KphpDocElementTypes.kphpDocTagTemplateClass,
             PhpDocTagStubSerializer(KphpDocElementTypes.kphpDocTagTemplateClass)
         )
+
+        registry.registerStubSerializer(
+            KphpDocElementTypes.kphpDocTagWarnPerformance,
+            PhpDocTagStubSerializer(KphpDocElementTypes.kphpDocTagWarnPerformance)
+        )
+
+        registry.registerStubSerializer(
+            KphpDocElementTypes.kphpDocTagJson,
+            PhpDocTagStubSerializer(KphpDocElementTypes.kphpDocTagJson)
+        )
     }
 
     private fun registerFactories(registry: StubRegistry) {
@@ -34,6 +44,16 @@ class KphpStubRegistryExtension : StubRegistryExtension {
         registry.registerStubFactory(
             KphpDocElementTypes.kphpDocTagTemplateClass,
             KphpDocTagTemplateClassElementTypeFactory
+        )
+
+        registry.registerStubFactory(
+            KphpDocElementTypes.kphpDocTagWarnPerformance,
+            PhpDocTagStubFactory(KphpDocElementTypes.kphpDocTagWarnPerformance)
+        )
+
+        registry.registerStubFactory(
+            KphpDocElementTypes.kphpDocTagJson,
+            PhpDocTagStubFactory(KphpDocElementTypes.kphpDocTagJson)
         )
     }
 }
