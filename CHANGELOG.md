@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.2.15] - 31.07.2025
+
+- introduce an intention to add `@kphp-immutable-class` annotation
+
 ## [1.2.14] - 01.03.2024
 
 - adapt code for 2024.3
