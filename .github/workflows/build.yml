@@ -101,6 +101,44 @@ jobs:
           name: tests-result
           path: ${{ github.workspace }}/build/reports/tests
 
+  # Run Qodana inspections and provide a report
+  inspectCode:
+      name: Inspect code
+      needs: [ build ]
+      runs-on: ubuntu-latest
+      permissions:
+        contents: write
+        checks: write
+        pull-requests: write
+      steps:
+
+        # Free GitHub Actions Environment Disk Space
+        - name: Maximize Build Space
+          uses: jlumbroso/free-disk-space@v1.3.1
+          with:
+            tool-cache: false
+            large-packages: false
+
+        # Check out the current repository
+        - name: Fetch Sources
+          uses: actions/checkout@v4
+          with:
+            ref: ${{ github.event.pull_request.head.sha }}  # to check out the actual pull request commit, not the merge commit
+            fetch-depth: 0  # a full history is required for pull request analysis
+
+        # Set up the Java environment for the next steps
+        - name: Setup Java
+          uses: actions/setup-java@v4
+          with:
+            distribution: zulu
+            java-version: 17
+
+        # Run Qodana inspections
+        - name: Qodana - Code Inspection
+          uses: JetBrains/qodana-action@v2025.1.1
+          with:
+            cache-default-branch-only: true
+
   # Run plugin structure verification along with IntelliJ Plugin Verifier
   verify:
     name: Verify plugin
