@@ -1,8 +1,10 @@
 package com.vk.kphpstorm.testing.infrastructure
 
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import com.jetbrains.php.config.PhpLanguageLevel
 import com.jetbrains.php.config.PhpProjectConfigurationFacade
+import java.nio.file.Paths
 
 abstract class KphpStormTestBase() : BasePlatformTestCase() {
 
@@ -13,6 +15,8 @@ abstract class KphpStormTestBase() : BasePlatformTestCase() {
     override fun setUp() {
         super.setUp()
         setupLanguageLevel()
+        val testDataAbsPath = Paths.get(testDataPath).toAbsolutePath().toString()
+        VfsRootAccess.allowRootAccess(testRootDisposable, testDataAbsPath)
     }
 
     private fun setupLanguageLevel() {

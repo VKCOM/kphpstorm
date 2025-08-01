@@ -94,6 +94,7 @@
     <lang.parserDefinition language="PHP" order="first"
                            implementationClass="com.vk.kphpstorm.KphpStormParserDefinition"/>
     <stubElementTypeHolder class="com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes"/>
+    <stubElementRegistryExtension implementation="com.vk.kphpstorm.kphptags.psi.stubs.KphpStubRegistryExtension"/>
     <annotator language="PHP" implementationClass="com.vk.kphpstorm.highlighting.KphpStormAnnotator"/>
 
     <lang.documentationProvider language="PHP" order="first"

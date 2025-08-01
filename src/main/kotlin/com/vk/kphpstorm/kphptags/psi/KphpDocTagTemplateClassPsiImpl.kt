@@ -1,7 +1,7 @@
 package com.vk.kphpstorm.kphptags.psi
 
 import com.intellij.lang.ASTNode
-import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.tree.IElementType
 import com.jetbrains.php.lang.documentation.phpdoc.psi.impl.tags.PhpDocTagImpl
 import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStub
 
@@ -11,7 +11,7 @@ import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStub
  */
 class KphpDocTagTemplateClassPsiImpl : PhpDocTagImpl, KphpDocTagImpl {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: PhpDocTagStub, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
+    constructor(stub: PhpDocTagStub, nodeType: IElementType) : super(stub, nodeType)
 
     // important! this function can be called when current file is not loaded,
     // but we store all necessary information in stub

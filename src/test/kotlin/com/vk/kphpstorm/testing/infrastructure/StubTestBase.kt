@@ -40,7 +40,6 @@ abstract class StubTestBase : KphpStormTestBase() {
         assertSameLinesWithFile(expectedFile.absolutePath, stubTreeString)
     }
 
-
     private fun dumpToString(node: StubElement<*>): String {
         val buffer = StringBuilder()
         dumpToString(node, buffer, 0)
@@ -72,10 +71,12 @@ abstract class StubTestBase : KphpStormTestBase() {
             }
 
             is PhpDocTagStub -> {
-                "${node.stubType} {name: ${node.name}${if (node.value != null) ", value: " + node.value else ""}}"
+                "${node.elementType} {name: ${node.name}${if (node.value != null) ", value: " + node.value else ""}}"
             }
 
-            else -> node.stubType
+            else -> {
+                if (node is StubElement<*>) node.elementType else node.stubSerializer
+            }
         }
     }
 }

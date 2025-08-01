@@ -1,5 +1,6 @@
 package com.vk.kphpstorm.kphptags.psi
 
+import com.jetbrains.php.lang.psi.PhpElementType
 import com.vk.kphpstorm.KphpStormParserDefinition
 
 
@@ -21,27 +22,24 @@ object KphpDocElementTypes {
      * * do not store anything in stubs, so their contents is unaccessible from other files
      * Such doc tags are 'simple'
      */
-    val kphpDocTagSimple = KphpDocTagSimpleElementType
+    val kphpDocTagSimple = PhpElementType("<kphp-simple-tag>")
 
     /**
      * '@kphp-warn-performance ...' and '@kphp-analyze-performance ...'
      * They don't store stubs, but have a psi parser
      */
-    val kphpDocTagWarnPerformance = KphpDocTagWarnPerformanceElementType
+    val kphpDocTagWarnPerformance = PhpElementType("@kphp-warn-performance")
 
     /**
      * '@kphp-json [for EncoderName] attribute[= optional value]'
      * They don't store stubs, but have a psi parser
      */
-    val kphpDocTagJson = KphpDocTagJsonElementType
+    val kphpDocTagJson = PhpElementType("@kphp-json")
 
     /**
      * '@kphp-template-class T1, T2'
      * (NOTE! This is not working in KPHP for now, it is just a matter of IDE experiments for future)
      * This tag stores "T1,T2" in stubs and has custom psi for them, therefore is not simple
      */
-    val kphpDocTagTemplateClass = KphpDocTagTemplateClassElementType
-
+    val kphpDocTagTemplateClass = PhpElementType("@kphp-template-class")
 }
-
-
