@@ -73,8 +73,7 @@ abstract class KphpDocTag(
     }
 
     fun findThisTagInDocComment(docCommentOwner: PhpNamedElement): PhpDocTag? {
-        return PsiTreeUtil.findChildrenOfType(docCommentOwner.docComment, PhpDocTag::class.java)
-            .firstOrNull { it.name == nameWithAt }
+        return findThisTagInDocComment(docCommentOwner.docComment ?: return null)
     }
 
     inline fun <reified T : PhpDocTag> findThisTagsInDocComment(docComment: PhpDocComment): List<T> {
