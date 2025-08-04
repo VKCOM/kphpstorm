@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.2.16] - 04.08.2025
+
+- Adapt code for PhpStorm 2025.1
+
 ## [1.2.15] - 31.07.2025
 
 - introduce an intention to add `@kphp-immutable-class` annotation

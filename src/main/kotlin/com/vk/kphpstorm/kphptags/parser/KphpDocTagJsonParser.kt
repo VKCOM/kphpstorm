@@ -5,12 +5,12 @@ import com.jetbrains.php.lang.documentation.phpdoc.parser.tags.PhpDocTagParser
 import com.jetbrains.php.lang.parser.PhpParserErrors
 import com.jetbrains.php.lang.parser.PhpPsiBuilder
 import com.vk.kphpstorm.exphptype.psi.TokensToExPhpTypePsiParsing
+import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
 import com.vk.kphpstorm.kphptags.psi.KphpDocJsonAttributePsiImpl
 import com.vk.kphpstorm.kphptags.psi.KphpDocJsonForEncoderPsiImpl
-import com.vk.kphpstorm.kphptags.psi.KphpDocTagJsonElementType
 
 class KphpDocTagJsonParser : PhpDocTagParser() {
-    override fun getElementType() = KphpDocTagJsonElementType
+    override fun getElementType() = KphpDocElementTypes.kphpDocTagJson
 
     override fun parseContents(builder: PhpPsiBuilder): Boolean {
         val paramsTagParser = PhpDocParamTagParser()

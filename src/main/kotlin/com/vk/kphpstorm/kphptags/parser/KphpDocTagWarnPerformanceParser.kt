@@ -4,11 +4,11 @@ import com.jetbrains.php.lang.documentation.phpdoc.lexer.PhpDocTokenTypes
 import com.jetbrains.php.lang.documentation.phpdoc.parser.tags.PhpDocTagParser
 import com.jetbrains.php.lang.parser.PhpParserErrors
 import com.jetbrains.php.lang.parser.PhpPsiBuilder
-import com.vk.kphpstorm.kphptags.psi.KphpDocTagWarnPerformanceElementType
+import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
 import com.vk.kphpstorm.kphptags.psi.KphpDocWarnPerformanceItemPsiImpl
 
 class KphpDocTagWarnPerformanceParser : PhpDocTagParser() {
-    override fun getElementType() = KphpDocTagWarnPerformanceElementType
+    override fun getElementType() = KphpDocElementTypes.kphpDocTagWarnPerformance
 
     override fun parseContents(builder: PhpPsiBuilder): Boolean {
         do {
