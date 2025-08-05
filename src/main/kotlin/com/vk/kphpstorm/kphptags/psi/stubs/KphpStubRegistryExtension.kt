@@ -3,7 +3,6 @@ package com.vk.kphpstorm.kphptags.psi.stubs
 import com.intellij.psi.stubs.StubRegistry
 import com.intellij.psi.stubs.StubRegistryExtension
 import com.jetbrains.php.lang.documentation.phpdoc.psi.stubs.PhpDocTagStubSerializer
-import com.jetbrains.php.lang.psi.stubs.stub_factories.PhpDocTagStubFactory
 import com.vk.kphpstorm.kphptags.psi.KphpDocElementTypes
 
 @Suppress("UnstableApiUsage")
@@ -38,7 +37,7 @@ class KphpStubRegistryExtension : StubRegistryExtension {
     private fun registerFactories(registry: StubRegistry) {
         registry.registerStubFactory(
             KphpDocElementTypes.kphpDocTagSimple,
-            PhpDocTagStubFactory(KphpDocElementTypes.kphpDocTagSimple)
+            KphpDocTagStubFactory(KphpDocElementTypes.kphpDocTagSimple)
         )
 
         registry.registerStubFactory(
@@ -48,12 +47,12 @@ class KphpStubRegistryExtension : StubRegistryExtension {
 
         registry.registerStubFactory(
             KphpDocElementTypes.kphpDocTagWarnPerformance,
-            PhpDocTagStubFactory(KphpDocElementTypes.kphpDocTagWarnPerformance)
+            KphpDocTagStubFactory(KphpDocElementTypes.kphpDocTagWarnPerformance)
         )
 
         registry.registerStubFactory(
             KphpDocElementTypes.kphpDocTagJson,
-            PhpDocTagStubFactory(KphpDocElementTypes.kphpDocTagJson)
+            KphpDocTagStubFactory(KphpDocElementTypes.kphpDocTagJson)
         )
     }
 }
