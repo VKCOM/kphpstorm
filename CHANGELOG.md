@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.2.17] - 05.08.2025
+
+- Fix IllegalArgumentException when navigating the codebase
+
 ## [1.2.16] - 04.08.2025
 
 - Adapt code for PhpStorm 2025.1
