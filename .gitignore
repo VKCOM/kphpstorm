@@ -1,7 +1,6 @@
+.DS_Store
+.gradle
 .idea
 .intellijPlatform
-.gradle
-build
-.DS_Store
-out
 .kotlin
+build
