@@ -131,6 +131,7 @@ jobs:
         - name: Qodana - Code Inspection
           uses: JetBrains/qodana-action@v2025.1.1
           with:
+            args: --baseline,./.qodana/baseline.sarif.json
             cache-default-branch-only: true
 
         - name: Qodana - Publish Results
