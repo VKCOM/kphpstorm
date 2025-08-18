@@ -1,6 +1,7 @@
 <component name="ProjectDictionaryState">
   <dictionary name="project">
     <words>
+      <w>appname</w>
       <w>bcdiv</w>
       <w>bcmod</w>
       <w>bindec</w>
@@ -15,6 +16,7 @@
       <w>dists</w>
       <w>exphptype</w>
       <w>floatval</w>
+      <w>foojay</w>
       <w>getimagesize</w>
       <w>gmdate</w>
       <w>gmmktime</w>
@@ -22,6 +24,7 @@
       <w>intval</w>
       <w>jlumbroso</w>
       <w>kmixed</w>
+      <w>kover</w>
       <w>kphp</w>
       <w>kphpdoc</w>
       <w>kphptags</w>
@@ -29,6 +32,7 @@
       <w>memcpy</w>
       <w>multiassign</w>
       <w>noflush</w>
+      <w>opentest</w>
       <w>pdtag</w>
       <w>prettifications</w>
       <w>qcachegrind</w>
