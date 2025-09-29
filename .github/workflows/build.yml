@@ -100,6 +100,8 @@ jobs:
       name: Inspect code
       needs: [ build ]
       runs-on: ubuntu-latest
+      if: github.event_name == 'pull_request'
+
       permissions:
         contents: write
         checks: write
@@ -135,7 +137,7 @@ jobs:
             cache-default-branch-only: true
 
         - name: Qodana - Publish Results
-          uses: github/codeql-action/upload-sarif@v2
+          uses: github/codeql-action/upload-sarif@v3
           with:
             sarif_file: ${{ runner.temp }}/qodana/results/qodana.sarif.json
 
