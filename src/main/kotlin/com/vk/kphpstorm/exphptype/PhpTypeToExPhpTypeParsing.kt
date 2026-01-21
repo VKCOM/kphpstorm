@@ -109,6 +109,18 @@ object PhpTypeToExPhpTypeParsing {
                 offset++
         }
 
+        inline fun <T> rollbackOnNull(operation: () -> T?): T? {
+            val curr = offset
+            val result = operation()
+
+            if (result == null) {
+                offset = curr
+                return null
+            } else {
+                return result
+            }
+        }
+
         fun compare(c: Char): Boolean {
             skipWhitespace()
             return offset < type.length && type[offset] == c
@@ -129,6 +141,37 @@ object PhpTypeToExPhpTypeParsing {
             val match = RE_VALID_FQN.find(type, offset) ?: return null
             offset = match.range.last + 1
             return match.value
+        }
+
+        fun parseStringLiteral(): String? {
+            skipWhitespace()
+
+            return buildString {
+                if (type.length - offset < 2) return null
+
+                // "..."
+                // ^
+                when (type[offset]) {
+                    '\'' -> offset++
+                    '\"' -> offset++
+                    else -> return null
+                }
+
+
+                // "..."
+                //  ^
+                while (type[offset] != '\'' && type[offset] != '"') {
+                    append(type[offset++])
+                }
+
+                // "..."
+                //     ^
+                if (type[offset] != '"' && type[offset] != '\'') {
+                    return null
+                }
+
+                offset++
+            }
         }
     }
 
@@ -265,6 +308,11 @@ object PhpTypeToExPhpTypeParsing {
             return ExPhpTypeForcing(inner)
         }
 
+        if (fqn == "array" && builder.compare('{')) {
+            val items = parseArrayShapeContents(builder) ?: return null
+            return ExPhpTypeArrayShape(items)
+        }
+
         if (builder.compare('<')) {
             val specialization = parseTemplateSpecialization(builder) ?: return null
             return ExPhpTypeTplInstantiation(fqn, specialization)
@@ -294,6 +342,44 @@ object PhpTypeToExPhpTypeParsing {
         }
 
         return createPipeOrSimplified(pipeItems)
+    }
+
+    private fun parseArrayShapeContents(builder: ExPhpTypeBuilder): List<ExPhpTypeArrayShape.ShapeItem>? {
+        if (!builder.compareAndEat('{'))
+            return null
+        if (builder.compareAndEat('}'))
+            return listOf()
+
+        val items = mutableListOf<ExPhpTypeArrayShape.ShapeItem>()
+
+        while (true) {
+            var isString = false
+
+            val keyName = builder.rollbackOnNull {
+                builder.parseFQN()
+            } ?: builder.rollbackOnNull {
+                isString = true
+                builder.parseStringLiteral()
+            } ?: return null
+
+            val nullable = builder.compareAndEat('?')
+            builder.compareAndEat(':')
+            val type = parseTypeExpression(builder) ?: return null
+
+            items.add(ExPhpTypeArrayShape.ShapeItem(keyName, isString, nullable, type))
+            if (builder.compareAndEat('}'))
+                return items
+
+            if (builder.compareAndEat(',')) {
+                if (builder.compareAndEat('.') && builder.compareAndEat('.') && builder.compareAndEat('.')) {
+                    if (!builder.compareAndEat('}'))
+                        return null
+                    return items
+                }
+                continue
+            }
+            return null
+        }
     }
 
     /**
