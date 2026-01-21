@@ -155,6 +155,10 @@
     <php.docTagParserExtension tagName="kphp-json" implementationClass="com.vk.kphpstorm.kphptags.parser.KphpDocTagJsonParser"/>
   </extensions>
 
+  <extensions defaultExtensionNs="com.intellij">
+    <notificationGroup id="kphpstorm.plugin.setup.notification" displayType="BALLOON" toolWindowId="kphp configuration notification"/>
+  </extensions>
+
   <actions>
     <group id="com.vk.kphpstorm" text="KPHPStorm" popup="true" icon="/icons/kphp_logo.svg">
       <add-to-group group-id="ToolsMenu" anchor="last"/>
