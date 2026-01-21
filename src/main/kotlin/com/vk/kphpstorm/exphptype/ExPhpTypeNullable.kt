@@ -29,6 +29,7 @@ class ExPhpTypeNullable(val inner: ExPhpType) : ExPhpType {
         is ExPhpTypePipe      -> rhs.isAssignableTo(this, project)
         is ExPhpTypeNullable  -> inner.isAssignableFrom(rhs.inner, project)
         is ExPhpTypePrimitive -> rhs === ExPhpType.NULL || inner.isAssignableFrom(rhs, project)
+        is ExPhpTypeInstance  -> false
         else                  -> inner.isAssignableFrom(rhs, project)
     }
 }

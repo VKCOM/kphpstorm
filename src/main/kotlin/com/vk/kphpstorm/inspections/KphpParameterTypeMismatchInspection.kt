@@ -76,6 +76,7 @@ class KphpParameterTypeMismatchInspection : PhpInspection() {
             val callType = PsiToExPhpType.getTypeOfExpr(callParam, project) ?: continue
             val argType = PsiToExPhpType.getArgumentDeclaredType(fArg, project) ?: continue
 
+            val test = !argType.isAssignableFrom(callType, project)
             if (!argType.isAssignableFrom(callType, project) && needsReporting(f)) {
                 holder.registerProblem(callParam, "Can't pass '${callType.toHumanReadable(call)}' to '${argType.toHumanReadable(call)}' \$${fArg.name}", ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
             }
